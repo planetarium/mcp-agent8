@@ -1,0 +1,38 @@
+# Automatically normalize line endings for all text files
+* text=auto eol=lf
+
+# Source code
+*.js    text
+*.ts    text
+*.tsx   text
+*.jsx   text
+*.json  text
+*.html  text
+*.css   text
+*.scss  text
+*.less  text
+*.md    text
+*.yaml  text
+*.yml   text
+
+# Graphics
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svg   text
+
+# Fonts
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+
+# Shell scripts maintain LF endings
+*.sh    text eol=lf
+
+# Windows scripts maintain CRLF endings
+*.bat   text eol=crlf
+*.cmd   text eol=crlf 

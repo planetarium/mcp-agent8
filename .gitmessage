@@ -1,0 +1,18 @@
+# [type]: Title (max 50 characters)
+
+# Body (optional, each line max 72 characters)
+# Explain why and what you changed
+
+# Footer (optional)
+# Related issues: #123, #456
+# Closed issues: Close #789
+
+# Commit type list
+# feat: Add new feature
+# fix: Bug fix
+# docs: Documentation changes
+# style: Code formatting, missing semicolons, no code changes
+# refactor: Code refactoring
+# test: Add or modify test code
+# chore: Changes to build process or documentation tools
+# perf: Performance improvements 
