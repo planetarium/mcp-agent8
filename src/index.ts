@@ -91,8 +91,7 @@ async function main() {
       version: '1.0.0',
     });
 
-    const sessions: Record<string, { transport: SSEServerTransport; response: express.Response }> =
-      {};
+    const sessions: Record<string, SSEServerTransport> = {};
 
     if (transportType === 'sse') {
       logger.info(`SSE transport configured, port: ${port}`);
@@ -104,20 +103,20 @@ async function main() {
 
       // Set up SSE endpoint
       app.get('/sse', async (req, res) => {
-        logger.info('New SSE connection established');
-
         // Configure SSE response headers
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
+        res.setHeader('Content-Encoding', 'none');
 
         // Create SSE transport
         const transport = new SSEServerTransport('/messages', res);
         await server.connect(transport);
+        logger.info('New SSE connection established, sessionId: ' + transport.sessionId);
 
         const sessionId = transport.sessionId;
         if (sessionId) {
-          sessions[sessionId] = { transport: transport, response: res };
+          sessions[sessionId] = transport;
         }
 
         transport.onclose = () => {
@@ -146,9 +145,9 @@ async function main() {
         }
 
         const session = sessions[sessionId];
-        if (session?.transport?.handlePostMessage) {
+        if (session?.handlePostMessage) {
           logger.info(`POST to SSE transport (session ${sessionId})`);
-          await session.transport.handlePostMessage(req, res, req.body);
+          await session.handlePostMessage(req, res, req.body);
         } else {
           res.status(503).send(`No active SSE connection for session ${sessionId}`);
         }

@@ -52,3 +52,22 @@ export const ALLOWED_HTML_ELEMENTS = [
 
 export const WORK_DIR_NAME = 'project';
 export const WORK_DIR = `/home/${WORK_DIR_NAME}`;
+
+export const IGNORE_PATTERNS = [
+    'node_modules/**',
+    '.git/**',
+    'dist/**',
+    'build/**',
+    '.next/**',
+    'coverage/**',
+    '.cache/**',
+    '.vscode/**',
+    '.idea/**',
+    '**/*.log',
+    '**/.DS_Store',
+    '**/npm-debug.log*',
+    '**/yarn-debug.log*',
+    '**/yarn-error.log*',
+    '**/*lock.json',
+    '**/*lock.yml',
+  ];
