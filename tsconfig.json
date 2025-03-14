@@ -8,7 +8,8 @@
     "outDir": "dist",
     "declaration": true,
     "sourceMap": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "lib": ["ES2015", "DOM"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

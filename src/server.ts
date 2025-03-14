@@ -3,11 +3,15 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
   ListToolsRequestSchema,
-  GetPromptRequest
+  CallToolRequestSchema,
+  GetPromptRequest,
+  CallToolRequest
 } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from './utils/logging.js';
 import { PromptProvider } from './prompts/provider.js';
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { ToolProvider } from './tools/provider.js';
+import { SearchCodeExamplesTool } from './tools/search-code-examples.js';
 
 /**
  * MCP Server Implementation
@@ -16,10 +20,15 @@ import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 export class McpServer {
   private server: Server;
   private promptProvider: PromptProvider;
+  private toolProvider: ToolProvider;
   
   constructor(options: { name: string; version: string }) {
     // Initialize prompt provider
     this.promptProvider = new PromptProvider();
+    
+    // Initialize tool provider and register tools
+    this.toolProvider = new ToolProvider();
+    this.registerTools();
     
     // Initialize MCP server
     this.server = new Server(
@@ -38,7 +47,19 @@ export class McpServer {
     // Set up prompt-related handlers
     this.setupPromptHandlers();
     
+    // Set up tool-related handlers
+    this.setupToolHandlers();
+    
     logger.info(`MCP server '${options.name}' v${options.version} initialized`);
+  }
+  
+  /**
+   * Register available tools
+   */
+  private registerTools(): void {
+    // Register the vector DB search tool
+    this.toolProvider.getRegistry().register(new SearchCodeExamplesTool());
+    logger.info('Tools registered');
   }
   
   /**
@@ -75,13 +96,45 @@ export class McpServer {
         }
       }
     );
-
+  }
+  
+  /**
+   * Set up tool handlers
+   */
+  private setupToolHandlers(): void {
     // Handle tool list requests
     this.server.setRequestHandler(
       ListToolsRequestSchema,
       async () => {
-        return {
-          tools: [],
+        const tools = this.toolProvider.getRegistry().list().map(tool => ({
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema
+        }));
+        
+        logger.debug('Processing tool list request:', tools.length);
+        return { tools };
+      }
+    );
+    
+    // Handle tool call requests
+    this.server.setRequestHandler(
+      CallToolRequestSchema,
+      async (request: CallToolRequest) => {
+        const { name, arguments: args } = request.params;
+        logger.debug(`Processing tool call '${name}' with arguments:`, args);
+
+        if (!args) {
+          throw new Error(`No arguments provided for tool: ${name}`);
+        }
+
+        try {
+          const toolResult = await this.toolProvider.getRegistry().execute(request);
+          return { content: [{ type: "text", text: JSON.stringify(toolResult) }] };
+
+        } catch (error) {
+          logger.error(`Error while calling tool '${name}':`, error);
+          throw error;
         }
       }
     );
