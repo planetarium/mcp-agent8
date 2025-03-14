@@ -7,6 +7,7 @@ import cors from 'cors';
 import { Command } from 'commander';
 import { McpServer } from './server.js';
 import { logger, LogLevel, LogDestination } from './utils/logging.js';
+import { env } from './utils/env.js';
 import path from 'path';
 
 /**
@@ -25,28 +26,62 @@ async function main() {
       .option('--debug', 'Enable debug mode')
       .option('--transport <type>', 'Transport method (stdio or sse)', 'stdio')
       .option('--port <number>', 'Port to use for SSE transport', '3000')
-      .option('--log-destination <dest>', 'Log destination (stdout, stderr, file, none)', '')
+      .option(
+        '--log-destination <dest>',
+        'Log destination (stdout, stderr, file, none) (defaults to stderr for stdio transport, stdout for sse transport)'
+      )
       .option('--log-file <path>', 'Path to log file (when log-destination is file)')
-      .option('--log-level <level>', 'Log level (debug, info, warn, error)', 'info');
+      .option('--log-level <level>', 'Log level (debug, info, warn, error)', 'info')
+      .option('--env-file <path>', 'Path to .env file');
 
     program.parse();
 
     const options = program.opts();
 
+    // Load environment variables (.env file)
+    env.load(options.envFile);
+
+    // Check if options were explicitly provided in command line
+    const hasExplicitTransport = process.argv.includes('--transport');
+    const hasExplicitPort = process.argv.includes('--port');
+    const hasExplicitLogLevel = process.argv.includes('--log-level');
+
+    // Read settings from environment variables with proper fallback logic
+    const transportType = hasExplicitTransport
+      ? options.transport
+      : env.get('MCP_TRANSPORT', 'stdio');
+
+    const portStr = hasExplicitPort ? options.port : env.get('MCP_PORT', '3000');
+
+    const port = parseInt(portStr, 10);
+
+    const isDebugMode = options.debug || env.getBoolean('DEBUG', false);
+
+    const logLevelStr = hasExplicitLogLevel ? options.logLevel : env.get('LOG_LEVEL', 'info');
+
+    const logLevel = logLevelStr as LogLevel;
+
+    // Check if option was explicitly provided
+    const hasExplicitLogDestination = process.argv.includes('--log-destination');
+
     // Determine log destination based on transport and options
-    const logDestination =
-      options.logDestination ||
-      (options.transport === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
+    const logDestination = hasExplicitLogDestination
+      ? options.logDestination
+      : env.get('LOG_DESTINATION') ||
+        (transportType === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
+
+    // Log file path
+    const logFilePath = options.logFile || env.get('LOG_FILE');
 
     // Set up logger configuration
     logger.configure({
-      level: options.debug ? LogLevel.DEBUG : (options.logLevel as LogLevel) || LogLevel.INFO,
+      level: isDebugMode ? LogLevel.DEBUG : logLevel || LogLevel.INFO,
       destination: logDestination as LogDestination,
-      filePath: options.logFile ? path.resolve(options.logFile) : undefined,
+      filePath: logFilePath ? path.resolve(logFilePath) : undefined,
     });
 
     // Log debug info
-    if (options.debug) {
+    if (isDebugMode) {
       logger.debug('Debug mode enabled');
     }
 
@@ -56,14 +91,10 @@ async function main() {
       version: '1.0.0',
     });
 
-    // Select transport based on arguments
-    const transportType = options.transport;
-
     const sessions: Record<string, { transport: SSEServerTransport; response: express.Response }> =
       {};
 
     if (transportType === 'sse') {
-      const port = parseInt(options.port, 10);
       logger.info(`SSE transport configured, port: ${port}`);
 
       // Create Express app for SSE transport
