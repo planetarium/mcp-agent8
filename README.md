@@ -4,12 +4,15 @@ A server implementing the Model Context Protocol (MCP) to support Agent8 SDK dev
 
 ## Features
 
-- Provides various features for Agent8 game server development
-- Supports Stdio and SSE transports
-- Feature listing and detailed information retrieval
-- Supports Agent8 multiplayer game development workflows
-- Command-line interface powered by Commander.js
-- Environment variable support via dotenv
+This Agent8 MCP Server implements the following MCP specification capabilities:
+
+### Prompts
+
+- **System Prompt for Agent8 SDK**: Provides optimized guidelines for Agent8 SDK development through the `system-prompt-for-agent8-sdk` prompt template.
+
+### Tools
+
+- **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
 
 ## Installation
 
@@ -81,14 +84,17 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 #### Supported Environment Variables
 
-| Variable        | Description                                     | Default  |
-| --------------- | ----------------------------------------------- | -------- |
-| MCP_TRANSPORT   | Transport type (stdio or sse)                   | stdio    |
-| MCP_PORT        | Port to use for SSE transport                   | 3000     |
-| LOG_LEVEL       | Log level (debug, info, warn, error)            | info     |
-| LOG_DESTINATION | Log destination (stdout, stderr, file, none)    | _varies_ |
-| LOG_FILE        | Path to log file (when LOG_DESTINATION is file) |          |
-| DEBUG           | Enable debug mode (true/false)                  | false    |
+| Variable                  | Description                                     | Default                                                  |
+| ------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| MCP_TRANSPORT             | Transport type (stdio or sse)                   | stdio                                                    |
+| MCP_PORT                  | Port to use for SSE transport                   | 3000                                                     |
+| LOG_LEVEL                 | Log level (debug, info, warn, error)            | info                                                     |
+| LOG_DESTINATION           | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
+| LOG_FILE                  | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
+| DEBUG                     | Enable debug mode (true/false)                  | false                                                    |
+| SUPABASE_URL              | Supabase URL for database connection            | (required)                                               |
+| SUPABASE_SERVICE_ROLE_KEY | Supabase service role key for authentication    | (required)                                               |
+| OPENAI_API_KEY            | OpenAI API key for AI functionality             | (required)                                               |
 
 ### Using Stdio Transport
 
