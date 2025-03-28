@@ -3,7 +3,7 @@ services:
   mcp-server:
     build: .
     ports:
-      - "${MCP_PORT}:${MCP_PORT}"
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     volumes:
@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     # Health check configuration
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${MCP_PORT}/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT}/health"]
       interval: 30s
       timeout: 10s
       retries: 3 

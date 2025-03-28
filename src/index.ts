@@ -51,7 +51,7 @@ async function main() {
       ? options.transport
       : env.get('MCP_TRANSPORT', 'stdio');
 
-    const portStr = hasExplicitPort ? options.port : env.get('MCP_PORT', '3000');
+    const portStr = hasExplicitPort ? options.port : env.get('PORT', '3000');
 
     const port = parseInt(portStr, 10);
 

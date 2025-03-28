@@ -28,7 +28,7 @@ COPY --from=builder /app/dist ./dist
 RUN npm install --omit=dev --ignore-scripts
 
 # Expose the port the app runs on
-EXPOSE ${MCP_PORT}
+EXPOSE ${PORT}
 
 # Start the application
 CMD ["node", "dist/index.js"] 

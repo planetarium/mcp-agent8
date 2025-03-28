@@ -26,24 +26,26 @@ pnpm build
 
 ### Using Docker
 
-You can also run this application using Docker:
+You can run this application using Docker in several ways:
+
+#### Option 1: Pull from GitHub Container Registry (Recommended)
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/planetarium/mcp-agent8:latest
+
+# Run the container
+docker run -p 3333:3333 --env-file .env ghcr.io/planetarium/mcp-agent8:latest
+```
+
+#### Option 2: Build Locally
 
 ```bash
 # Build the Docker image
 docker build -t agent8-mcp-server .
 
 # Run the container with environment variables
-docker run -p 3000:3000 \
-  -e SUPABASE_URL=your_supabase_url \
-  -e SUPABASE_SERVICE_ROLE_KEY=your_service_role_key \
-  -e OPENAI_API_KEY=your_openai_api_key \
-  agent8-mcp-server
-
-# Alternative: Run with environment variables from .env file (recommended)
-docker run -p 3000:3000 --env-file .env agent8-mcp-server
-
-# Run with mounted volume (if needed)
-docker run -p 3000:3000 -v $(pwd)/data:/app/data agent8-mcp-server
+docker run -p 3333:3333 --env-file .env agent8-mcp-server
 ```
 
 #### Docker Environment Configuration
@@ -69,7 +71,7 @@ There are three ways to configure environment variables when running with Docker
      -e SUPABASE_SERVICE_ROLE_KEY=your_service_role_key \
      -e OPENAI_API_KEY=your_openai_api_key \
      -e MCP_TRANSPORT=sse \
-     -e MCP_PORT=3000 \
+     -e PORT=3000 \
      -e LOG_LEVEL=info \
      agent8-mcp-server
    ```
@@ -172,7 +174,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | Variable                  | Description                                     | Default                                                  |
 | ------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
 | MCP_TRANSPORT             | Transport type (stdio or sse)                   | stdio                                                    |
-| MCP_PORT                  | Port to use for SSE transport                   | 3000                                                     |
+| PORT                      | Port to use for SSE transport                   | 3000                                                     |
 | LOG_LEVEL                 | Log level (debug, info, warn, error)            | info                                                     |
 | LOG_DESTINATION           | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
 | LOG_FILE                  | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
