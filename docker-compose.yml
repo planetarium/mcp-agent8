@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "${MCP_PORT}:${MCP_PORT}"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    # Automatically restart container if it stops unexpectedly
+    restart: unless-stopped
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${MCP_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 

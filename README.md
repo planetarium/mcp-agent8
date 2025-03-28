@@ -24,6 +24,91 @@ pnpm install
 pnpm build
 ```
 
+### Using Docker
+
+You can also run this application using Docker:
+
+```bash
+# Build the Docker image
+docker build -t agent8-mcp-server .
+
+# Run the container with environment variables
+docker run -p 3000:3000 \
+  -e SUPABASE_URL=your_supabase_url \
+  -e SUPABASE_SERVICE_ROLE_KEY=your_service_role_key \
+  -e OPENAI_API_KEY=your_openai_api_key \
+  agent8-mcp-server
+
+# Alternative: Run with environment variables from .env file (recommended)
+docker run -p 3000:3000 --env-file .env agent8-mcp-server
+
+# Run with mounted volume (if needed)
+docker run -p 3000:3000 -v $(pwd)/data:/app/data agent8-mcp-server
+```
+
+#### Docker Environment Configuration
+
+There are three ways to configure environment variables when running with Docker:
+
+1. Using `--env-file` (Recommended):
+
+   ```bash
+   # Create and configure your .env file first
+   cp .env.example .env
+   nano .env
+
+   # Run with .env file
+   docker run -p 3000:3000 --env-file .env agent8-mcp-server
+   ```
+
+2. Using individual `-e` flags:
+
+   ```bash
+   docker run -p 3000:3000 \
+     -e SUPABASE_URL=your_supabase_url \
+     -e SUPABASE_SERVICE_ROLE_KEY=your_service_role_key \
+     -e OPENAI_API_KEY=your_openai_api_key \
+     -e MCP_TRANSPORT=sse \
+     -e MCP_PORT=3000 \
+     -e LOG_LEVEL=info \
+     agent8-mcp-server
+   ```
+
+3. Using Docker Compose (for development/production setup):
+
+   The project includes a pre-configured `docker-compose.yml` file with:
+
+   - Automatic port mapping from .env configuration
+   - Environment variables loading
+   - Volume mounting for data persistence
+   - Container auto-restart policy
+   - Health check configuration
+
+   To run the server:
+
+   ```bash
+   docker compose up
+   ```
+
+   To run in detached mode:
+
+   ```bash
+   docker compose up -d
+   ```
+
+**Required Environment Variables:**
+
+- `SUPABASE_URL`: Supabase URL for database connection
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key for authentication
+- `OPENAI_API_KEY`: OpenAI API key for AI functionality
+
+The Dockerfile uses a multi-stage build process to create a minimal production image:
+
+- Uses Node.js 20 Alpine as the base image for smaller size
+- Separates build and runtime dependencies
+- Only includes necessary files in the final image
+- Exposes port 3000 by default
+
 ## Usage
 
 ### Command Line Options
