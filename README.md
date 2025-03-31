@@ -13,6 +13,7 @@ This Agent8 MCP Server implements the following MCP specification capabilities:
 ### Tools
 
 - **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
+- **Game Resource Search**: Searches for game development assets (sprites, animations, sounds, etc.) using semantic similarity matching via the `search_game_resources` tool.
 
 ## Installation
 

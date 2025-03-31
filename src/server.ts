@@ -12,6 +12,7 @@ import { PromptProvider } from './prompts/provider.js';
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
 import { SearchCodeExamplesTool } from './tools/search-code-examples.js';
+import { SearchGameResourcesTool } from './tools/search-game-resources.js';
 import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 
 /**
@@ -58,8 +59,9 @@ export class McpServer {
    * Register available tools
    */
   private registerTools(): void {
-    // Register the vector DB search tool
+    // Register the vector DB search tools
     this.toolProvider.getRegistry().register(new SearchCodeExamplesTool());
+    this.toolProvider.getRegistry().register(new SearchGameResourcesTool());
     logger.info('Tools registered');
   }
   
