@@ -5,14 +5,14 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
   GetPromptRequest,
-  CallToolRequest
+  CallToolRequest,
+  CallToolResult,
 } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from './utils/logging.js';
 import { PromptProvider } from './prompts/provider.js';
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
-import { SearchCodeExamplesTool } from './tools/search-code-examples.js';
-import { SearchGameResourcesTool } from './tools/search-game-resources.js';
+import { cinematicTools } from './tools/cinematic/index.js';
 import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 
 /**
@@ -23,103 +23,99 @@ export class McpServer {
   private server: Server;
   private promptProvider: PromptProvider;
   private toolProvider: ToolProvider;
-  
+
   constructor(options: { name: string; version: string }) {
     // Initialize prompt provider
     this.promptProvider = new PromptProvider();
-    
+
     // Initialize tool provider and register tools
     this.toolProvider = new ToolProvider();
     this.registerTools();
-    
+
     // Initialize MCP server
     this.server = new Server(
       {
         name: options.name,
-        version: options.version
+        version: options.version,
       },
       {
         capabilities: {
           prompts: {},
           tools: {},
-        }
+        },
       }
     );
-    
+
     // Set up prompt-related handlers
     this.setupPromptHandlers();
-    
+
     // Set up tool-related handlers
     this.setupToolHandlers();
-    
+
     logger.info(`MCP server '${options.name}' v${options.version} initialized`);
   }
-  
+
   /**
    * Register available tools
    */
   private registerTools(): void {
-    // Register the vector DB search tools
-    this.toolProvider.getRegistry().register(new SearchCodeExamplesTool());
-    this.toolProvider.getRegistry().register(new SearchGameResourcesTool());
+    // Register cinematic tools (replacing fal.ai tools)
+    cinematicTools.forEach((tool) => {
+      this.toolProvider.getRegistry().register(tool);
+    });
+
     logger.info('Tools registered');
   }
-  
+
   /**
    * Set up prompt handlers
    */
   private setupPromptHandlers(): void {
     // Handle prompt list requests
-    this.server.setRequestHandler(
-      ListPromptsRequestSchema,
-      async () => {
-        const prompts = this.promptProvider.getRegistry().list();
-        logger.debug('Processing prompt list request:', prompts.length);
-        return { prompts };
-      }
-    );
-    
+    this.server.setRequestHandler(ListPromptsRequestSchema, async () => {
+      const prompts = this.promptProvider.getRegistry().list();
+      logger.debug('Processing prompt list request:', prompts.length);
+      return { prompts };
+    });
+
     // Handle prompt detail requests
-    this.server.setRequestHandler(
-      GetPromptRequestSchema,
-      async (request: GetPromptRequest) => {
-        const name = request.params.name;
-        const args = request.params.arguments;
-        logger.debug(`Processing prompt '${name}' request:`, args);
-        
-        try {
-          const result = this.promptProvider.getRegistry().execute(name, args || {});
-          return {
-            description: result.description,
-            messages: result.messages
-          };
-        } catch (error) {
-          logger.error(`Error while processing prompt '${name}':`, error);
-          throw error;
-        }
+    this.server.setRequestHandler(GetPromptRequestSchema, async (request: GetPromptRequest) => {
+      const name = request.params.name;
+      const args = request.params.arguments;
+      logger.debug(`Processing prompt '${name}' request:`, args);
+
+      try {
+        const result = this.promptProvider.getRegistry().execute(name, args || {});
+        return {
+          description: result.description,
+          messages: result.messages,
+        };
+      } catch (error) {
+        logger.error(`Error while processing prompt '${name}':`, error);
+        throw error;
       }
-    );
+    });
   }
-  
+
   /**
    * Set up tool handlers
    */
   private setupToolHandlers(): void {
     // Handle tool list requests
-    this.server.setRequestHandler(
-      ListToolsRequestSchema,
-      async () => {
-        const tools = this.toolProvider.getRegistry().list().map(tool => ({
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      const tools = this.toolProvider
+        .getRegistry()
+        .list()
+        .map((tool) => ({
           name: tool.name,
           description: tool.description,
-          inputSchema: tool.inputSchema
+          inputSchema: tool.inputSchema,
         }));
-        
-        logger.debug('Processing tool list request:', tools.length);
-        return { tools };
-      }
-    );
-    
+
+      logger.debug('Processing tool list request:', tools.length);
+      return { tools };
+    });
+
     // Handle tool call requests
     this.server.setRequestHandler(
       CallToolRequestSchema,
@@ -133,17 +129,21 @@ export class McpServer {
         }
 
         try {
-          const toolResult = await this.toolProvider.getRegistry().execute(request, signal, this.server);
-          return { content: [{ type: "text", text: JSON.stringify(toolResult) }] };
-
+          return (await this.toolProvider
+            .getRegistry()
+            .execute(request, signal, this.server)) as CallToolResult;
         } catch (error) {
           logger.error(`Error while calling tool '${name}':`, error);
-          throw error;
+
+          return {
+            content: [{ type: 'text', text: `Error: ${error}` }],
+            isError: true,
+          };
         }
       }
     );
   }
-  
+
   /**
    * Connect server with the specified transport
    * @param transport Transport object (HTTP SSE, WebSocket, etc.)
@@ -157,7 +157,7 @@ export class McpServer {
       throw error;
     }
   }
-  
+
   /**
    * Disconnect server
    */
@@ -170,4 +170,4 @@ export class McpServer {
       throw error;
     }
   }
-} 
+}
