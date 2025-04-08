@@ -56,10 +56,10 @@ export class Logger {
     if (config.level) {
       this.level = config.level;
     }
-    
+
     if (config.destination) {
       this.destination = config.destination;
-      
+
       // Close existing file stream if we had one
       if (this.fileStream) {
         try {
@@ -70,7 +70,7 @@ export class Logger {
         }
         this.fileStream = undefined;
       }
-      
+
       // Set up file stream if needed
       if (config.destination === LogDestination.FILE && config.filePath) {
         this.filePath = config.filePath;
@@ -139,24 +139,24 @@ export class Logger {
   private writeLog(level: string, message: string, args: any[]): void {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] [${level}] ${message}`;
-    
+
     switch (this.destination) {
-      case LogDestination.STDOUT:
-        console.log(logMessage, ...args);
-        break;
-      case LogDestination.STDERR:
-        console.error(logMessage, ...args);
-        break;
-      case LogDestination.FILE:
-        if (this.fileStream) {
-          const formattedArgs = args.length > 0 ? ' ' + args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') : '';
-          this.fileStream.write(`${logMessage}${formattedArgs}\n`);
-        }
-        break;
-      case LogDestination.NONE:
-        // Do nothing
-        break;
+    case LogDestination.STDOUT:
+      console.log(logMessage, ...args);
+      break;
+    case LogDestination.STDERR:
+      console.error(logMessage, ...args);
+      break;
+    case LogDestination.FILE:
+      if (this.fileStream) {
+        const formattedArgs = args.length > 0 ? ' ' + args.map(arg =>
+          typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') : '';
+        this.fileStream.write(`${logMessage}${formattedArgs}\n`);
+      }
+      break;
+    case LogDestination.NONE:
+      // Do nothing
+      break;
     }
   }
 
@@ -167,11 +167,11 @@ export class Logger {
     if (this.destination === LogDestination.NONE) {
       return false;
     }
-    
+
     const levels = [LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR];
     return levels.indexOf(level) >= levels.indexOf(this.level);
   }
 }
 
 // Create logger instance
-export const logger = Logger.getInstance(); 
+export const logger = Logger.getInstance();

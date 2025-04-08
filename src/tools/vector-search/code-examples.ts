@@ -22,7 +22,7 @@ export class CodeExampleSearchTool implements Tool {
     properties: {
       userMessage: {
         type: 'string',
-        description: "A detailed description of the game programming problem or implementation challenge that requires code examples. THIS MUST BE PROVIDED IN ENGLISH ONLY. Extract the core game implementation requirements from the user's query, focusing on what they're trying to build or implement in their game. This should include context about what the user is trying to accomplish, specific technical requirements, game engines or technologies being used, and any constraints or edge cases that need to be addressed. The more specific and detailed this description is, the more relevant the returned game code examples will be. Examples of good messages include explaining a complex game mechanic integration, describing a game UI component behavior, detailing a game physics simulation, or requesting help with game AI implementation.",
+        description: 'A detailed description of the game programming problem or implementation challenge that requires code examples. THIS MUST BE PROVIDED IN ENGLISH ONLY. Extract the core game implementation requirements from the user\'s query, focusing on what they\'re trying to build or implement in their game. This should include context about what the user is trying to accomplish, specific technical requirements, game engines or technologies being used, and any constraints or edge cases that need to be addressed. The more specific and detailed this description is, the more relevant the returned game code examples will be. Examples of good messages include explaining a complex game mechanic integration, describing a game UI component behavior, detailing a game physics simulation, or requesting help with game AI implementation.',
       },
       tags: {
         type: 'array',
@@ -117,7 +117,7 @@ export class CodeExampleSearchTool implements Tool {
       const result: FileMap = {};
       relevantExamples.forEach((example, index) => {
         const basePath = `example-${index + 1}`;
-  
+
         if (example.client_code) {
           result[`${basePath}/client.js`] = {
             type: 'file',
@@ -125,7 +125,7 @@ export class CodeExampleSearchTool implements Tool {
             isBinary: false,
           };
         }
-  
+
         if (example.server_code) {
           result[`${basePath}/server.js`] = {
             type: 'file',
@@ -133,7 +133,7 @@ export class CodeExampleSearchTool implements Tool {
             isBinary: false,
           };
         }
-  
+
         result[`${basePath}/description.md`] = {
           type: 'file',
           content: `# ${example.requirement || 'Code Example'}\n\n${example.description}`,
@@ -357,4 +357,4 @@ export class CodeExampleSearchTool implements Tool {
       return examples.slice(0, 2); // Return first 2 examples as fallback
     }
   }
-} 
+}

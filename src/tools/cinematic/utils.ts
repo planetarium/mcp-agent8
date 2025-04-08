@@ -20,11 +20,11 @@ export async function authenticatedRequest(url: string, method = 'GET', data?: a
       headers: { 'Authorization': `Key ${getApiKey()}` },
       timeout: AUTHENTICATED_TIMEOUT,
     };
-    
+
     if (data && (method === 'POST' || method === 'PUT')) {
       config.data = data;
     }
-    
+
     const response = await axios(config);
     return response.data;
   } catch (error) {
@@ -56,26 +56,26 @@ export function formatGameContext(gameContext: string): string {
   if (!gameContext || gameContext.trim().length === 0) {
     throw new Error('Game context is required');
   }
-  
+
   // Truncate if context is too long (consider model limits)
   const maxLength = 1000;
   if (gameContext.length > maxLength) {
     logger.warn(`Game context is too long. Truncating to ${maxLength} characters.`);
     return gameContext.substring(0, maxLength) + '...';
   }
-  
+
   return gameContext;
 }
 
 // Validate cinematic style
 export function validateCinematicStyle(style: string): string {
   const normalizedStyle = style.toLowerCase().trim();
-  
+
   if (!SUPPORTED_STYLES.includes(normalizedStyle)) {
     logger.warn(`Unsupported cinematic style: ${style}. Defaulting to 'realistic'.`);
     return 'realistic';
   }
-  
+
   return normalizedStyle;
 }
 
@@ -83,12 +83,12 @@ export function validateCinematicStyle(style: string): string {
 export function formatResolution(resolution: string): string {
   // Basic resolution format: "1280x720"
   const resolutionRegex = /^(\d+)x(\d+)$/;
-  
+
   if (!resolutionRegex.test(resolution)) {
     logger.warn(`Invalid resolution format: ${resolution}. Defaulting to '1280x720'.`);
     return '1280x720';
   }
-  
+
   return resolution;
 }
 
@@ -97,7 +97,7 @@ export function processReferenceImages(images: string[]): string[] {
   if (!images || images.length === 0) {
     return [];
   }
-  
+
   // Validate image URLs
   return images.filter(img => {
     const isValid = img && (img.startsWith('http') || img.startsWith('data:image'));
@@ -106,4 +106,4 @@ export function processReferenceImages(images: string[]): string[] {
     }
     return isValid;
   });
-} 
+}

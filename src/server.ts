@@ -178,7 +178,7 @@ export class McpServer {
       // Connect the server to the transport
       await this.server.connect(transport);
     } catch (error) {
-      logger.error(`MCP server connection failed:`, error);
+      logger.error('MCP server connection failed:', error);
       throw error;
     }
   }

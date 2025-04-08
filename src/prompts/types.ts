@@ -56,4 +56,4 @@ export interface PromptMetadata {
 export interface PromptResult {
   description: string;
   messages: PromptMessage[];
-} 
+}

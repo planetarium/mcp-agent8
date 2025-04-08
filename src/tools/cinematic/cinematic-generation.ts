@@ -61,7 +61,7 @@ This tool uses the fal.ai API for image generation and video rendering.`;
       parameters: {
         type: 'object',
         description:
-          "Model-specific parameter object. You MUST first check the model schema using the cinematic_model_schema tool before setting parameters. Configure parameters precisely according to each model's requirements and specifications. Setting parameters without checking the schema may result in errors.",
+          'Model-specific parameter object. You MUST first check the model schema using the cinematic_model_schema tool before setting parameters. Configure parameters precisely according to each model\'s requirements and specifications. Setting parameters without checking the schema may result in errors.',
         additionalProperties: true,
       },
     },
@@ -96,7 +96,7 @@ This tool uses the fal.ai API for image generation and video rendering.`;
         await context.progressCallback({
           progress: 0.1,
           total: 1,
-          message: `Preparing cinematic generation...`,
+          message: 'Preparing cinematic generation...',
         });
       }
 
@@ -122,7 +122,7 @@ This tool uses the fal.ai API for image generation and video rendering.`;
         await context.progressCallback({
           progress: 0.9,
           total: 1,
-          message: `Cinematic generation complete. Processing results...`,
+          message: 'Cinematic generation complete. Processing results...',
         });
       }
 
@@ -131,7 +131,7 @@ This tool uses the fal.ai API for image generation and video rendering.`;
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: `Cinematic generation finished successfully`,
+          message: 'Cinematic generation finished successfully',
         });
       }
 
@@ -181,7 +181,7 @@ Use this tool to get the generated cinematic results. When queue processing is c
         await context.progressCallback({
           progress: 0.5,
           total: 1,
-          message: `Fetching cinematic result...`,
+          message: 'Fetching cinematic result...',
         });
       }
 
@@ -192,7 +192,7 @@ Use this tool to get the generated cinematic results. When queue processing is c
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: `Cinematic result fetched successfully`,
+          message: 'Cinematic result fetched successfully',
         });
       }
 
@@ -244,7 +244,7 @@ Note that the status typically doesn't change within 30 seconds. To avoid unnece
         await context.progressCallback({
           progress: 0.5,
           total: 1,
-          message: `Checking cinematic status...`,
+          message: 'Checking cinematic status...',
         });
       }
 
@@ -255,7 +255,7 @@ Note that the status typically doesn't change within 30 seconds. To avoid unnece
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: `Cinematic status checked successfully`,
+          message: 'Cinematic status checked successfully',
         });
       }
 
@@ -305,7 +305,7 @@ Use this tool to stop a long cinematic generation request or to cancel a request
         await context.progressCallback({
           progress: 0.5,
           total: 1,
-          message: `Cancelling cinematic request...`,
+          message: 'Cancelling cinematic request...',
         });
       }
 
@@ -316,7 +316,7 @@ Use this tool to stop a long cinematic generation request or to cancel a request
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: `Cinematic request cancelled successfully`,
+          message: 'Cinematic request cancelled successfully',
         });
       }
 

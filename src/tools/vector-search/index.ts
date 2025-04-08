@@ -11,4 +11,4 @@ export const vectorSearchTools = [
 export {
   CodeExampleSearchTool,
   GameResourceSearchTool
-}; 
+};

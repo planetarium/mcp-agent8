@@ -85,7 +85,7 @@ export class Environment {
     if (value === undefined) {
       return defaultValue;
     }
-    
+
     const numValue = Number(value);
     return isNaN(numValue) ? defaultValue : numValue;
   }
@@ -101,10 +101,10 @@ export class Environment {
     if (value === undefined) {
       return defaultValue;
     }
-    
+
     return ['true', 'yes', '1'].includes(value.toLowerCase());
   }
 }
 
 // Export environment singleton instance
-export const env = Environment.getInstance(); 
+export const env = Environment.getInstance();

@@ -90,7 +90,7 @@ export class CinematicModelsSearchTool implements Tool {
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: `Cinematic models search completed`,
+          message: 'Cinematic models search completed',
         });
       }
 

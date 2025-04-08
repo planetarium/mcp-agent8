@@ -89,16 +89,16 @@ class Registry implements ToolRegistry {
       const progressCallback =
         progressToken !== undefined
           ? async (progressData: Progress) => {
-              logger.debug(`Progress callback: ${JSON.stringify(progressData)}`);
-              logger.debug(`Progress token: ${progressToken}`);
-              await server.notification({
-                method: 'notifications/progress',
-                params: {
-                  progressToken,
-                  ...progressData,
-                },
-              });
-            }
+            logger.debug(`Progress callback: ${JSON.stringify(progressData)}`);
+            logger.debug(`Progress token: ${progressToken}`);
+            await server.notification({
+              method: 'notifications/progress',
+              params: {
+                progressToken,
+                ...progressData,
+              },
+            });
+          }
           : undefined;
 
       // Create execution context
