@@ -1,9 +1,9 @@
 import { embed, generateText, LanguageModel } from 'ai';
 import { createOpenAI, OpenAIProvider } from '@ai-sdk/openai';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Tool, ToolResult, Example, FileMap, ToolExecutionContext } from './types.js';
-import { logger } from '../utils/logging.js';
-import { env } from '../utils/env.js';
+import { Tool, ToolResult, Example, FileMap, ToolExecutionContext } from '../types.js';
+import { logger } from '../../utils/logging.js';
+import { env } from '../../utils/env.js';
 
 /**
  * Code Example Search Tool
@@ -11,7 +11,7 @@ import { env } from '../utils/env.js';
  * Searches a vector database for code examples that match specific requirements
  * extracted from user messages.
  */
-export class SearchCodeExamplesTool implements Tool {
+export class CodeExampleSearchTool implements Tool {
   name = 'search_code_examples';
   description =
     'Searches and retrieves relevant game development code examples from a vector database based on specific game development requirements or programming challenges. This tool performs semantic search to find code snippets and examples that match the user\'s game development needs. It analyzes both the user message and associated tags to identify the most appropriate game code examples from the database. [WHEN TO USE THIS TOOL] You should use this tool whenever the user asks about game implementation details, game programming patterns, specific game feature implementations, or requests examples of how to implement something in game development. USE THIS TOOL if the user mentions specific game programming tasks, asks "how do I code X in my game", or needs reference implementations for game mechanics, rendering, physics, AI, or other game-specific systems. The results are returned in a structured format containing game client code, game server code, and descriptive explanations when available. The userMessage parameter should include detailed context about the game programming challenge or implementation requirement, while the tags parameter should specify relevant game engines, frameworks, or concepts to narrow the search scope. Note: This tool does not generate complete games but rather provides existing code snippets and examples that address specific game implementation challenges. The quality of search results heavily depends on the clarity and specificity of the provided user message and tags. Examples typically demonstrate solutions to common game implementation problems and can be used as reference material for your own game development work. Common scenarios where this tool is useful include: 1) When a user asks "How do I implement character movement in Unity?", 2) When they need examples of game state management for specific operations, 3) When they want to see how others have implemented a specific game UI component, 4) When they need patterns for game networking, 5) When they request code for handling specific game physics edge cases. IMPORTANT: You should proactively offer to search for game code examples whenever a user is discussing game implementation details or asking how to build something in a game, even if they don\'t explicitly request examples. Always prefer showing existing, tested game code examples over generating new code when possible. If you are uncertain whether relevant game code examples exist for a user\'s question, it is better to use this tool and check rather than assume none are available. Even partial matches can provide valuable game implementation insights to users.';
@@ -22,7 +22,7 @@ export class SearchCodeExamplesTool implements Tool {
     properties: {
       userMessage: {
         type: 'string',
-        description: "A detailed description of the game programming problem or implementation challenge that requires code examples. THIS MUST BE PROVIDED IN ENGLISH ONLY. Extract the core game implementation requirements from the user's query, focusing on what they're trying to build or implement in their game. This should include context about what the user is trying to accomplish, specific technical requirements, game engines or technologies being used, and any constraints or edge cases that need to be addressed. The more specific and detailed this description is, the more relevant the returned game code examples will be. Examples of good messages include explaining a complex game mechanic integration, describing a game UI component behavior, detailing a game physics simulation, or requesting help with game AI implementation.",
+        description: 'A detailed description of the game programming problem or implementation challenge that requires code examples. THIS MUST BE PROVIDED IN ENGLISH ONLY. Extract the core game implementation requirements from the user\'s query, focusing on what they\'re trying to build or implement in their game. This should include context about what the user is trying to accomplish, specific technical requirements, game engines or technologies being used, and any constraints or edge cases that need to be addressed. The more specific and detailed this description is, the more relevant the returned game code examples will be. Examples of good messages include explaining a complex game mechanic integration, describing a game UI component behavior, detailing a game physics simulation, or requesting help with game AI implementation.',
       },
       tags: {
         type: 'array',
@@ -117,7 +117,7 @@ export class SearchCodeExamplesTool implements Tool {
       const result: FileMap = {};
       relevantExamples.forEach((example, index) => {
         const basePath = `example-${index + 1}`;
-  
+
         if (example.client_code) {
           result[`${basePath}/client.js`] = {
             type: 'file',
@@ -125,7 +125,7 @@ export class SearchCodeExamplesTool implements Tool {
             isBinary: false,
           };
         }
-  
+
         if (example.server_code) {
           result[`${basePath}/server.js`] = {
             type: 'file',
@@ -133,7 +133,7 @@ export class SearchCodeExamplesTool implements Tool {
             isBinary: false,
           };
         }
-  
+
         result[`${basePath}/description.md`] = {
           type: 'file',
           content: `# ${example.requirement || 'Code Example'}\n\n${example.description}`,

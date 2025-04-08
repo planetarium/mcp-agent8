@@ -63,7 +63,7 @@ export class PromptRegistry {
   /**
    * Execute prompt
    */
-  public execute(name: string, args: any): PromptResult {
+  public execute(name: string, args: unknown): PromptResult {
     const prompt = this.prompts.get(name);
     if (!prompt) {
       throw new Error(`Prompt '${name}' not found.`);
@@ -72,10 +72,10 @@ export class PromptRegistry {
     try {
       // Validate arguments
       const validatedArgs = prompt.schema.parse(args);
-      
+
       // Generate prompt
       const result = prompt.generator(validatedArgs);
-      
+
       return {
         description: prompt.description,
         messages: result.messages
@@ -98,10 +98,10 @@ export class PromptRegistry {
     if (schema instanceof z.ZodObject) {
       return Object.entries(schema.shape).map(([key, value]) => {
         const isOptional = value instanceof z.ZodOptional;
-        const baseType = isOptional 
-          ? (value as z.ZodOptional<any>).unwrap() 
+        const baseType = isOptional
+          ? (value as z.ZodOptional<any>).unwrap()
           : value;
-        
+
         let description = '';
         if ('description' in baseType && typeof baseType.description === 'string') {
           description = baseType.description;
@@ -114,7 +114,7 @@ export class PromptRegistry {
         };
       });
     }
-    
+
     return [];
   }
-} 
+}

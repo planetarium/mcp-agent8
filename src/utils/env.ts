@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { logger } from './logging.js';
 
 /**
  * Environment Variable Management Class
@@ -37,23 +36,16 @@ export class Environment {
       envPath = path.resolve(process.cwd(), '.env');
     }
 
-    try {
-      // Check if file exists
-      if (fs.existsSync(envPath)) {
-        // Load .env file
-        const result = config({ path: envPath });
-        
-        if (result.error) {
-          logger.error(`Failed to load environment variables: ${result.error.message}`);
-        } else {
-          logger.info(`Environment file loaded successfully: ${envPath}`);
-          this.initialized = true;
-        }
+    // Check if file exists
+    if (fs.existsSync(envPath)) {
+      // Load .env file
+      const result = config({ path: envPath });
+
+      if (result.error) {
+        throw new Error(`Failed to load environment variables: ${result.error.message}`);
       } else {
-        logger.warn(`Environment file not found: ${envPath}`);
+        this.initialized = true;
       }
-    } catch (error) {
-      logger.error('Error loading environment variables:', error);
     }
   }
 
@@ -77,7 +69,6 @@ export class Environment {
     const value = this.get(key);
     if (value === undefined) {
       const errorMessage = `Required environment variable is missing: ${key}`;
-      logger.error(errorMessage);
       throw new Error(errorMessage);
     }
     return value;
@@ -94,7 +85,7 @@ export class Environment {
     if (value === undefined) {
       return defaultValue;
     }
-    
+
     const numValue = Number(value);
     return isNaN(numValue) ? defaultValue : numValue;
   }
@@ -110,10 +101,10 @@ export class Environment {
     if (value === undefined) {
       return defaultValue;
     }
-    
+
     return ['true', 'yes', '1'].includes(value.toLowerCase());
   }
 }
 
 // Export environment singleton instance
-export const env = Environment.getInstance(); 
+export const env = Environment.getInstance();

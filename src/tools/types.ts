@@ -23,7 +23,7 @@ export interface ToolExecutionContext {
 export interface Tool {
   name: string;
   description: string;
-  inputSchema: Record<string, any>;
+  inputSchema: Record<string, unknown>;
   execute: (args: Record<string, any>, context: ToolExecutionContext) => Promise<ToolResult>;
 }
 
@@ -32,7 +32,7 @@ export interface Tool {
  */
 export interface ToolResult {
   content: ToolContent[];
-  isError: boolean;
+  isError: boolean | undefined;
 }
 
 /**

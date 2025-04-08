@@ -5,6 +5,7 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   js.configs.recommended,
+  prettierConfig,
   {
     files: ['**/*.ts', '**/*.js'],
     languageOptions: {
@@ -25,14 +26,10 @@ export default [
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
-      'indent': ['error', 2],
-      'linebreak-style': ['error', 'unix'],
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
       'no-console': 'warn',
+      'no-trailing-spaces': ['error'],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
-  prettierConfig,
-]; 
+];

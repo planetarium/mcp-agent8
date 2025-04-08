@@ -1,9 +1,9 @@
-import { Tool, ToolResult, ToolExecutionContext } from './types.js';
+import { Tool, ToolResult, ToolExecutionContext } from '../types.js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createOpenAI, OpenAIProvider } from '@ai-sdk/openai';
 import { embed } from 'ai';
-import { logger } from '../utils/logging.js';
-import { env } from '../utils/env.js';
+import { logger } from '../../utils/logging.js';
+import { env } from '../../utils/env.js';
 
 /**
  * Game Resource Search Tool
@@ -44,9 +44,9 @@ interface SearchGameResourcesArgs {
   limit?: number;
 }
 
-export class SearchGameResourcesTool implements Tool {
+export class GameResourceSearchTool implements Tool {
   name = 'search_game_resources';
-  description = `Searches and retrieves relevant game development assets from a vector database based on natural language descriptions. This tool performs semantic search to find game assets such as 3D models, textures, sounds, and animations that match the user's requirements. [WHEN TO USE THIS TOOL] Use this tool when users need to find specific game assets by describing what they're looking for, such as: 1) "A medieval knight character sprite sheet", 2) "Running animation for a humanoid character", 3) "Weapon swing sound effect", 4) "Forest environment background". The tool uses semantic similarity to find the most relevant assets based on their descriptions. Results include asset descriptions, URLs, and any associated metadata.`;
+  description = 'Searches and retrieves relevant game development assets from a vector database based on natural language descriptions. This tool performs semantic search to find game assets such as 3D models, textures, sounds, and animations that match the user\'s requirements. [WHEN TO USE THIS TOOL] Use this tool when users need to find specific game assets by describing what they\'re looking for, such as: 1) "A medieval knight character sprite sheet", 2) "Running animation for a humanoid character", 3) "Weapon swing sound effect", 4) "Forest environment background". The tool uses semantic similarity to find the most relevant assets based on their descriptions. Results include asset descriptions, URLs, and any associated metadata.';
 
   inputSchema = {
     type: 'object',
