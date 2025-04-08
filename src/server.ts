@@ -15,6 +15,7 @@ import { ToolProvider } from './tools/provider.js';
 import { cinematicTools } from './tools/cinematic/index.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import { env } from './utils/env.js';
 
 /**
  * MCP Server Implementation
@@ -60,17 +61,35 @@ export class McpServer {
    * Register available tools
    */
   private registerTools(): void {
-    // Register cinematic tools (replacing fal.ai tools)
-    cinematicTools.forEach((tool) => {
-      this.toolProvider.getRegistry().register(tool);
-    });
+    // Check if all tools are enabled globally
+    const enableAllTools = env.getBoolean('ENABLE_ALL_TOOLS', true);
+    let registeredToolCount = 0;
+
+    // Register cinematic tools
+    const enableCinematicTools = enableAllTools && env.getBoolean('ENABLE_CINEMATIC_TOOLS', true);
+    if (enableCinematicTools && cinematicTools.length > 0) {
+      cinematicTools.forEach((tool) => {
+        this.toolProvider.getRegistry().register(tool);
+        registeredToolCount++;
+      });
+      logger.info(`${cinematicTools.length} cinematic tools registered`);
+    } else {
+      logger.info('Cinematic tools are disabled');
+    }
 
     // Register vector search tools
-    vectorSearchTools.forEach((tool) => {
-      this.toolProvider.getRegistry().register(tool);
-    });
+    const enableVectorSearchTools = enableAllTools && env.getBoolean('ENABLE_VECTOR_SEARCH_TOOLS', true);
+    if (enableVectorSearchTools && vectorSearchTools.length > 0) {
+      vectorSearchTools.forEach((tool) => {
+        this.toolProvider.getRegistry().register(tool);
+        registeredToolCount++;
+      });
+      logger.info(`${vectorSearchTools.length} vector search tools registered`);
+    } else {
+      logger.info('Vector search tools are disabled');
+    }
 
-    logger.info('Tools registered');
+    logger.info(`Total ${registeredToolCount} tools registered`);
   }
 
   /**

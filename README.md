@@ -172,17 +172,43 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 #### Supported Environment Variables
 
-| Variable                  | Description                                     | Default                                                  |
-| ------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
-| MCP_TRANSPORT             | Transport type (stdio or sse)                   | stdio                                                    |
-| PORT                      | Port to use for SSE transport                   | 3000                                                     |
-| LOG_LEVEL                 | Log level (debug, info, warn, error)            | info                                                     |
-| LOG_DESTINATION           | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
-| LOG_FILE                  | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
-| DEBUG                     | Enable debug mode (true/false)                  | false                                                    |
-| SUPABASE_URL              | Supabase URL for database connection            | (required)                                               |
-| SUPABASE_SERVICE_ROLE_KEY | Supabase service role key for authentication    | (required)                                               |
-| OPENAI_API_KEY            | OpenAI API key for AI functionality             | (required)                                               |
+| Variable                         | Description                                     | Default                                                  |
+| -------------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| MCP_TRANSPORT                    | Transport type (stdio or sse)                   | stdio                                                    |
+| PORT                             | Port to use for SSE transport                   | 3000                                                     |
+| LOG_LEVEL                        | Log level (debug, info, warn, error)            | info                                                     |
+| LOG_DESTINATION                  | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
+| LOG_FILE                         | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
+| DEBUG                            | Enable debug mode (true/false)                  | false                                                    |
+| SUPABASE_URL                     | Supabase URL for database connection            | (required)                                               |
+| SUPABASE_SERVICE_ROLE_KEY        | Supabase service role key for authentication    | (required)                                               |
+| OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |
+| ENABLE_ALL_TOOLS                 | Enable or disable all tools globally            | true                                                     |
+| ENABLE_VECTOR_SEARCH_TOOLS       | Enable or disable all vector search tools       | true                                                     |
+| ENABLE_CINEMATIC_TOOLS           | Enable or disable all cinematic tools           | true                                                     |
+| ENABLE_CODE_EXAMPLE_SEARCH_TOOL  | Enable or disable code example search tool      | true                                                     |
+| ENABLE_GAME_RESOURCE_SEARCH_TOOL | Enable or disable game resource search tool     | true                                                     |
+
+**Tool Activation Priority**:
+The tool activation settings follow this priority order:
+
+1. Individual tool settings (e.g., `ENABLE_CODE_EXAMPLE_SEARCH_TOOL`)
+2. Tool group settings (e.g., `ENABLE_VECTOR_SEARCH_TOOLS`)
+3. Global tool setting (`ENABLE_ALL_TOOLS`)
+
+For example, if you set `ENABLE_ALL_TOOLS=false` but `ENABLE_VECTOR_SEARCH_TOOLS=true`, only vector search tools will be enabled while other tools remain disabled. Similarly, individual tool settings override their respective group settings.
+
+**Examples**:
+
+```bash
+# Enable only vector search tools
+ENABLE_ALL_TOOLS=false
+ENABLE_VECTOR_SEARCH_TOOLS=true
+
+# Disable a specific tool while keeping others enabled
+ENABLE_ALL_TOOLS=true
+ENABLE_CODE_EXAMPLE_SEARCH_TOOL=false
+```
 
 ### Using Stdio Transport
 
