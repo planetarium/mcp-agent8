@@ -13,6 +13,7 @@ import { PromptProvider } from './prompts/provider.js';
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
 import { cinematicTools } from './tools/cinematic/index.js';
+import { vectorSearchTools } from './tools/vector-search/index.js';
 import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 
 /**
@@ -61,6 +62,11 @@ export class McpServer {
   private registerTools(): void {
     // Register cinematic tools (replacing fal.ai tools)
     cinematicTools.forEach((tool) => {
+      this.toolProvider.getRegistry().register(tool);
+    });
+
+    // Register vector search tools
+    vectorSearchTools.forEach((tool) => {
       this.toolProvider.getRegistry().register(tool);
     });
 
