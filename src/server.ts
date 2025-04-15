@@ -12,8 +12,8 @@ import { logger } from './utils/logging.js';
 import { PromptProvider } from './prompts/provider.js';
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
-import { cinematicTools } from './tools/cinematic/index.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
+import { assetGenerateTools } from './tools/asset-generate/index.js';
 import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { env } from './utils/env.js';
 
@@ -65,16 +65,16 @@ export class McpServer {
     const enableAllTools = env.getBoolean('ENABLE_ALL_TOOLS', true);
     let registeredToolCount = 0;
 
-    // Register cinematic tools
-    const enableCinematicTools = enableAllTools && env.getBoolean('ENABLE_CINEMATIC_TOOLS', true);
-    if (enableCinematicTools && cinematicTools.length > 0) {
-      cinematicTools.forEach((tool) => {
+    // Register asset generation tools (includes both static and cinematic)
+    const enableAssetGenerateTools = enableAllTools && env.getBoolean('ENABLE_ASSET_GENERATE_TOOLS', true);
+    if (enableAssetGenerateTools && assetGenerateTools.length > 0) {
+      assetGenerateTools.forEach((tool) => {
         this.toolProvider.getRegistry().register(tool);
         registeredToolCount++;
       });
-      logger.info(`${cinematicTools.length} cinematic tools registered`);
+      logger.info(`${assetGenerateTools.length} asset generation tools registered`);
     } else {
-      logger.info('Cinematic tools are disabled');
+      logger.info('Asset generation tools are disabled');
     }
 
     // Register vector search tools
