@@ -1,0 +1,208 @@
+import { ToolExecutionContext } from '../../types.js';
+import {
+  authenticatedRequest,
+  sanitizeParameters,
+  generateStaticAssetPrompt,
+  mapToRecraftStyle,
+} from '../common/utils.js';
+import {
+  FAL_DIRECT_URL,
+  DEFAULT_STATIC_API_ENDPOINT,
+  DEFAULT_STATIC_WIDTH,
+  DEFAULT_STATIC_HEIGHT,
+} from '../common/constants.js';
+import { AssetGeneratorBase } from '../common/types.js';
+import { uploadAssetToServer } from '../common/utils.js';
+import { logger } from '../../../utils/logging.js';
+
+/**
+ * Game 2D Static Asset Generator Tool
+ *
+ * Generates 2D assets for game development.
+ * Utilizes fal.ai API to help game developers easily create various 2D assets
+ * for characters, items, backgrounds, UI elements, and more.
+ */
+export class StaticAssetGeneratorTool extends AssetGeneratorBase {
+  name = 'static_asset_generate';
+  description = `Generates 2D static assets for game development.
+
+This tool helps game developers quickly create 2D assets for their games.
+
+[WHEN TO USE]
+Use this tool when you need to:
+1. Create character sprites
+2. Generate game item images
+3. Create game background images
+4. Design UI elements or icons
+5. Generate tilemap elements
+
+[KEY FEATURES]
+- Creates 2D assets based on detailed descriptions
+- Supports various styles (pixel art, cartoon, vector, fantasy, etc.)
+- Provides optimized generation parameters for different asset types
+- Outputs in formats compatible with game engines
+
+[TIPS FOR BEST RESULTS]
+- Provide specific and detailed descriptions of the desired asset
+- Specify the desired style clearly (e.g., pixel, cartoon)
+- Set appropriate asset dimensions (default: 128x128)
+- Include game type information (platformer, shooter, etc.)`;
+
+  inputSchema = {
+    type: 'object',
+    properties: {
+      description: {
+        type: 'string',
+        description:
+          'Detailed description of the asset to generate. More specific descriptions yield better results.',
+      },
+      style: {
+        type: 'string',
+        description: 'Asset style (pixel, cartoon, vector, realistic, fantasy, retro)',
+        default: 'pixel',
+      },
+      assetType: {
+        type: 'string',
+        description: 'Asset type (character, item, background, ui, tile, icon)',
+        default: 'character',
+      },
+      width: {
+        type: 'number',
+        description: 'Asset width in pixels',
+        default: DEFAULT_STATIC_WIDTH,
+      },
+      height: {
+        type: 'number',
+        description: 'Asset height in pixels',
+        default: DEFAULT_STATIC_HEIGHT,
+      },
+      gameType: {
+        type: 'string',
+        description: 'Game type (platformer, shooter, rpg, puzzle, etc.) to help with generation.',
+      },
+      additionalPrompt: {
+        type: 'string',
+        description: 'Additional prompt information to fine-tune the generation result.',
+      },
+    },
+    required: ['description'],
+  };
+
+  protected sanitizeArgs(args: Record<string, any>): Record<string, any> {
+    return {
+      description: args.description,
+      style: args.style || 'pixel',
+      assetType: args.assetType || 'character',
+      width: args.width || DEFAULT_STATIC_WIDTH,
+      height: args.height || DEFAULT_STATIC_HEIGHT,
+      gameType: args.gameType,
+      additionalPrompt: args.additionalPrompt,
+    };
+  }
+
+  protected getApiEndpoint(): string {
+    // Use default API endpoint
+    return DEFAULT_STATIC_API_ENDPOINT;
+  }
+
+  protected async generateAsset(
+    args: Record<string, any>,
+    apiEndpoint: string,
+    context: ToolExecutionContext
+  ): Promise<any> {
+    const style = args.style;
+    const width = args.width;
+    const height = args.height;
+
+    // Generate asset prompt
+    const prompt = generateStaticAssetPrompt({
+      description: args.description,
+      style: style,
+      assetType: args.assetType,
+      gameType: args.gameType,
+      additionalPrompt: args.additionalPrompt,
+    });
+
+    // Map to recraft-v3 style format
+    const recraftStyle = mapToRecraftStyle(style);
+
+    // Set API parameters for recraft-v3
+    const parameters = {
+      prompt: prompt,
+      image_size: {
+        width: width,
+        height: height,
+      },
+      style: recraftStyle,
+    };
+
+    const sanitizedParams = sanitizeParameters(parameters);
+
+    // Update progress
+    if (context.progressCallback) {
+      await context.progressCallback({
+        progress: 0.3,
+        total: 1,
+        message: `Generating ${style} style ${args.assetType || 'asset'}... (${width}x${height})`,
+      });
+    }
+
+    // Execute model using the API endpoint
+    const url = `${FAL_DIRECT_URL}/${apiEndpoint}`;
+    const result = await authenticatedRequest(url, 'POST', sanitizedParams);
+
+    // Check for image URL in the result
+    let imageUrl = '';
+    if (result.images && result.images.length > 0 && result.images[0].url) {
+      imageUrl = result.images[0].url;
+    } else {
+      throw new Error('Expected image URL not found in result format');
+    }
+
+    // Update progress
+    if (context.progressCallback) {
+      await context.progressCallback({
+        progress: 0.7,
+        total: 1,
+        message: 'Uploading generated image to server...',
+      });
+    }
+
+    // Upload to server if we have a URL
+    if (imageUrl) {
+      const uploadedAsset = await uploadAssetToServer(
+        imageUrl,
+        `static-${args.assetType || 'character'}`
+      );
+
+      if (uploadedAsset.success && uploadedAsset.url) {
+        // Add the uploaded URL to the original result
+        result.agent8_url = uploadedAsset.url;
+
+        // Update progress
+        if (context.progressCallback) {
+          await context.progressCallback({
+            progress: 0.9,
+            total: 1,
+            message: 'Image successfully uploaded to server',
+          });
+        }
+      } else {
+        // Log upload failure
+        logger.warn(`Failed to upload static asset to server: ${uploadedAsset.error}`);
+        throw new Error(`Failed to upload static asset to server: ${uploadedAsset.error}`);
+      }
+    } else {
+      logger.warn('Expected image URL not found in result format');
+      throw new Error('Expected image URL not found in result format');
+    }
+
+    // Return an object containing only the uploaded asset's URL
+    return {
+      url: result.agent8_url || null,
+      message: result.agent8_url
+        ? 'Asset successfully generated and uploaded to server'
+        : 'Asset generated but upload to server failed',
+    };
+  }
+}

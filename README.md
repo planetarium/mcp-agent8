@@ -14,6 +14,7 @@ This Agent8 MCP Server implements the following MCP specification capabilities:
 
 - **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
 - **Game Resource Search**: Searches for game development assets (sprites, animations, sounds, etc.) using semantic similarity matching via the `search_game_resources` tool.
+- **Asset Generation**: Generates game assets including static images and cinematics using the `static_asset_generate` and `cinematic_asset_generate` tools.
 
 ## Installation
 
@@ -185,7 +186,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |
 | ENABLE_ALL_TOOLS                 | Enable or disable all tools globally            | true                                                     |
 | ENABLE_VECTOR_SEARCH_TOOLS       | Enable or disable all vector search tools       | true                                                     |
-| ENABLE_CINEMATIC_TOOLS           | Enable or disable all cinematic tools           | true                                                     |
+| ENABLE_ASSET_GENERATE_TOOLS      | Enable or disable all asset generation tools    | true                                                     |
 | ENABLE_CODE_EXAMPLE_SEARCH_TOOL  | Enable or disable code example search tool      | true                                                     |
 | ENABLE_GAME_RESOURCE_SEARCH_TOOL | Enable or disable game resource search tool     | true                                                     |
 
@@ -193,7 +194,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 The tool activation settings follow this priority order:
 
 1. Individual tool settings (e.g., `ENABLE_CODE_EXAMPLE_SEARCH_TOOL`)
-2. Tool group settings (e.g., `ENABLE_VECTOR_SEARCH_TOOLS`)
+2. Tool group settings (e.g., `ENABLE_VECTOR_SEARCH_TOOLS`, `ENABLE_ASSET_GENERATE_TOOLS`)
 3. Global tool setting (`ENABLE_ALL_TOOLS`)
 
 For example, if you set `ENABLE_ALL_TOOLS=false` but `ENABLE_VECTOR_SEARCH_TOOLS=true`, only vector search tools will be enabled while other tools remain disabled. Similarly, individual tool settings override their respective group settings.
@@ -204,6 +205,10 @@ For example, if you set `ENABLE_ALL_TOOLS=false` but `ENABLE_VECTOR_SEARCH_TOOLS
 # Enable only vector search tools
 ENABLE_ALL_TOOLS=false
 ENABLE_VECTOR_SEARCH_TOOLS=true
+
+# Enable only asset generation tools
+ENABLE_ALL_TOOLS=false
+ENABLE_ASSET_GENERATE_TOOLS=true
 
 # Disable a specific tool while keeping others enabled
 ENABLE_ALL_TOOLS=true
