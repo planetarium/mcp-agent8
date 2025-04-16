@@ -16,11 +16,6 @@ export const DEFAULT_STATIC_API_ENDPOINT = 'fal-ai/recraft-v3';
 export const DEFAULT_STATIC_WIDTH = 128;
 export const DEFAULT_STATIC_HEIGHT = 128;
 
-// Cinematic related constants
-export const DEFAULT_CINEMATIC_MODEL = 'fal-ai/sd-turbo';
-export const DEFAULT_CINEMATIC_RESOLUTION = '1280x720';
-export const DEFAULT_CINEMATIC_DURATION = 5; // seconds
-
 // Common style list with recraft-v3 supported styles only
 export const SUPPORTED_STYLES = [
   'realistic', // Realistic style - maps to 'realistic_image'

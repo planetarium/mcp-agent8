@@ -3,8 +3,8 @@ import {
   CinematicAssetGeneratorTool,
   CinematicAssetResultTool,
   CinematicStatusTool,
+  CinematicWaitTool,
 } from './cinematic/cinematic-generation.js';
-import { AssetGenerateModelsListTool, AssetGenerateModelSchemaTool } from './common/models.js';
 
 // Asset generation tools collection
 export const assetGenerateTools = [
@@ -15,10 +15,7 @@ export const assetGenerateTools = [
   new CinematicAssetGeneratorTool(),
   new CinematicAssetResultTool(),
   new CinematicStatusTool(),
-
-  // Model management tools
-  new AssetGenerateModelsListTool(),
-  new AssetGenerateModelSchemaTool(),
+  new CinematicWaitTool(),
 ];
 
 // Export individual tools
@@ -30,8 +27,5 @@ export {
   CinematicAssetGeneratorTool,
   CinematicAssetResultTool,
   CinematicStatusTool,
-
-  // Model management related
-  AssetGenerateModelsListTool,
-  AssetGenerateModelSchemaTool,
+  CinematicWaitTool,
 };

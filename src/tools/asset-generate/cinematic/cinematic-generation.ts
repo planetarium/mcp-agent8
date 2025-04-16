@@ -5,13 +5,7 @@ import {
   enhanceCinematicPrompt,
   uploadAssetToServer,
 } from '../common/utils.js';
-import {
-  FAL_QUEUE_URL,
-  FAL_DIRECT_URL,
-  DEFAULT_CINEMATIC_MODEL,
-  DEFAULT_CINEMATIC_RESOLUTION,
-  DEFAULT_CINEMATIC_DURATION,
-} from '../common/constants.js';
+import { FAL_QUEUE_URL } from '../common/constants.js';
 import { AssetGeneratorBase, AssetResultBase } from '../common/types.js';
 import { logger } from '../../../utils/logging.js';
 
@@ -52,37 +46,68 @@ Use this tool when you need to:
   inputSchema = {
     type: 'object',
     properties: {
-      model: {
+      prompt: {
         type: 'string',
-        description: 'AI model ID to use. Recommended to use the default unless you are an expert.',
+        description: 'Text prompt for video generation, max 1500 characters',
+        maxLength: 1500,
+      },
+      aspect_ratio: {
+        type: 'string',
+        enum: ['16:9', '9:16', '1:1'],
+        description: 'The aspect ratio of the output video',
+        default: '16:9',
+      },
+      reference_image_urls: {
+        type: 'array',
+        items: { type: 'string' },
+        description:
+          'URLs of the reference images to use for consistent subject appearance. Maximum 3 images allowed.',
+        maxItems: 3,
+      },
+      seed: {
+        type: 'integer',
+        description: 'Random seed for generation',
+      },
+      movement_amplitude: {
+        type: 'string',
+        enum: ['auto', 'small', 'medium', 'large'],
+        description: 'The movement amplitude of objects in the frame',
+        default: 'auto',
       },
       queue: {
         type: 'boolean',
-        description:
-          'Whether to use the queue system (default: true). Recommended for longer cinematics.',
+        description: 'Whether to use the queue system. Always true for this cinematic model.',
         default: true,
       },
-      parameters: {
-        type: 'object',
-        description:
-          "Model-specific parameter object. You MUST first check the model schema using the asset_generate_model_schema tool before setting parameters. Configure parameters precisely according to each model's requirements and specifications. Setting parameters without checking the schema may result in errors.",
-        additionalProperties: true,
-      },
     },
-    required: ['parameters'],
+    required: ['prompt', 'reference_image_urls'],
   };
 
   protected sanitizeArgs(args: Record<string, any>): Record<string, any> {
+    // Limit reference images to maximum of 3
+    const referenceImages = args.reference_image_urls || [];
+    if (referenceImages.length > 3) {
+      logger.warn(
+        'Too many reference images provided. Maximum allowed is 3. Using only the first 3 images.'
+      );
+    }
+
     return {
-      model: args.model || DEFAULT_CINEMATIC_MODEL,
-      queue: args.queue !== undefined ? !!args.queue : true,
-      parameters: args.parameters || {},
+      model: 'fal-ai/vidu/reference-to-video',
+      queue: true, // Always use queue for this model
+      parameters: {
+        prompt: args.prompt,
+        aspect_ratio: args.aspect_ratio || '16:9',
+        reference_image_urls: referenceImages.slice(0, 3), // Use maximum of 3 images
+        seed: args.seed,
+        movement_amplitude: args.movement_amplitude || 'auto',
+      },
     };
   }
 
-  protected getApiEndpoint(args: Record<string, any>): string {
-    // For cinematics, use the model directly instead of API endpoint
-    return args.model || DEFAULT_CINEMATIC_MODEL;
+  protected getApiEndpoint(): string {
+    // Fixed model for cinematics
+    return 'fal-ai/vidu/reference-to-video';
   }
 
   protected async generateAsset(
@@ -90,42 +115,29 @@ Use this tool when you need to:
     apiEndpoint: string,
     context: ToolExecutionContext
   ): Promise<any> {
-    const queue = args.queue;
     const parameters = args.parameters;
 
-    // Add default negative_prompt (if not provided by the user)
-    const defaultNegativePrompt =
-      'low quality, blurry, distorted, broken text, unnatural poses, text, letters';
-
-    // Optimize prompt (if user provided a prompt)
+    // Optimize prompt (if provided)
     if (parameters.prompt) {
-      parameters.prompt = enhanceCinematicPrompt(parameters.prompt, parameters.style);
+      parameters.prompt = enhanceCinematicPrompt(parameters.prompt, 'cinematic');
     }
 
-    // Use parameters provided by user and add default negative_prompt if needed
-    const modelParameters = {
-      ...parameters,
-      negative_prompt: parameters.negative_prompt || defaultNegativePrompt,
-    };
-
-    const sanitizedParams = sanitizeParameters(modelParameters);
+    const sanitizedParams = sanitizeParameters(parameters);
 
     // Update progress
     if (context.progressCallback) {
-      // Display style and resolution information if available
-      const style = modelParameters.style || 'default';
-      const duration = modelParameters.duration || DEFAULT_CINEMATIC_DURATION;
-      const resolution = modelParameters.resolution || DEFAULT_CINEMATIC_RESOLUTION;
+      const aspectRatio = parameters.aspect_ratio || '16:9';
+      const movementAmplitude = parameters.movement_amplitude || 'auto';
 
       await context.progressCallback({
         progress: 0.3,
         total: 1,
-        message: `Generating ${style} style cinematic... (${duration}s, ${resolution})`,
+        message: `Generating cinematic with reference images... (${aspectRatio}, ${movementAmplitude} movement)`,
       });
     }
 
     // Execute model using the API endpoint
-    const url = queue ? `${FAL_QUEUE_URL}/${apiEndpoint}` : `${FAL_DIRECT_URL}/${apiEndpoint}`;
+    const url = `${FAL_QUEUE_URL}/${apiEndpoint}`;
     const result = await authenticatedRequest(url, 'POST', sanitizedParams);
 
     // Check for cinematic asset URLs in the result
@@ -184,10 +196,25 @@ Use this tool when you need to:
       for (let i = 0; i < assetUrls.length; i++) {
         try {
           const assetUrl = assetUrls[i];
+
+          // Extract file extension from URL or use default value
+          let fileExt = '.mp4'; // Default extension (cinematic is usually video)
+
+          // Try to extract extension from URL
+          if (assetUrl.includes('?')) {
+            // Remove query parameters
+            const urlWithoutQuery = assetUrl.split('?')[0];
+            if (urlWithoutQuery.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
+              fileExt = urlWithoutQuery.substring(urlWithoutQuery.lastIndexOf('.'));
+            }
+          } else if (assetUrl.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
+            fileExt = assetUrl.substring(assetUrl.lastIndexOf('.'));
+          }
+
           const uploadedAsset = await uploadAssetToServer(
             assetUrl,
             'cinematic',
-            `cinematic-${i + 1}-${new Date().getTime()}`
+            `cinematic-${i + 1}-${new Date().getTime()}${fileExt}`
           );
 
           if (uploadedAsset.success && uploadedAsset.url) {
@@ -282,24 +309,36 @@ When queue processing is complete, the generated cinematic assets (image or vide
     }
 
     // Store uploaded asset URLs
-    const uploadedUrls: { original: string; agent8: string }[] = [];
+    const uploadedUrls: string[] = [];
 
     // Upload each asset URL to server
     if (assetUrls.length > 0) {
       for (let i = 0; i < assetUrls.length; i++) {
         try {
           const assetUrl = assetUrls[i];
+
+          // Extract file extension from URL or use default value
+          let fileExt = '.mp4'; // Default extension (cinematic is usually video)
+
+          // Try to extract extension from URL
+          if (assetUrl.includes('?')) {
+            // Remove query parameters
+            const urlWithoutQuery = assetUrl.split('?')[0];
+            if (urlWithoutQuery.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
+              fileExt = urlWithoutQuery.substring(urlWithoutQuery.lastIndexOf('.'));
+            }
+          } else if (assetUrl.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
+            fileExt = assetUrl.substring(assetUrl.lastIndexOf('.'));
+          }
+
           const uploadedAsset = await uploadAssetToServer(
             assetUrl,
             'cinematic',
-            `cinematic-result-${i + 1}-${new Date().getTime()}`
+            `cinematic-result-${i + 1}-${new Date().getTime()}${fileExt}`
           );
 
           if (uploadedAsset.success && uploadedAsset.url) {
-            uploadedUrls.push({
-              original: assetUrl,
-              agent8: uploadedAsset.url,
-            });
+            uploadedUrls.push(uploadedAsset.url);
           } else {
             logger.warn(`Failed to upload cinematic asset to server: ${uploadedAsset.error}`);
           }
@@ -309,17 +348,10 @@ When queue processing is complete, the generated cinematic assets (image or vide
       }
     }
 
-    // Add uploaded URLs to the original result
-    if (uploadedUrls.length > 0) {
-      result.agent8_urls = uploadedUrls;
-
-      // For single URL, also add as primary URL
-      if (uploadedUrls.length === 1) {
-        result.agent8_url = uploadedUrls[0].agent8;
-      }
-    }
-
-    return result;
+    return {
+      content: [{ type: 'text', text: JSON.stringify(uploadedUrls) }],
+      isError: false,
+    };
   }
 
   protected getAssetType(): string {
@@ -336,7 +368,7 @@ export class CinematicStatusTool {
   name = 'cinematic_status';
   description = `Checks the status of a queued cinematic generation request.
 
-Use this tool to check the current status of a cinematic generation job in the queue.`;
+Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 30 seconds between status checks for updates to propagate.`;
 
   inputSchema = {
     type: 'object',
@@ -364,100 +396,12 @@ Use this tool to check the current status of a cinematic generation job in the q
 
       const result = await authenticatedRequest(url);
 
-      // Check for cinematic asset URLs in the result
-      let assetUrls: string[] = [];
-
-      // Extract URLs based on result format and schema
-      if (result.video && typeof result.video === 'object' && result.video.url) {
-        // Handle vidu/reference-to-video schema format
-        assetUrls.push(result.video.url);
-      } else if (result.video && typeof result.video === 'string') {
-        // Handle string URL format
-        assetUrls.push(result.video);
-      } else if (result.image && typeof result.image === 'object' && result.image.url) {
-        // Handle image object with url property
-        assetUrls.push(result.image.url);
-      } else if (result.image && typeof result.image === 'string') {
-        // Handle string image URL format
-        assetUrls.push(result.image);
-      } else if (result.videos && result.videos.length > 0) {
-        // Handle array of video URLs or objects
-        result.videos.forEach((video: any) => {
-          if (typeof video === 'object' && video.url) {
-            assetUrls.push(video.url);
-          } else if (typeof video === 'string') {
-            assetUrls.push(video);
-          }
-        });
-      } else if (result.images && result.images.length > 0) {
-        // Handle array of image URLs or objects
-        result.images.forEach((image: any) => {
-          if (typeof image === 'object' && image.url) {
-            assetUrls.push(image.url);
-          } else if (typeof image === 'string') {
-            assetUrls.push(image);
-          }
-        });
-      } else if (typeof result === 'string' && result.startsWith('http')) {
-        // Handle direct URL string response
-        assetUrls.push(result);
-      }
-
-      // Update progress for upload phase
-      if (context.progressCallback) {
-        await context.progressCallback({
-          progress: 0.7,
-          total: 1,
-          message: 'Uploading cinematic assets to server...',
-        });
-      }
-
-      // Store uploaded asset URLs
-      const uploadedUrls: string[] = [];
-
-      // Upload each asset URL to server
-      if (assetUrls.length > 0) {
-        for (let i = 0; i < assetUrls.length; i++) {
-          try {
-            const assetUrl = assetUrls[i];
-
-            // Extract file extension from URL or use default value
-            let fileExt = '.mp4'; // Default extension (cinematic is usually video)
-
-            // Try to extract extension from URL
-            if (assetUrl.includes('?')) {
-              // Remove query parameters
-              const urlWithoutQuery = assetUrl.split('?')[0];
-              if (urlWithoutQuery.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
-                fileExt = urlWithoutQuery.substring(urlWithoutQuery.lastIndexOf('.'));
-              }
-            } else if (assetUrl.match(/\.(mp4|webm|mov|avi|gif|png|jpg|jpeg)$/i)) {
-              fileExt = assetUrl.substring(assetUrl.lastIndexOf('.'));
-            }
-
-            const uploadedAsset = await uploadAssetToServer(
-              assetUrl,
-              'cinematic',
-              `cinematic-status-${i + 1}-${new Date().getTime()}${fileExt}`
-            );
-
-            if (uploadedAsset.success && uploadedAsset.url) {
-              uploadedUrls.push(uploadedAsset.url);
-            } else {
-              logger.warn(`Failed to upload cinematic asset to server: ${uploadedAsset.error}`);
-            }
-          } catch (error) {
-            logger.error('Error during cinematic asset upload:', error);
-          }
-        }
-      }
-
       // Report completion
       if (context.progressCallback) {
         await context.progressCallback({
           progress: 1,
           total: 1,
-          message: 'Cinematic status check and upload completed',
+          message: 'Cinematic status check completed',
         });
       }
 
@@ -470,6 +414,98 @@ Use this tool to check the current status of a cinematic generation job in the q
       logger.error('Failed to check cinematic status:', error);
       return {
         content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+        isError: true,
+      };
+    }
+  }
+}
+
+/**
+ * Cinematic Wait Tool
+ *
+ * A utility tool that allows the LLM to wait a specified amount of time before checking status again.
+ */
+export class CinematicWaitTool {
+  name = 'cinematic_wait';
+  description = `Allows waiting for a specified number of seconds before continuing execution.
+
+Use this tool between status checks to give time for cinematic generation to progress.
+The recommended wait time is 30 seconds between status checks.`;
+
+  inputSchema = {
+    type: 'object',
+    properties: {
+      seconds: {
+        type: 'integer',
+        description: 'Number of seconds to wait. Default is 30 seconds.',
+        default: 30,
+        minimum: 1,
+        maximum: 120,
+      },
+      status_message: {
+        type: 'string',
+        description: 'Optional status message to display during the wait',
+      },
+    },
+    required: ['seconds'],
+  };
+
+  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<any> {
+    try {
+      const seconds = args.seconds || 30;
+      const statusMessage =
+        args.status_message || `Waiting ${seconds} seconds for cinematic generation...`;
+
+      // Limit waiting time to a reasonable amount (between 1 and 120 seconds)
+      const waitTime = Math.max(1, Math.min(120, seconds));
+
+      // Initial progress update
+      if (context.progressCallback) {
+        await context.progressCallback({
+          progress: 0,
+          total: waitTime,
+          message: statusMessage,
+        });
+      }
+
+      // Wait loop with progress updates
+      for (let i = 1; i <= waitTime; i++) {
+        // Wait for 1 second
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Update progress every second
+        if (context.progressCallback) {
+          await context.progressCallback({
+            progress: i,
+            total: waitTime,
+            message: `${statusMessage} (${i}/${waitTime}s)`,
+          });
+        }
+      }
+
+      // Final progress update
+      if (context.progressCallback) {
+        await context.progressCallback({
+          progress: waitTime,
+          total: waitTime,
+          message: 'Wait completed. You can now check the status again.',
+        });
+      }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Waited for ${waitTime} seconds. You can now check the status of your cinematic generation.`,
+          },
+        ],
+        isError: false,
+      };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error('Failed to execute wait:', error);
+      return {
+        content: [{ type: 'text', text: `Error during wait: ${errorMessage}` }],
         isError: true,
       };
     }

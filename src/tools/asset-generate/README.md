@@ -13,15 +13,23 @@ This module provides tools for generating game assets, including static images a
 - `CinematicAssetGeneratorTool`: Creates high-quality game cinematics
 - `CinematicAssetResultTool`: Retrieves results from cinematic generation
 - `CinematicStatusTool`: Checks status of cinematic generation requests
+- `CinematicWaitTool`: Provides a waiting utility between status checks (recommended 30 seconds)
 
 ## Usage
 
 ```typescript
-import { StaticAssetGeneratorTool, CinematicAssetGeneratorTool } from './tools/asset-generate';
+import {
+  StaticAssetGeneratorTool,
+  CinematicAssetGeneratorTool,
+  CinematicStatusTool,
+  CinematicWaitTool,
+} from './tools/asset-generate';
 
 // Initialize tools
 const staticGenerator = new StaticAssetGeneratorTool();
 const cinematicGenerator = new CinematicAssetGeneratorTool();
+const cinematicStatus = new CinematicStatusTool();
+const cinematicWait = new CinematicWaitTool();
 
 // Generate assets
 await staticGenerator.execute({
@@ -29,11 +37,30 @@ await staticGenerator.execute({
   style: 'Pixel art, 16-bit style',
 });
 
-await cinematicGenerator.execute({
-  context: 'Epic battle scene between hero and dragon',
-  references: ['url-to-reference-image'],
-  duration: 10,
+// Generate cinematic with status checking
+const result = await cinematicGenerator.execute({
+  prompt: 'Epic battle scene between hero and dragon',
+  reference_image_urls: ['url-to-reference-image'],
+  aspect_ratio: '16:9',
 });
+
+// For queued cinematic generations, check status with waiting
+const queueUrl = result.url; // URL returned from the original request
+let isComplete = false;
+
+while (!isComplete) {
+  // Check current status
+  const statusResult = await cinematicStatus.execute({ url: queueUrl });
+
+  // If complete, break out of loop
+  if (statusResult.status === 'COMPLETED') {
+    isComplete = true;
+    break;
+  }
+
+  // Wait 30 seconds before checking again
+  await cinematicWait.execute({ seconds: 30 });
+}
 ```
 
 ## File Structure
