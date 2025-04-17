@@ -44,9 +44,10 @@ Use this tool when you need to:
 
 [TIPS FOR BEST RESULTS]
 - Provide specific and detailed descriptions of the desired asset
-- Specify the desired style clearly (e.g., pixel, cartoon)
+- Specify the desired style clearly (e.g., pixel art, cartoon)
 - Set appropriate asset dimensions (default: 128x128)
-- Include game type information (platformer, shooter, etc.)`;
+- Include game type information (platformer, shooter, etc.)
+- Always adhere to the schema constraints for style, assetType, and gameType parameters`;
 
   inputSchema = {
     type: 'object',
@@ -58,12 +59,12 @@ Use this tool when you need to:
       },
       style: {
         type: 'string',
-        description: 'Asset style (pixel, cartoon, vector, realistic, fantasy, retro)',
-        default: 'pixel',
+        description: 'Asset style. Must be one of: pixel art, cartoon, vector, realistic, fantasy, or retro.',
+        default: 'pixel art',
       },
       assetType: {
         type: 'string',
-        description: 'Asset type (character, item, background, ui, tile, icon)',
+        description: 'Asset type. Must be one of: character, item, background, ui, tilemap, or icon.',
         default: 'character',
       },
       width: {
@@ -78,7 +79,8 @@ Use this tool when you need to:
       },
       gameType: {
         type: 'string',
-        description: 'Game type (platformer, shooter, rpg, puzzle, etc.) to help with generation.',
+        description: 'Game type to help with generation. Must be one of: platformer, shooter, rpg, puzzle, strategy, arcade, or simulation.',
+        default: 'platformer',
       },
       additionalPrompt: {
         type: 'string',
@@ -91,7 +93,7 @@ Use this tool when you need to:
   protected sanitizeArgs(args: Record<string, any>): Record<string, any> {
     return {
       description: args.description,
-      style: args.style || 'pixel',
+      style: args.style || 'pixel art',
       assetType: args.assetType || 'character',
       width: args.width || DEFAULT_STATIC_WIDTH,
       height: args.height || DEFAULT_STATIC_HEIGHT,
