@@ -85,8 +85,8 @@ export function validateStyle(style: string): string {
   const normalizedStyle = style.toLowerCase().trim();
 
   if (!SUPPORTED_STYLES.includes(normalizedStyle)) {
-    logger.warn(`Unsupported style: ${style}. Defaulting to 'pixel'.`);
-    return 'pixel';
+    logger.warn(`Unsupported style: ${style}. Defaulting to 'pixel art'.`);
+    return 'pixel art';
   }
 
   return normalizedStyle;
@@ -126,7 +126,7 @@ export function generateStaticAssetPrompt(params: {
   let prompt = `2D ${validatedStyle} style ${validatedAssetType} for a game: ${description}`;
 
   // Style-specific optimizations
-  if (validatedStyle === 'pixel') {
+  if (validatedStyle === 'pixel art') {
     prompt += ', pixel art, pixel perfect, pixelated, clean pixel edges, limited color palette';
   } else if (validatedStyle === 'cartoon') {
     prompt += ', cartoon style, vibrant colors, clean outlines, flat design';
@@ -141,17 +141,17 @@ export function generateStaticAssetPrompt(params: {
   }
 
   // Asset type-specific optimizations (pixel style)
-  if (validatedStyle === 'pixel' && validatedAssetType === 'character') {
+  if (validatedStyle === 'pixel art' && validatedAssetType === 'character') {
     prompt += ', character sprite, game sprite, flat design, 2D character';
-  } else if (validatedStyle === 'pixel' && validatedAssetType === 'item') {
+  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'item') {
     prompt += ', game item, collectible, power-up, game object';
-  } else if (validatedStyle === 'pixel' && validatedAssetType === 'background') {
+  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'background') {
     prompt += ', game background, seamless pattern, tileable';
-  } else if (validatedStyle === 'pixel' && validatedAssetType === 'tile') {
+  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'tilemap') {
     prompt += ', game tile, seamless tile, tileset, tilemap element';
-  } else if (validatedStyle === 'pixel' && validatedAssetType === 'ui') {
+  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'ui') {
     prompt += ', game interface, UI element, menu item, button';
-  } else if (validatedStyle === 'pixel' && validatedAssetType === 'icon') {
+  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'icon') {
     prompt += ', game icon, skill icon, menu icon, small icon';
   }
 
@@ -338,7 +338,7 @@ export function mapToRecraftStyle(style: string): string {
   switch (normalizedStyle) {
     case 'realistic':
       return 'realistic_image';
-    case 'pixel':
+    case 'pixel art':
       return 'digital_illustration/pixel_art';
     case 'vector':
       return 'vector_illustration';

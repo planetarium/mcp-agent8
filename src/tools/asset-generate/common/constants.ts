@@ -19,7 +19,7 @@ export const DEFAULT_STATIC_HEIGHT = 128;
 // Common style list with recraft-v3 supported styles only
 export const SUPPORTED_STYLES = [
   'realistic', // Realistic style - maps to 'realistic_image'
-  'pixel', // Pixel art style - maps to 'digital_illustration/pixel_art'
+  'pixel art', // Pixel art style - maps to 'digital_illustration/pixel_art'
   'vector', // Vector graphic style - maps to 'vector_illustration'
   'cartoon', // Cartoon style - maps to 'digital_illustration/hand_drawn'
   'noir', // Noir style - maps to 'digital_illustration/noir'
@@ -31,6 +31,6 @@ export const SUPPORTED_STATIC_TYPES = [
   'item', // Items/objects
   'background', // Background images
   'ui', // UI elements
-  'tile', // Tilemap elements
+  'tilemap', // Tilemap elements
   'icon', // Icons
 ];
