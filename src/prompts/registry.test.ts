@@ -1,6 +1,7 @@
-import { PromptRegistry } from '../../src/prompts/registry.js';
+import { PromptRegistry } from './registry.js';
 import { z } from 'zod';
-import { MessageRole } from '../../src/prompts/types.js';
+import { MessageRole } from './types.js';
+import { describe, expect, beforeEach, test } from '@jest/globals';
 
 /* eslint-env jest */
 

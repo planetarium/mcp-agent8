@@ -9,6 +9,7 @@ import { McpServer } from './server.js';
 import { logger, LogLevel, LogDestination } from './utils/logging.js';
 import { env } from './utils/env.js';
 import path from 'path';
+import { authMiddleware } from './middleware/auth.js';
 
 /**
  * Main Entry Point
@@ -32,7 +33,9 @@ async function main() {
       )
       .option('--log-file <path>', 'Path to log file (when log-destination is file)')
       .option('--log-level <level>', 'Log level (debug, info, warn, error)', 'info')
-      .option('--env-file <path>', 'Path to .env file');
+      .option('--env-file <path>', 'Path to .env file')
+      .option('--auth-api-endpoint <url>', 'Authentication API endpoint URL')
+      .option('--require-auth', 'Require authentication for API endpoints');
 
     program.parse();
 
@@ -73,6 +76,25 @@ async function main() {
     // Log file path
     const logFilePath = options.logFile || env.get('LOG_FILE');
 
+    // Authentication related settings
+    const authApiEndpoint = options.authApiEndpoint || env.get('AUTH_API_ENDPOINT');
+    // Automatically disable authentication if API endpoint is not set
+    let requireAuth = options.requireAuth || env.getBoolean('REQUIRE_AUTH', false);
+
+    // If auth API endpoint is not set, disable authentication regardless of settings
+    if (!authApiEndpoint && requireAuth) {
+      logger.warn('Authentication API endpoint not set. Disabling authentication.');
+      requireAuth = false;
+    } else if (requireAuth) {
+      logger.info('Authentication is enabled');
+    } else {
+      logger.info('Authentication is disabled');
+    }
+
+    if (authApiEndpoint) {
+      process.env.AUTH_API_ENDPOINT = authApiEndpoint;
+    }
+
     // Set up logger configuration
     logger.configure({
       level: isDebugMode ? LogLevel.DEBUG : logLevel || LogLevel.INFO,
@@ -101,8 +123,8 @@ async function main() {
       app.use(cors());
       app.use(express.json());
 
-      // Set up SSE endpoint
-      app.get('/sse', async (req, res) => {
+      // Extract SSE connection handler function to avoid duplication
+      const handleSseConnection = async (req: express.Request, res: express.Response) => {
         // Configure SSE response headers
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
@@ -112,7 +134,13 @@ async function main() {
         // Create SSE transport
         const transport = new SSEServerTransport('/messages', res);
         await server.connect(transport);
-        logger.info('New SSE connection established, sessionId: ' + transport.sessionId);
+
+        // Log authenticated user info if available
+        if (req.user) {
+          logger.info(`New SSE connection established for user: ${req.user.email}, sessionId: ${transport.sessionId}`);
+        } else {
+          logger.info('New SSE connection established, sessionId: ' + transport.sessionId);
+        }
 
         const sessionId = transport.sessionId;
         if (sessionId) {
@@ -133,10 +161,10 @@ async function main() {
           logger.info(`Client disconnected (session ${sessionId})`);
           delete sessions[sessionId];
         });
-      });
+      };
 
-      // Set up message handling endpoint
-      app.post('/messages', async (req, res) => {
+      // Extract message handling function to avoid duplication
+      const handleMessagePost = async (req: express.Request, res: express.Response) => {
         const sessionId = req.query.sessionId as string;
         if (!sessionId) {
           logger.error('Missing sessionId parameter');
@@ -146,18 +174,36 @@ async function main() {
 
         const session = sessions[sessionId];
         if (session?.handlePostMessage) {
-          logger.info(`POST to SSE transport (session ${sessionId})`);
+          // Log authenticated user info if available
+          if (req.user) {
+            logger.info(`POST to SSE transport from user: ${req.user.email} (session ${sessionId})`);
+          } else {
+            logger.info(`POST to SSE transport (session ${sessionId})`);
+          }
           await session.handlePostMessage(req, res, req.body);
         } else {
           res.status(503).send(`No active SSE connection for session ${sessionId}`);
         }
-      });
+      };
+
+      // Apply appropriate middleware based on authentication requirements
+      if (requireAuth) {
+        logger.info('Authentication middleware activated');
+        app.get('/sse', authMiddleware({ checkActivated: true }), handleSseConnection);
+        app.post('/messages', authMiddleware(), handleMessagePost);
+      } else {
+        app.get('/sse', handleSseConnection);
+        app.post('/messages', handleMessagePost);
+      }
 
       // Start Express server
       app.listen(port, () => {
         logger.info(`SSE server listening on port ${port}`);
         logger.info(`SSE endpoint: http://localhost:${port}/sse`);
         logger.info(`Message submission endpoint: http://localhost:${port}/messages`);
+        if (requireAuth) {
+          logger.info('Authentication required. Provide a Bearer token in the Authorization header.');
+        }
       });
     } else {
       // Use stdio transport
