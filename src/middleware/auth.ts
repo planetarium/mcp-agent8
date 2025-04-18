@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logging.js';
-import fetch from 'node-fetch';
 import { V8User } from '../types/v8user.js';
 
 /**`
@@ -16,6 +15,7 @@ const verifyAccessToken = async (token: string): Promise<V8User | null> => {
       throw new Error('AUTH_API_ENDPOINT is not configured');
     }
 
+    // eslint-disable-next-line no-undef
     const response = await fetch(`${apiEndpoint}/verify`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -29,6 +29,7 @@ const verifyAccessToken = async (token: string): Promise<V8User | null> => {
 
     // Extract user data from response
     const userData = (await response.json()) as V8User;
+
     return {
       ...userData,
       accessToken: token,

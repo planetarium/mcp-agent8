@@ -16,7 +16,7 @@ dist
 .eslintrc*
 .prettier*
 jest.config.*
-test
+**/*.test.ts
 coverage
 
 # Editor directories
