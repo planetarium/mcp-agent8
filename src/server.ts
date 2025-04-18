@@ -5,7 +5,6 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
   GetPromptRequest,
-  CallToolRequest,
   CallToolResult,
 } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from './utils/logging.js';
@@ -14,7 +13,6 @@ import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
-import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { env } from './utils/env.js';
 
 /**
@@ -144,7 +142,7 @@ export class McpServer {
     // Handle tool call requests
     this.server.setRequestHandler(
       CallToolRequestSchema,
-      async (request: CallToolRequest, extra: RequestHandlerExtra) => {
+      async (request, extra) => {
         const { name, arguments: args } = request.params;
         const { signal } = extra;
         logger.debug(`Processing tool call '${name}' with arguments:`, args);
