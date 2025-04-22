@@ -24,7 +24,7 @@ describe('Auth Middleware', () => {
       json: jest.fn() as jest.MockedFunction<Response['json']>,
     } as Partial<Response>;
     nextFunction = jest.fn();
-    process.env.AUTH_API_ENDPOINT = 'https://test-auth-api.com';
+    process.env.V8_AUTH_API_ENDPOINT = 'https://test-auth-api.com';
     mockedFetch.enableMocks();
   });
 

@@ -77,9 +77,9 @@ async function main() {
     const logFilePath = options.logFile || env.get('LOG_FILE');
 
     // Authentication related settings
-    const authApiEndpoint = options.authApiEndpoint || env.get('AUTH_API_ENDPOINT');
+    const authApiEndpoint = options.authApiEndpoint || env.get('V8_AUTH_API_ENDPOINT');
     // Automatically disable authentication if API endpoint is not set
-    let requireAuth = options.requireAuth || env.getBoolean('REQUIRE_AUTH', false);
+    let requireAuth = options.requireAuth || env.getBoolean('V8_AUTH_REQUIRE', false);
 
     // If auth API endpoint is not set, disable authentication regardless of settings
     if (!authApiEndpoint && requireAuth) {
@@ -92,7 +92,7 @@ async function main() {
     }
 
     if (authApiEndpoint) {
-      process.env.AUTH_API_ENDPOINT = authApiEndpoint;
+      process.env.V8_AUTH_API_ENDPOINT = authApiEndpoint;
     }
 
     // Set up logger configuration

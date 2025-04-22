@@ -181,8 +181,8 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | LOG_DESTINATION                  | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
 | LOG_FILE                         | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
 | DEBUG                            | Enable debug mode (true/false)                  | false                                                    |
-| AUTH_API_ENDPOINT                | Authentication API endpoint URL                 | (none)                                                   |
-| REQUIRE_AUTH                     | Require authentication for API endpoints        | false                                                    |
+| V8_AUTH_API_ENDPOINT             | Authentication API endpoint URL                 | (none)                                                   |
+| V8_AUTH_REQUIRE                  | Require authentication for API endpoints        | false                                                    |
 | SUPABASE_URL                     | Supabase URL for database connection            | (required)                                               |
 | SUPABASE_SERVICE_ROLE_KEY        | Supabase service role key for authentication    | (required)                                               |
 | OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |

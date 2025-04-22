@@ -80,7 +80,7 @@ export abstract class AssetGeneratorBase implements Tool {
    * @returns User ID or undefined if not available
    *
    * This method attempts to find the user ID from various sources.
-   * When REQUIRE_AUTH=false, the user ID may not be available,
+   * When V8_AUTH_REQUIRE=false, the user ID may not be available,
    * and in this case, the credit consumption functionality will not be executed.
    */
   protected getUserId(context: ToolExecutionContext): string | undefined {
