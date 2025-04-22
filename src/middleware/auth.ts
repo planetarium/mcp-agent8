@@ -8,11 +8,11 @@ import { V8User } from '../types/v8user.js';
  */
 const verifyAccessToken = async (token: string): Promise<V8User | null> => {
   try {
-    // Check if AUTH_API_ENDPOINT is configured
-    const apiEndpoint = process.env.AUTH_API_ENDPOINT;
+    // Check if V8_AUTH_API_ENDPOINT is configured
+    const apiEndpoint = process.env.V8_AUTH_API_ENDPOINT;
     if (!apiEndpoint) {
-      logger.error('AUTH_API_ENDPOINT is not configured');
-      throw new Error('AUTH_API_ENDPOINT is not configured');
+      logger.error('V8_AUTH_API_ENDPOINT is not configured');
+      throw new Error('V8_AUTH_API_ENDPOINT is not configured');
     }
 
     // eslint-disable-next-line no-undef

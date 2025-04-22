@@ -71,15 +71,15 @@ async function main() {
     const logDestination = hasExplicitLogDestination
       ? options.logDestination
       : env.get('LOG_DESTINATION') ||
-        (transportType === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
+      (transportType === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
 
     // Log file path
     const logFilePath = options.logFile || env.get('LOG_FILE');
 
     // Authentication related settings
-    const authApiEndpoint = options.authApiEndpoint || env.get('AUTH_API_ENDPOINT');
+    const authApiEndpoint = options.authApiEndpoint || env.get('V8_AUTH_API_ENDPOINT');
     // Automatically disable authentication if API endpoint is not set
-    let requireAuth = options.requireAuth || env.getBoolean('REQUIRE_AUTH', false);
+    let requireAuth = options.requireAuth || env.getBoolean('V8_AUTH_REQUIRE', false);
 
     // If auth API endpoint is not set, disable authentication regardless of settings
     if (!authApiEndpoint && requireAuth) {
@@ -92,7 +92,7 @@ async function main() {
     }
 
     if (authApiEndpoint) {
-      process.env.AUTH_API_ENDPOINT = authApiEndpoint;
+      process.env.V8_AUTH_API_ENDPOINT = authApiEndpoint;
     }
 
     // Set up logger configuration
@@ -180,6 +180,13 @@ async function main() {
           } else {
             logger.info(`POST to SSE transport (session ${sessionId})`);
           }
+
+          if (!req.body.params) {
+            req.body.params = {};
+          }
+
+          req.body.params._user = req.user;
+
           await session.handlePostMessage(req, res, req.body);
         } else {
           res.status(503).send(`No active SSE connection for session ${sessionId}`);

@@ -1,5 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequest, Progress } from '@modelcontextprotocol/sdk/types.js';
+import { V8User } from '../types/v8user.js';
 
 /**
  * Progress callback interface for reporting tool execution progress
@@ -15,6 +16,7 @@ export interface ToolExecutionContext {
   progressCallback?: ProgressCallback;
   // eslint-disable-next-line no-undef
   signal?: AbortSignal;
+  v8User?: V8User;
 }
 
 /**

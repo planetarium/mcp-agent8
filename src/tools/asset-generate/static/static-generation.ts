@@ -10,6 +10,7 @@ import {
   DEFAULT_STATIC_API_ENDPOINT,
   DEFAULT_STATIC_WIDTH,
   DEFAULT_STATIC_HEIGHT,
+  TOOL_TYPE_IMAGE_GENERATION_2D,
 } from '../common/constants.js';
 import { AssetGeneratorBase } from '../common/types.js';
 import { uploadAssetToServer } from '../common/utils.js';
@@ -206,5 +207,9 @@ Use this tool when you need to:
         ? 'Asset successfully generated and uploaded to server'
         : 'Asset generated but upload to server failed',
     };
+  }
+
+  protected getToolType(): string {
+    return TOOL_TYPE_IMAGE_GENERATION_2D;
   }
 }

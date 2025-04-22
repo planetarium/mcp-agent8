@@ -11,6 +11,10 @@ export const AUTHENTICATED_TIMEOUT = 300000; // ms - longer timeout for asset ge
 // API key environment variable
 export const API_KEY_ENV_VAR = 'FAL_KEY';
 
+// Tool types for credit consumption
+export const TOOL_TYPE_IMAGE_GENERATION_2D = 'imageGeneration2D';
+export const TOOL_TYPE_VIDEO_GENERATION = 'videoGeneration';
+
 // Static image related constants
 export const DEFAULT_STATIC_API_ENDPOINT = 'fal-ai/recraft-v3';
 export const DEFAULT_STATIC_WIDTH = 128;
