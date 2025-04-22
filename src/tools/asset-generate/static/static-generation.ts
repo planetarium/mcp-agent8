@@ -37,6 +37,10 @@ Use this tool when you need to:
 4. Design UI elements or icons
 5. Generate tilemap elements
 
+[IMPORTANT NOTE]
+- This tool is specifically designed for 2D game assets and static images.
+- For creating immersive 360° environments or skyboxes for VR/AR applications, please use the 'skybox_generate' tool instead.
+
 [KEY FEATURES]
 - Creates 2D assets based on detailed descriptions
 - Supports various styles (pixel art, cartoon, vector, fantasy, etc.)
@@ -91,7 +95,7 @@ Use this tool when you need to:
     required: ['description'],
   };
 
-  protected sanitizeArgs(args: Record<string, any>): Record<string, any> {
+  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
     return {
       description: args.description,
       style: args.style || 'pixel art',
@@ -109,21 +113,21 @@ Use this tool when you need to:
   }
 
   protected async generateAsset(
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<any> {
-    const style = args.style;
-    const width = args.width;
-    const height = args.height;
+  ): Promise<Record<string, unknown>> {
+    const style = args.style as string;
+    const width = args.width as number;
+    const height = args.height as number;
 
     // Generate asset prompt
     const prompt = generateStaticAssetPrompt({
-      description: args.description,
+      description: args.description as string,
       style: style,
-      assetType: args.assetType,
-      gameType: args.gameType,
-      additionalPrompt: args.additionalPrompt,
+      assetType: args.assetType as string,
+      gameType: args.gameType as string,
+      additionalPrompt: args.additionalPrompt as string | undefined,
     });
 
     // Map to recraft-v3 style format

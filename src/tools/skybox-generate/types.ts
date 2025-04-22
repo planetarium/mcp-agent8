@@ -46,3 +46,26 @@ export interface SkyboxStatusResponse {
   updated_at: string;
   is_complete: boolean;
 }
+
+/**
+ * Skybox Style information
+ */
+export interface SkyboxStyle {
+  id: number;
+  name: string;
+  "max-char": number;
+  "negative-text-max-char": number;
+  image: string;
+  sort_order: number;
+  model: string;
+  model_version: string;
+  description?: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Response from Skybox Styles API
+ */
+export type SkyboxStylesResponse = SkyboxStyle[];

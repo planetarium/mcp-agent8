@@ -1,5 +1,5 @@
 import { ToolExecutionContext, ToolResult } from '../types.js';
-import { SkyboxGeneratorBase, SkyboxStatusResponse } from './types.js';
+import { SkyboxGeneratorBase, SkyboxStatusResponse, SkyboxStyle } from './types.js';
 import { blockadeRequest } from './utils.js';
 import { DEFAULT_POLLING_INTERVAL } from './constants.js';
 import { logger } from '../../utils/logging.js';
@@ -23,10 +23,22 @@ Use this tool when you need to:
 3. Create environmental backgrounds for scenes
 4. Visualize game worlds or levels
 
+[IMPORTANT NOTE]
+- This tool is specifically optimized for creating 360° environments and skyboxes.
+- For standard 2D game assets (sprites, UI elements, items, etc.), please use the 'static_asset_generate' tool instead.
+
+[STYLE SELECTION]
+First use skybox_styles tool to find a style ID that matches your needs.
+Different styles offer different aesthetic qualities, for example:
+- ID 67: M3 Photoreal - Highly detailed photorealistic environments
+- ID 43: Anime art style - Stylized anime-inspired scenes
+
 [TIPS FOR BEST RESULTS]
 - Provide detailed descriptions of the environment
 - Include lighting conditions and atmospheric details
-- Specify the style or aesthetic you want`;
+- Specify the style or aesthetic you want
+- Use skybox_styles tool to find the best style for your needs
+- Pay attention to character limits for each style`;
 
   inputSchema = {
     type: 'object',
@@ -34,6 +46,11 @@ Use this tool when you need to:
       prompt: {
         type: 'string',
         description: 'Text prompt describing the skybox world you wish to create',
+      },
+      skybox_style_id: {
+        type: 'number',
+        description: 'ID of the skybox style to use. Use the skybox_styles tool to see available styles',
+        default: 67
       },
       webhook_url: {
         type: 'string',
@@ -46,6 +63,7 @@ Use this tool when you need to:
   protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
     return {
       prompt: args.prompt,
+      skybox_style_id: args.skybox_style_id || 67, // Default to style ID 67 if not provided
       webhook_url: args.webhook_url
     };
   }
@@ -98,6 +116,94 @@ Use this tool when you need to:
 }
 
 /**
+ * Skybox Styles Tool
+ *
+ * Lists available skybox styles for generating immersive 360° environments.
+ */
+export class SkyboxStylesTool implements Tool {
+  name = 'skybox_styles';
+  description = `Lists available skybox styles for generating immersive 360° environments.
+  
+Use this tool to discover available skybox style options before using the skybox_generate tool.
+Each style has a unique ID and influences the overall aesthetic of generated skyboxes.`;
+
+  inputSchema = {
+    type: 'object',
+    properties: {}
+  };
+
+  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
+    const { progressCallback } = context;
+    try {
+      // Update progress
+      if (progressCallback) {
+        await progressCallback({
+          progress: 0.3,
+          total: 1,
+          message: `Fetching available skybox styles...`,
+        });
+      }
+
+      // API endpoint for skybox styles
+      const endpoint = 'skybox/styles';
+
+      // Make request
+      const result = await blockadeRequest(endpoint, 'GET');
+
+      // API returns array directly, not wrapped in an object
+      const styles = Array.isArray(result) ? result : [];
+
+      // Format the styles information for better readability and usage
+      const formattedStyles = styles.map((style: SkyboxStyle) => ({
+        id: style.id,
+        name: style.name,
+        model: style.model,
+        model_version: style.model_version,
+        max_char: style["max-char"],
+        negative_text_max_char: style["negative-text-max-char"],
+        image: style.image,
+        sort_order: style.sort_order,
+        description: `Style ${style.id}: ${style.name} (${style.model})`
+      }));
+
+      // Update progress
+      if (progressCallback) {
+        await progressCallback({
+          progress: 1,
+          total: 1,
+          message: `Successfully retrieved ${formattedStyles.length} skybox styles`,
+        });
+      }
+
+      // Format response as a helpful message with style options
+      let responseText = `Available Skybox Styles:\n\n`;
+      formattedStyles.sort((a, b) => a.sort_order - b.sort_order).forEach(style => {
+        responseText += `ID: ${style.id} - ${style.name}\n`;
+        responseText += `Model: ${style.model} (version: ${style.model_version})\n`;
+        responseText += `Character limits: Prompt (${style.max_char}), Negative prompt (${style.negative_text_max_char})\n`;
+        responseText += `Image example: ${style.image}\n\n`;
+      });
+
+      responseText += `To use a specific style, include the 'skybox_style_id' parameter when calling the skybox_generate tool.`;
+
+      return {
+        content: [{
+          type: 'text',
+          text: responseText
+        }],
+        isError: false,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: 'text', text: `Error fetching skybox styles: ${errorMessage}` }],
+        isError: true,
+      };
+    }
+  }
+}
+
+/**
  * Skybox Status Tool
  *
  * Checks the status of a queued skybox generation request.
@@ -132,10 +238,12 @@ Use this tool to monitor the progress of a skybox generation request initiated w
       }
 
       // API endpoint for status check
-      const endpoint = `imagine/requests/${args.obfuscated_id}`;
+      const endpoint = `imagine/requests/obfuscated-id/${args.obfuscated_id}`;
 
       // Make request
       const result = await blockadeRequest(endpoint, 'GET');
+      // 응답에서 request 객체 추출
+      const resultData = result.request as Record<string, unknown>;
 
       // Update progress
       if (progressCallback) {
@@ -147,17 +255,17 @@ Use this tool to monitor the progress of a skybox generation request initiated w
       }
 
       const response: SkyboxStatusResponse = {
-        skybox_id: typeof result.id === 'number' ? result.id : Number(result.id),
-        status: this.validateStatus(String(result.status)),
-        file_url: result.file_url ? String(result.file_url) : undefined,
-        thumb_url: result.thumb_url ? String(result.thumb_url) : undefined,
-        depth_map_url: result.depth_map_url ? String(result.depth_map_url) : undefined,
-        error_message: result.error_message ? String(result.error_message) : undefined,
-        queue_position: result.queue_position !== undefined ?
-          (typeof result.queue_position === 'number' ? result.queue_position : Number(result.queue_position)) :
+        skybox_id: typeof resultData.id === 'number' ? resultData.id : Number(resultData.id),
+        status: this.validateStatus(String(resultData.status)),
+        file_url: resultData.file_url ? String(resultData.file_url) : undefined,
+        thumb_url: resultData.thumb_url ? String(resultData.thumb_url) : undefined,
+        depth_map_url: resultData.depth_map_url ? String(resultData.depth_map_url) : undefined,
+        error_message: resultData.error_message ? String(resultData.error_message) : undefined,
+        queue_position: resultData.queue_position !== undefined ?
+          (typeof resultData.queue_position === 'number' ? resultData.queue_position : Number(resultData.queue_position)) :
           undefined,
-        updated_at: String(result.updated_at),
-        is_complete: String(result.status) === 'complete'
+        updated_at: String(resultData.updated_at),
+        is_complete: String(resultData.status) === 'complete'
       };
 
       // Return data about current status
@@ -178,7 +286,7 @@ Use this tool to monitor the progress of a skybox generation request initiated w
   }
 
   /**
-   * 상태 값이 유효한지 확인하고 타입 안전성 보장
+   * Validates status value and ensures type safety
    */
   private validateStatus(status: string): SkyboxStatusResponse['status'] {
     const validStatuses: Array<SkyboxStatusResponse['status']> = [
@@ -189,7 +297,7 @@ Use this tool to monitor the progress of a skybox generation request initiated w
       return status as SkyboxStatusResponse['status'];
     }
 
-    // 유효하지 않은 상태인 경우 기본값 반환
+    // Return default value for invalid status
     logger.warn(`Invalid status received: ${status}, defaulting to 'pending'`);
     return 'pending';
   }
@@ -266,11 +374,13 @@ This tool continuously checks the status of a skybox generation and returns the 
         }
 
         // Check status
-        const endpoint = `imagine/requests/${obfuscatedId}`;
+        const endpoint = `imagine/requests/obfuscated-id/${obfuscatedId}`;
         const result = await blockadeRequest(endpoint, 'GET');
+        // 응답에서 request 객체 추출
+        const resultData = result.request as Record<string, unknown>;
 
         // If completed or error, return result
-        const status = String(result.status);
+        const status = String(resultData.status);
         if (status === 'complete' || status === 'error' || status === 'abort') {
           // Final progress update
           if (progressCallback) {
@@ -282,13 +392,13 @@ This tool continuously checks the status of a skybox generation and returns the 
           }
 
           const response: SkyboxStatusResponse = {
-            skybox_id: typeof result.id === 'number' ? result.id : Number(result.id),
+            skybox_id: typeof resultData.id === 'number' ? resultData.id : Number(resultData.id),
             status: this.validateStatus(status),
-            file_url: result.file_url ? String(result.file_url) : undefined,
-            thumb_url: result.thumb_url ? String(result.thumb_url) : undefined,
-            depth_map_url: result.depth_map_url ? String(result.depth_map_url) : undefined,
-            error_message: result.error_message ? String(result.error_message) : undefined,
-            updated_at: String(result.updated_at),
+            file_url: resultData.file_url ? String(resultData.file_url) : undefined,
+            thumb_url: resultData.thumb_url ? String(resultData.thumb_url) : undefined,
+            depth_map_url: resultData.depth_map_url ? String(resultData.depth_map_url) : undefined,
+            error_message: resultData.error_message ? String(resultData.error_message) : undefined,
+            updated_at: String(resultData.updated_at),
             is_complete: status === 'complete'
           };
 
@@ -314,7 +424,7 @@ This tool continuously checks the status of a skybox generation and returns the 
   }
 
   /**
-   * 상태 값이 유효한지 확인하고 타입 안전성 보장
+   * Validates status value and ensures type safety
    */
   private validateStatus(status: string): SkyboxStatusResponse['status'] {
     const validStatuses: Array<SkyboxStatusResponse['status']> = [
@@ -325,7 +435,7 @@ This tool continuously checks the status of a skybox generation and returns the 
       return status as SkyboxStatusResponse['status'];
     }
 
-    // 유효하지 않은 상태인 경우 기본값 반환
+    // Return default value for invalid status
     logger.warn(`Invalid status received: ${status}, defaulting to 'pending'`);
     return 'pending';
   }
