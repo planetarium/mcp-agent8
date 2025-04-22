@@ -36,7 +36,7 @@ describe('Auth Middleware', () => {
   describe('verifyAccessToken', () => {
     it('should return user data for valid token', async () => {
       const mockUser: V8User = {
-        uid: '123',
+        userUid: '123',
         email: 'test@example.com',
         walletAddress: '0x123',
         isActivated: true,
@@ -71,7 +71,7 @@ describe('Auth Middleware', () => {
   describe('authMiddleware', () => {
     it('should accept token from query string', async () => {
       const mockUser: V8User = {
-        uid: '123',
+        userUid: '123',
         email: 'test@example.com',
         walletAddress: '0x123',
         isActivated: true,
@@ -102,7 +102,7 @@ describe('Auth Middleware', () => {
 
     it('should check account activation when required', async () => {
       const mockUser: V8User = {
-        uid: '123',
+        userUid: '123',
         email: 'test@example.com',
         walletAddress: '0x123',
         isActivated: false,
@@ -124,7 +124,7 @@ describe('Auth Middleware', () => {
   describe('requireAuth', () => {
     it('should allow authenticated requests', () => {
       mockReq.user = {
-        uid: '123',
+        userUid: '123',
         email: 'test@example.com',
         walletAddress: '0x123',
         isActivated: true,

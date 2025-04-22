@@ -2,6 +2,7 @@ import { CallToolRequest, Progress } from '@modelcontextprotocol/sdk/types.js';
 import { Tool, ToolRegistry, ToolResult, ToolExecutionContext } from './types.js';
 import { logger } from '../utils/logging.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { V8User } from '../types/v8user.js';
 
 /**
  * Tool Provider class
@@ -105,6 +106,7 @@ class Registry implements ToolRegistry {
       const context: ToolExecutionContext = {
         progressCallback,
         signal,
+        v8User: request.params._user as V8User,
       };
 
       // Execute the tool with context

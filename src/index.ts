@@ -71,7 +71,7 @@ async function main() {
     const logDestination = hasExplicitLogDestination
       ? options.logDestination
       : env.get('LOG_DESTINATION') ||
-        (transportType === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
+      (transportType === 'stdio' ? LogDestination.STDERR : LogDestination.STDOUT);
 
     // Log file path
     const logFilePath = options.logFile || env.get('LOG_FILE');
@@ -180,6 +180,13 @@ async function main() {
           } else {
             logger.info(`POST to SSE transport (session ${sessionId})`);
           }
+
+          if (!req.body.params) {
+            req.body.params = {};
+          }
+
+          req.body.params._user = req.user;
+
           await session.handlePostMessage(req, res, req.body);
         } else {
           res.status(503).send(`No active SSE connection for session ${sessionId}`);
