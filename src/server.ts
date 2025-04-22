@@ -13,6 +13,7 @@ import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
+import { skyboxGenerateTools } from './tools/skybox-generate/index.js';
 import { env } from './utils/env.js';
 
 /**
@@ -85,6 +86,18 @@ export class McpServer {
       logger.info(`${vectorSearchTools.length} vector search tools registered`);
     } else {
       logger.info('Vector search tools are disabled');
+    }
+
+    // Register skybox generation tools
+    const enableSkyboxGenerationTools = enableAllTools && env.getBoolean('ENABLE_SKYBOX_GENERATION_TOOL', true);
+    if (enableSkyboxGenerationTools && skyboxGenerateTools.length > 0) {
+      skyboxGenerateTools.forEach((tool) => {
+        this.toolProvider.getRegistry().register(tool);
+        registeredToolCount++;
+      });
+      logger.info(`${skyboxGenerateTools.length} skybox generation tools registered`);
+    } else {
+      logger.info('Skybox generation tools are disabled');
     }
 
     logger.info(`Total ${registeredToolCount} tools registered`);
