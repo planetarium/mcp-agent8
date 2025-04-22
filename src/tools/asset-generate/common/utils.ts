@@ -10,6 +10,67 @@ import {
 import { AssetUploadResponse } from '../types.js';
 import { v4 as uuidv4 } from 'uuid';
 import FormData from 'form-data';
+import { env } from '../../../utils/env.js';
+
+/**
+ * Consumes credits for tool usage via API call
+ * @param userUid User unique identifier
+ * @param toolType Type of tool used (imageGeneration2D or videoGeneration)
+ * @param usageCount Number of times the tool was used (default: 1)
+ * @param description Optional description
+ * @returns Response from the API server
+ *
+ * Note: If V8_CREDIT_CLIENT_ID and V8_CREDIT_CLIENT_SECRET environment variables are not set,
+ * a warning will be logged and an unsuccessful result will be returned. In this case,
+ * the implementation in `AssetGeneratorBase` will treat the entire operation as a failure.
+ */
+export async function consumeToolUsageCredits(
+  userUid: string,
+  toolType: string,
+): Promise<any> {
+  try {
+    // Check if required env vars are set
+    const clientId = env.get('V8_CREDIT_CLIENT_ID');
+    const clientSecret = env.get('V8_CREDIT_CLIENT_SECRET');
+    const apiEndpoint = env.get('V8_CREDIT_API_ENDPOINT');
+
+    if (!clientId || !clientSecret || !apiEndpoint) {
+      logger.warn('Credit consumption credentials not set (V8_CREDIT_CLIENT_ID, V8_CREDIT_CLIENT_SECRET, V8_CREDIT_API_ENDPOINT)');
+      return { success: false, error: 'Credit consumption credentials not configured. Please set V8_CREDIT_CLIENT_ID, V8_CREDIT_CLIENT_SECRET, and V8_CREDIT_API_ENDPOINT in your .env file.' };
+    }
+
+    // API endpoint for tool usage credit consumption
+    const url = apiEndpoint;
+
+    // Request payload
+    const data = {
+      userUid,
+      toolType,
+      usageCount: 1,
+      description: '',
+    };
+
+    // Make authenticated request
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      url,
+      data,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-client-id': clientId,
+        'x-client-secret': clientSecret
+      },
+      timeout: DEFAULT_TIMEOUT,
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    logger.error('Failed to consume credits for tool usage:', error);
+    // Don't throw the error, just log it to not block asset generation
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
 
 /**
  * Gets API key from environment

@@ -5,7 +5,7 @@ import {
   enhanceCinematicPrompt,
   uploadAssetToServer,
 } from '../common/utils.js';
-import { FAL_QUEUE_URL } from '../common/constants.js';
+import { FAL_QUEUE_URL, TOOL_TYPE_VIDEO_GENERATION } from '../common/constants.js';
 import { AssetGeneratorBase, AssetResultBase } from '../common/types.js';
 import { logger } from '../../../utils/logging.js';
 
@@ -251,6 +251,10 @@ Use this tool when you need to:
     }
 
     return result;
+  }
+
+  protected getToolType(): string {
+    return TOOL_TYPE_VIDEO_GENERATION;
   }
 }
 

@@ -186,6 +186,10 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | SUPABASE_URL                     | Supabase URL for database connection            | (required)                                               |
 | SUPABASE_SERVICE_ROLE_KEY        | Supabase service role key for authentication    | (required)                                               |
 | OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |
+| FAL_KEY                          | fal.ai API key for asset generation             | (required)                                               |
+| V8_CREDIT_CLIENT_ID              | Client ID for credit consumption API            | (none, optional for asset generation)                    |
+| V8_CREDIT_CLIENT_SECRET          | Client secret for credit consumption API        | (none, optional for asset generation)                    |
+| V8_CREDIT_API_ENDPOINT           | API endpoint for credit consumption             | (required for asset generation)                          |
 | ENABLE_ALL_TOOLS                 | Enable or disable all tools globally            | true                                                     |
 | ENABLE_VECTOR_SEARCH_TOOLS       | Enable or disable all vector search tools       | true                                                     |
 | ENABLE_ASSET_GENERATE_TOOLS      | Enable or disable all asset generation tools    | true                                                     |
