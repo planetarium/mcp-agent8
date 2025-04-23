@@ -79,10 +79,12 @@ export class Logger {
           import('fs').then(fs => {
             this.fileStream = fs.createWriteStream(this.filePath as string, { flags: 'a' });
           }).catch(error => {
+            // eslint-disable-next-line no-console
             console.error(`[ERROR] Failed to open log file: ${(error as Error).message}`);
             this.destination = LogDestination.STDERR;
           });
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error(`[ERROR] Failed to import fs module: ${(error as Error).message}`);
           this.destination = LogDestination.STDERR;
         }
@@ -142,9 +144,11 @@ export class Logger {
 
     switch (this.destination) {
     case LogDestination.STDOUT:
+      // eslint-disable-next-line no-console
       console.log(logMessage, ...args);
       break;
     case LogDestination.STDERR:
+      // eslint-disable-next-line no-console
       console.error(logMessage, ...args);
       break;
     case LogDestination.FILE:

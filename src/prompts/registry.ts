@@ -99,11 +99,11 @@ export class PromptRegistry {
       return Object.entries(schema.shape).map(([key, value]) => {
         const isOptional = value instanceof z.ZodOptional;
         const baseType = isOptional
-          ? (value as z.ZodOptional<any>).unwrap()
+          ? (value as z.ZodOptional<z.ZodTypeAny>).unwrap()
           : value;
 
         let description = '';
-        if ('description' in baseType && typeof baseType.description === 'string') {
+        if (baseType instanceof z.ZodType && 'description' in baseType && typeof baseType.description === 'string') {
           description = baseType.description;
         }
 
