@@ -1,5 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
 # Set PATH to ensure npm/npx can be found
 export PATH="$PATH:$(npm bin -g):$(npm bin)"
