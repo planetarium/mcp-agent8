@@ -14,6 +14,7 @@ import { ToolProvider } from './tools/provider.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
 import { skyboxGenerateTools } from './tools/skybox-generate/index.js';
+import { audioGenerationTools } from './tools/audio-generate/index.js';
 import { env } from './utils/env.js';
 
 /**
@@ -98,6 +99,18 @@ export class McpServer {
       logger.info(`${skyboxGenerateTools.length} skybox generation tools registered`);
     } else {
       logger.info('Skybox generation tools are disabled');
+    }
+
+    // Register audio generation tools
+    const enableAudioGenerationTools = enableAllTools && env.getBoolean('ENABLE_AUDIO_GENERATION_TOOLS', true);
+    if (enableAudioGenerationTools && audioGenerationTools.length > 0) {
+      audioGenerationTools.forEach((tool) => {
+        this.toolProvider.getRegistry().register(tool);
+        registeredToolCount++;
+      });
+      logger.info(`${audioGenerationTools.length} audio generation tools registered`);
+    } else {
+      logger.info('Audio generation tools are disabled');
     }
 
     logger.info(`Total ${registeredToolCount} tools registered`);
