@@ -50,6 +50,7 @@ Use this tool when you need to:
 - For visual assets, use the appropriate tools like 'static_asset_generate' or 'skybox_generate'.
 - Music generation may take 5-10 seconds to complete. Use 'audio_wait' tool with about 10 seconds wait time, then check with 'audio_status' tool using the requestId to see if generation is complete.
 - Once status shows 'COMPLETED', use 'audio_result' tool to get the final result.
+- IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.
 
 [KEY FEATURES]
 - Generates 30-second music samples in about 2 seconds
@@ -59,6 +60,7 @@ Use this tool when you need to:
 - Results delivered as WAV files
 
 [TIPS FOR BEST RESULTS]
+- Write all prompts in English only
 - Describe the musical style and mood clearly
 - Specify any desired instruments or sound characteristics
 - Include tempo, key, or other musical attributes if relevant
@@ -70,7 +72,7 @@ Use this tool when you need to:
     properties: {
       prompt: {
         type: 'string',
-        description: 'Detailed description of the music to generate',
+        description: 'Detailed description of the music to generate (must be in English)',
       },
       duration: {
         type: 'number',

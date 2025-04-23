@@ -37,6 +37,7 @@ Use this tool when you need to:
 - Sound effect generation typically takes 5-15 seconds to complete depending on duration
 - For music tracks and longer compositions, please use the 'music_generate' tool instead
 - For visual assets, use appropriate tools like 'static_asset_generate' or 'skybox_generate'
+- IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.
 
 [KEY FEATURES]
 - Generates high-quality SFX up to 30 seconds long
@@ -45,6 +46,7 @@ Use this tool when you need to:
 - Results delivered as WAV files
 
 [TIPS FOR BEST RESULTS]
+- Write all prompts in English only
 - Be specific about the sound you want to create
 - Include environmental context if relevant
 - Describe the sound's intensity, duration, and character
@@ -56,7 +58,7 @@ Use this tool when you need to:
     properties: {
       prompt: {
         type: 'string',
-        description: 'Detailed description of the sound effect to generate',
+        description: 'Detailed description of the sound effect to generate (must be in English)',
       },
       duration: {
         type: 'number',
