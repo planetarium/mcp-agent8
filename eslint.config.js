@@ -28,6 +28,7 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       'no-console': 'warn',
       'no-trailing-spaces': ['error'],
+      'eol-last': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
     },

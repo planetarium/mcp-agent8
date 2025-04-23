@@ -15,6 +15,7 @@ This Agent8 MCP Server implements the following MCP specification capabilities:
 - **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
 - **Game Resource Search**: Searches for game development assets (sprites, animations, sounds, etc.) using semantic similarity matching via the `search_game_resources` tool.
 - **Asset Generation**: Generates game assets including static images and cinematics using the `static_asset_generate` and `cinematic_asset_generate` tools.
+- **Skybox Generation**: Creates immersive 360° skybox environments for VR/AR applications and games using the `skybox_generate` tool, `skybox_status` tool, and `skybox_wait` tool.
 
 ## Installation
 
@@ -187,12 +188,14 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | SUPABASE_SERVICE_ROLE_KEY        | Supabase service role key for authentication    | (required)                                               |
 | OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |
 | FAL_KEY                          | fal.ai API key for asset generation             | (required)                                               |
+| BLOCKADE_LABS_API_KEY            | Blockade Labs API key for skybox generation     | (required for skybox generation)                         |
 | V8_CREDIT_CLIENT_ID              | Client ID for credit consumption API            | (none, optional for asset generation)                    |
 | V8_CREDIT_CLIENT_SECRET          | Client secret for credit consumption API        | (none, optional for asset generation)                    |
 | V8_CREDIT_API_ENDPOINT           | API endpoint for credit consumption             | (required for asset generation)                          |
 | ENABLE_ALL_TOOLS                 | Enable or disable all tools globally            | true                                                     |
 | ENABLE_VECTOR_SEARCH_TOOLS       | Enable or disable all vector search tools       | true                                                     |
 | ENABLE_ASSET_GENERATE_TOOLS      | Enable or disable all asset generation tools    | true                                                     |
+| ENABLE_SKYBOX_GENERATION_TOOL    | Enable or disable skybox generation tools       | true                                                     |
 | ENABLE_CODE_EXAMPLE_SEARCH_TOOL  | Enable or disable code example search tool      | true                                                     |
 | ENABLE_GAME_RESOURCE_SEARCH_TOOL | Enable or disable game resource search tool     | true                                                     |
 

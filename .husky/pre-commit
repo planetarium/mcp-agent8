@@ -1,2 +1,6 @@
+
+# Set PATH to ensure npm/npx can be found
+export PATH="$PATH:$(npm bin -g):$(npm bin)"
+
 # Run lint-staged
 npx lint-staged
