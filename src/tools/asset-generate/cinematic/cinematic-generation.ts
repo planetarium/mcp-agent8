@@ -1,7 +1,7 @@
 import { ToolExecutionContext } from '../../types.js';
 import {
   authenticatedRequest,
-  sanitizeParameters,
+  sanitizeAPIParameters,
   enhanceCinematicPrompt,
   uploadAssetToServer,
 } from '../common/utils.js';
@@ -83,7 +83,7 @@ Use this tool when you need to:
     required: ['prompt', 'reference_image_urls'],
   };
 
-  protected sanitizeArgs(args: Record<string, any>): Record<string, any> {
+  protected sanitizeToolArgs(args: Record<string, any>): Record<string, any> {
     // Limit reference images to maximum of 3
     const referenceImages = args.reference_image_urls || [];
     if (referenceImages.length > 3) {
@@ -122,7 +122,7 @@ Use this tool when you need to:
       parameters.prompt = enhanceCinematicPrompt(parameters.prompt, 'cinematic');
     }
 
-    const sanitizedParams = sanitizeParameters(parameters);
+    const sanitizedParams = sanitizeAPIParameters(parameters);
 
     // Update progress
     if (context.progressCallback) {

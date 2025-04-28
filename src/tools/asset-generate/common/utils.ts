@@ -133,7 +133,7 @@ export async function publicRequest(url: string, method = 'GET', data?: any): Pr
 /**
  * Sanitizes parameters for API requests
  */
-export function sanitizeParameters(parameters: Record<string, any>): Record<string, any> {
+export function sanitizeAPIParameters(parameters: Record<string, any>): Record<string, any> {
   return Object.fromEntries(
     Object.entries(parameters).filter(([, v]) => v !== null && v !== undefined)
   );

@@ -1,6 +1,6 @@
 import { ToolExecutionContext } from '../../types.js';
 import { AudioGeneratorBase } from '../common/types.js';
-import { sanitizeParameters } from '../../asset-generate/common/utils.js';
+import { sanitizeAPIParameters } from '../../asset-generate/common/utils.js';
 import { queueSubmit } from '../common/queue-utils.js';
 import {
   DEFAULT_SFX_API_ENDPOINT,
@@ -98,7 +98,7 @@ Use this tool when you need to:
     };
 
     // Sanitize parameters
-    const sanitizedParams = sanitizeParameters(parameters);
+    const sanitizedParams = sanitizeAPIParameters(parameters);
 
     // Update progress
     if (progressCallback) {
