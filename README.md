@@ -14,7 +14,7 @@ This Agent8 MCP Server implements the following MCP specification capabilities:
 
 - **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
 - **Game Resource Search**: Searches for game development assets (sprites, animations, sounds, etc.) using semantic similarity matching via the `search_game_resources` tool.
-- **Asset Generation**: Generates game assets including static images and cinematics using the `static_asset_generate` and `cinematic_asset_generate` tools.
+- **Asset Generation**: Generates game assets including 2D images and cinematics using the `image_asset_generate` and `cinematic_asset_generate` tools.
 - **Skybox Generation**: Creates immersive 360° skybox environments for VR/AR applications and games using the `skybox_generate` tool, `skybox_status` tool, and `skybox_wait` tool.
 - **Audio Generation**: Creates custom music tracks and sound effects for games using the `music_generate` and `sfx_generate` tools, with support for status checking via `audio_status` and result retrieval via `audio_result`.
 

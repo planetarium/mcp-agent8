@@ -36,7 +36,7 @@ Use this tool when you need to:
   4. If status is not 'COMPLETED', wait again and check status until complete
 - Sound effect generation typically takes 5-15 seconds to complete depending on duration
 - For music tracks and longer compositions, please use the 'music_generate' tool instead
-- For visual assets, use appropriate tools like 'static_asset_generate' or 'skybox_generate'
+- For visual assets, use appropriate tools like 'image_asset_generate' or 'skybox_generate'
 - IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.
 
 [KEY FEATURES]

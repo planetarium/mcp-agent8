@@ -17,15 +17,15 @@ import { uploadAssetToServer } from '../common/utils.js';
 import { logger } from '../../../utils/logging.js';
 
 /**
- * Game 2D Static Asset Generator Tool
+ * Game 2D Image Asset Generator Tool
  *
  * Generates 2D assets for game development.
  * Utilizes fal.ai API to help game developers easily create various 2D assets
  * for characters, items, backgrounds, UI elements, and more.
  */
-export class StaticAssetGeneratorTool extends AssetGeneratorBase {
-  name = 'static_asset_generate';
-  description = `Generates 2D static assets for game development.
+export class ImageAssetGeneratorTool extends AssetGeneratorBase {
+  name = 'image_asset_generate';
+  description = `Generates 2D image assets for game development.
 
 This tool helps game developers quickly create 2D assets for their games.
 
@@ -38,7 +38,7 @@ Use this tool when you need to:
 5. Generate tilemap elements
 
 [IMPORTANT NOTE]
-- This tool is specifically designed for 2D game assets and static images.
+- This tool is specifically designed for 2D game assets and images.
 - For creating immersive 360° environments or skyboxes for VR/AR applications, please use the 'skybox_generate' tool instead.
 
 [KEY FEATURES]
@@ -179,7 +179,7 @@ Use this tool when you need to:
     if (imageUrl) {
       const uploadedAsset = await uploadAssetToServer(
         imageUrl,
-        `static-${args.assetType || 'character'}`
+        `image-${args.assetType || 'character'}`
       );
 
       if (uploadedAsset.success && uploadedAsset.url) {
@@ -196,8 +196,8 @@ Use this tool when you need to:
         }
       } else {
         // Log upload failure
-        logger.warn(`Failed to upload static asset to server: ${uploadedAsset.error}`);
-        throw new Error(`Failed to upload static asset to server: ${uploadedAsset.error}`);
+        logger.warn(`Failed to upload image asset to server: ${uploadedAsset.error}`);
+        throw new Error(`Failed to upload image asset to server: ${uploadedAsset.error}`);
       }
     } else {
       logger.warn('Expected image URL not found in result format');

@@ -25,7 +25,7 @@ Use this tool when you need to:
 
 [IMPORTANT NOTE]
 - This tool is specifically optimized for creating 360° environments and skyboxes.
-- For standard 2D game assets (sprites, UI elements, items, etc.), please use the 'static_asset_generate' tool instead.
+- For standard 2D game assets (sprites, UI elements, items, etc.), please use the 'image_asset_generate' tool instead.
 
 [STYLE SELECTION]
 First use skybox_styles tool to find a style ID that matches your needs.

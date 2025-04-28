@@ -1,4 +1,4 @@
-import { StaticAssetGeneratorTool } from './static/static-generation.js';
+import { ImageAssetGeneratorTool } from './image/image-generation.js';
 import {
   CinematicAssetGeneratorTool,
   CinematicAssetResultTool,
@@ -9,7 +9,7 @@ import {
 // Asset generation tools collection
 export const assetGenerateTools = [
   // Static image generation tools
-  new StaticAssetGeneratorTool(),
+  new ImageAssetGeneratorTool(),
 
   // Cinematic generation tools
   new CinematicAssetGeneratorTool(),
@@ -21,7 +21,7 @@ export const assetGenerateTools = [
 // Export individual tools
 export {
   // Static image related
-  StaticAssetGeneratorTool,
+  ImageAssetGeneratorTool,
 
   // Cinematic related
   CinematicAssetGeneratorTool,

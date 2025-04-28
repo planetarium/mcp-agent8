@@ -47,7 +47,7 @@ Use this tool when you need to:
 [IMPORTANT NOTE]
 - This tool is specifically designed for generating music tracks.
 - For sound effects (SFX), please use the 'sfx_generate' tool instead.
-- For visual assets, use the appropriate tools like 'static_asset_generate' or 'skybox_generate'.
+- For visual assets, use the appropriate tools like 'image_asset_generate' or 'skybox_generate'.
 - Music generation may take 5-10 seconds to complete. Use 'audio_wait' tool with about 10 seconds wait time, then check with 'audio_status' tool using the requestId to see if generation is complete.
 - Once status shows 'COMPLETED', use 'audio_result' tool to get the final result.
 - IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.

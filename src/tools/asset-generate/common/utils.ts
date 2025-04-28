@@ -168,7 +168,7 @@ export function validateStaticAssetType(assetType: string): string {
 }
 
 /**
- * Generates optimized prompt for 2D static assets
+ * Generates optimized prompt for 2D image assets
  */
 export function generateStaticAssetPrompt(params: {
   description: string;

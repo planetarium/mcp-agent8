@@ -4,9 +4,9 @@ This module provides tools for generating game assets, including static images a
 
 ## Tools Overview
 
-### Static Asset Generation
+### Image Asset Generation
 
-- `StaticAssetGeneratorTool`: Generates game assets based on provided context
+- `ImageAssetGeneratorTool`: Generates game assets based on provided context
 
 ### Cinematic Generation
 
@@ -19,14 +19,14 @@ This module provides tools for generating game assets, including static images a
 
 ```typescript
 import {
-  StaticAssetGeneratorTool,
+  ImageAssetGeneratorTool,
   CinematicAssetGeneratorTool,
   CinematicStatusTool,
   CinematicWaitTool,
 } from './tools/asset-generate';
 
 // Initialize tools
-const staticGenerator = new StaticAssetGeneratorTool();
+const staticGenerator = new ImageAssetGeneratorTool();
 const cinematicGenerator = new CinematicAssetGeneratorTool();
 const cinematicStatus = new CinematicStatusTool();
 const cinematicWait = new CinematicWaitTool();
@@ -68,7 +68,7 @@ while (!isComplete) {
 ```
 asset-generate/
 ├── common/           # Shared utilities and types
-├── static/           # Static image generation
+├── image/            # 2D image asset generation
 ├── cinematic/        # Cinematic sequence generation
 └── index.ts          # Main export file
 ```
