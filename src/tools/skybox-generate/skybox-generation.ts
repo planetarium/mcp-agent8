@@ -60,7 +60,7 @@ Different styles offer different aesthetic qualities, for example:
     required: ['prompt']
   };
 
-  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
+  protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
     return {
       prompt: args.prompt,
       skybox_style_id: args.skybox_style_id || 67, // Default to style ID 67 if not provided

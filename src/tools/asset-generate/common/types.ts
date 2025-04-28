@@ -47,7 +47,7 @@ export abstract class AssetGeneratorBase implements Tool {
         }
       }
 
-      args = this.sanitizeArgs(args);
+      args = this.sanitizeToolArgs(args);
 
       // Call the asset generation method of child class
       const result = await this.generateAsset(args, apiEndpoint, context);
@@ -108,7 +108,7 @@ export abstract class AssetGeneratorBase implements Tool {
    * @param args The arguments to sanitize
    * @returns The sanitized arguments
    */
-  protected abstract sanitizeArgs(args: Record<string, any>): Record<string, any>;
+  protected abstract sanitizeToolArgs(args: Record<string, any>): Record<string, any>;
 
   /**
    * Returns the API endpoint for the tool

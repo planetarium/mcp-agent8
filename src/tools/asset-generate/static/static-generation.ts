@@ -1,7 +1,7 @@
 import { ToolExecutionContext } from '../../types.js';
 import {
   authenticatedRequest,
-  sanitizeParameters,
+  sanitizeAPIParameters,
   generateStaticAssetPrompt,
   mapToRecraftStyle,
 } from '../common/utils.js';
@@ -95,7 +95,7 @@ Use this tool when you need to:
     required: ['description'],
   };
 
-  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
+  protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
     return {
       description: args.description,
       style: args.style || 'pixel art',
@@ -143,7 +143,7 @@ Use this tool when you need to:
       style: recraftStyle,
     };
 
-    const sanitizedParams = sanitizeParameters(parameters);
+    const sanitizedParams = sanitizeAPIParameters(parameters);
 
     // Update progress
     if (context.progressCallback) {
