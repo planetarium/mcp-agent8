@@ -11,16 +11,7 @@
 
 import { MusicGeneratorTool } from './music/music-generation.js';
 import { SoundEffectsGeneratorTool } from './sfx/sfx-generation.js';
-import { AudioStatusTool, AudioResultTool, AudioWaitTool } from './common/wait-tools.js';
-
-// Collection of audio generation tools
-export const audioGenerationTools = [
-  new MusicGeneratorTool(),
-  new SoundEffectsGeneratorTool(),
-  new AudioStatusTool(),
-  new AudioResultTool(),
-  new AudioWaitTool(),
-];
+import { AudioStatusTool, AudioResultTool, AudioWaitTool } from './wait-tools.js';
 
 // Export individual tools
 export {
@@ -30,6 +21,3 @@ export {
   AudioResultTool,
   AudioWaitTool,
 };
-
-// Default export for compatibility with existing imports
-export default audioGenerationTools;

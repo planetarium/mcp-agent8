@@ -13,8 +13,6 @@ import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { ToolProvider } from './tools/provider.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
-import { skyboxGenerateTools } from './tools/skybox-generate/index.js';
-import { audioGenerationTools } from './tools/audio-generate/index.js';
 import { env } from './utils/env.js';
 
 /**
@@ -65,14 +63,14 @@ export class McpServer {
     const enableAllTools = env.getBoolean('ENABLE_ALL_TOOLS', true);
     let registeredToolCount = 0;
 
-    // Register asset generation tools (includes both static and cinematic)
+    // Register asset generation tools (includes image, cinematic, audio, and skybox)
     const enableAssetGenerateTools = enableAllTools && env.getBoolean('ENABLE_ASSET_GENERATE_TOOLS', true);
     if (enableAssetGenerateTools && assetGenerateTools.length > 0) {
       assetGenerateTools.forEach((tool) => {
         this.toolProvider.getRegistry().register(tool);
         registeredToolCount++;
       });
-      logger.info(`${assetGenerateTools.length} asset generation tools registered`);
+      logger.info(`${assetGenerateTools.length} asset generation tools registered (including image, cinematic, audio, and skybox)`);
     } else {
       logger.info('Asset generation tools are disabled');
     }
@@ -87,30 +85,6 @@ export class McpServer {
       logger.info(`${vectorSearchTools.length} vector search tools registered`);
     } else {
       logger.info('Vector search tools are disabled');
-    }
-
-    // Register skybox generation tools
-    const enableSkyboxGenerationTools = enableAllTools && env.getBoolean('ENABLE_SKYBOX_GENERATION_TOOL', true);
-    if (enableSkyboxGenerationTools && skyboxGenerateTools.length > 0) {
-      skyboxGenerateTools.forEach((tool) => {
-        this.toolProvider.getRegistry().register(tool);
-        registeredToolCount++;
-      });
-      logger.info(`${skyboxGenerateTools.length} skybox generation tools registered`);
-    } else {
-      logger.info('Skybox generation tools are disabled');
-    }
-
-    // Register audio generation tools
-    const enableAudioGenerationTools = enableAllTools && env.getBoolean('ENABLE_AUDIO_GENERATION_TOOLS', true);
-    if (enableAudioGenerationTools && audioGenerationTools.length > 0) {
-      audioGenerationTools.forEach((tool) => {
-        this.toolProvider.getRegistry().register(tool);
-        registeredToolCount++;
-      });
-      logger.info(`${audioGenerationTools.length} audio generation tools registered`);
-    } else {
-      logger.info('Audio generation tools are disabled');
     }
 
     logger.info(`Total ${registeredToolCount} tools registered`);

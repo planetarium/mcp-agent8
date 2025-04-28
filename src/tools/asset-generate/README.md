@@ -1,6 +1,6 @@
 # Asset Generation Tools
 
-This module provides tools for generating game assets, including static images and cinematic sequences.
+This module provides tools for generating game assets, including static images, cinematic sequences, audio, and skybox environments.
 
 ## Tools Overview
 
@@ -15,51 +15,99 @@ This module provides tools for generating game assets, including static images a
 - `CinematicStatusTool`: Checks status of cinematic generation requests
 - `CinematicWaitTool`: Provides a waiting utility between status checks (recommended 30 seconds)
 
+### Audio Generation
+
+- `MusicGeneratorTool`: Creates music tracks based on text descriptions
+- `SoundEffectsGeneratorTool`: Creates sound effects based on text descriptions
+- `AudioStatusTool`: Checks the status of audio generation
+- `AudioResultTool`: Retrieves the result of completed audio generation
+- `AudioWaitTool`: Allows waiting for audio generation to complete (recommended 10s for music, 5s for SFX)
+
+### Skybox Generation
+
+- `SkyboxGeneratorTool`: Creates panoramic skybox environments based on prompts
+- `SkyboxStatusTool`: Checks status of skybox generation requests
+- `SkyboxWaitTool`: Provides a waiting utility between status checks
+- `SkyboxStylesTool`: Lists available skybox generation styles
+
 ## Usage
 
 ```typescript
 import {
+  // Image tools
   ImageAssetGeneratorTool,
+
+  // Cinematic tools
   CinematicAssetGeneratorTool,
   CinematicStatusTool,
   CinematicWaitTool,
+
+  // Audio tools
+  MusicGeneratorTool,
+  SoundEffectsGeneratorTool,
+  AudioStatusTool,
+  AudioResultTool,
+  AudioWaitTool,
+
+  // Skybox tools
+  SkyboxGeneratorTool,
+  SkyboxStatusTool,
+  SkyboxWaitTool,
+  SkyboxStylesTool,
 } from './tools/asset-generate';
 
 // Initialize tools
-const staticGenerator = new ImageAssetGeneratorTool();
+const imageGenerator = new ImageAssetGeneratorTool();
 const cinematicGenerator = new CinematicAssetGeneratorTool();
 const cinematicStatus = new CinematicStatusTool();
 const cinematicWait = new CinematicWaitTool();
+const musicGenerator = new MusicGeneratorTool();
+const sfxGenerator = new SoundEffectsGeneratorTool();
+const audioStatus = new AudioStatusTool();
+const audioWait = new AudioWaitTool();
+const skyboxGenerator = new SkyboxGeneratorTool();
+const skyboxStatus = new SkyboxStatusTool();
 
-// Generate assets
-await staticGenerator.execute({
+// Generate image asset
+await imageGenerator.execute({
   context: 'Fantasy RPG game scene with a castle',
   style: 'Pixel art, 16-bit style',
 });
 
-// Generate cinematic with status checking
-const result = await cinematicGenerator.execute({
-  prompt: 'Epic battle scene between hero and dragon',
-  reference_image_urls: ['url-to-reference-image'],
-  aspect_ratio: '16:9',
+// Generate music with status checking
+const musicResult = await musicGenerator.execute({
+  prompt: 'Epic orchestral theme with dramatic strings and percussion',
+  duration: 30,
 });
 
-// For queued cinematic generations, check status with waiting
-const queueUrl = result.url; // URL returned from the original request
-let isComplete = false;
-
-while (!isComplete) {
-  // Check current status
-  const statusResult = await cinematicStatus.execute({ url: queueUrl });
-
-  // If complete, break out of loop
+// For queued audio generation, check status with waiting
+let audioComplete = false;
+while (!audioComplete) {
+  await audioWait.execute({ seconds: 10 });
+  const statusResult = await audioStatus.execute({
+    request_id: musicResult.request_id,
+    model: 'cassetteai/music-generator',
+  });
   if (statusResult.status === 'COMPLETED') {
-    isComplete = true;
-    break;
+    audioComplete = true;
   }
+}
 
-  // Wait 30 seconds before checking again
-  await cinematicWait.execute({ seconds: 30 });
+// Generate skybox with status checking
+const skyboxResult = await skyboxGenerator.execute({
+  prompt: 'Stunning sunset over mountains with dramatic clouds',
+  style: 'realistic',
+  negative_prompt: 'buildings, people, distortion',
+});
+
+// Wait and check status for skybox
+let skyboxComplete = false;
+while (!skyboxComplete) {
+  await skyboxWait.execute({ seconds: 20 });
+  const statusResult = await skyboxStatus.execute({ skybox_id: skyboxResult.skybox_id });
+  if (statusResult.is_complete) {
+    skyboxComplete = true;
+  }
 }
 ```
 
@@ -70,12 +118,16 @@ asset-generate/
 ├── common/           # Shared utilities and types
 ├── image/            # 2D image asset generation
 ├── cinematic/        # Cinematic sequence generation
+├── audio/            # Audio asset generation
+│   ├── music/        # Music track generation
+│   └── sfx/          # Sound effects generation
+├── skybox/           # Skybox environment generation
 └── index.ts          # Main export file
 ```
 
 ## Technical Details
 
-These tools use the fal.ai API while providing a more game development-focused interface. All tools support progress callbacks and provide detailed error information when things go wrong.
+These tools use various AI generation APIs while providing a game development-focused interface. All tools support progress callbacks and provide detailed error information when things go wrong.
 
 ### Common Architecture
 
@@ -87,7 +139,7 @@ The tools share these common components:
 
 ## Requirements
 
-- API key set in the environment variable `FAL_KEY`
+- API keys set in the respective environment variables
 - Node.js with ES modules support
 - Internet connection for API access
 

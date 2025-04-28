@@ -1,12 +1,12 @@
-import { ToolExecutionContext } from '../../types.js';
-import { AudioGeneratorBase } from '../common/types.js';
-import { sanitizeAPIParameters } from '../../asset-generate/common/utils.js';
-import { queueSubmit } from '../common/queue-utils.js';
+import { ToolExecutionContext } from '../../../types.js';
+import { AudioGeneratorBase } from '../audio-generator.js';
+import { sanitizeAPIParameters } from '../../common/utils.js';
+import { queueSubmit } from '../../common/queue-utils.js';
 import {
   DEFAULT_MUSIC_API_ENDPOINT,
   DEFAULT_AUDIO_DURATION,
-} from '../../asset-generate/common/constants.js';
-import { logger } from '../../../utils/logging.js';
+} from '../../common/constants.js';
+import { logger } from '../../../../utils/logging.js';
 
 /**
  * Music Generator Tool for generating music tracks based on text descriptions.

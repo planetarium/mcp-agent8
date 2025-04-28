@@ -1,16 +1,17 @@
-import { ToolExecutionContext, ToolResult } from '../types.js';
-import { SkyboxGeneratorBase, SkyboxStatusResponse, SkyboxStyle } from './types.js';
+import { ToolExecutionContext, ToolResult } from '../../types.js';
+import { SkyboxStatusResponse, SkyboxStyle } from './types.js';
 import { blockadeRequest } from './utils.js';
-import { DEFAULT_POLLING_INTERVAL } from './constants.js';
-import { logger } from '../../utils/logging.js';
-import { Tool } from '../types.js';
+import { DEFAULT_POLLING_INTERVAL, TOOL_TYPE_SKYBOX_GENERATION } from './constants.js';
+import { logger } from '../../../utils/logging.js';
+import { Tool } from '../../types.js';
+import { AssetGeneratorBase } from '../common/types.js';
 
 /**
  * Skybox Generator Tool
  *
  * Generates immersive 360° skybox environments based on text prompts.
  */
-export class SkyboxGeneratorTool extends SkyboxGeneratorBase {
+export class SkyboxGeneratorTool extends AssetGeneratorBase {
   name = 'skybox_generate';
   description = `Generates immersive 360° skybox environments based on text prompts.
 
@@ -112,6 +113,10 @@ Different styles offer different aesthetic qualities, for example:
       logger.error('Failed to initiate skybox generation:', error);
       throw new Error(`Failed to initiate skybox generation: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  protected getToolType(): string {
+    return TOOL_TYPE_SKYBOX_GENERATION;
   }
 }
 

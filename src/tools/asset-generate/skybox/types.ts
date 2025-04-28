@@ -1,16 +1,3 @@
-import { AssetGeneratorBase } from '../asset-generate/common/types.js';
-import { TOOL_TYPE_SKYBOX_GENERATION } from './constants.js';
-
-/**
- * Skybox Generator Base class
- * Extends AssetGeneratorBase with Skybox specific functionality
- */
-export abstract class SkyboxGeneratorBase extends AssetGeneratorBase {
-  protected getToolType(): string {
-    return TOOL_TYPE_SKYBOX_GENERATION;
-  }
-}
-
 /**
  * Response from Skybox generation API
  */
