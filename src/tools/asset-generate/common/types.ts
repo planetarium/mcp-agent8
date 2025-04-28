@@ -47,6 +47,8 @@ export abstract class AssetGeneratorBase implements Tool {
         }
       }
 
+      args = this.sanitizeArgs(args);
+
       // Call the asset generation method of child class
       const result = await this.generateAsset(args, apiEndpoint, context);
 
