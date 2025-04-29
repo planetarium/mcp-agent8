@@ -1,12 +1,12 @@
-import { ToolExecutionContext } from '../../types.js';
-import { AudioGeneratorBase } from '../common/types.js';
-import { sanitizeAPIParameters } from '../../asset-generate/common/utils.js';
-import { queueSubmit } from '../common/queue-utils.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../../types.js';
+import { AudioGeneratorBase } from '../audio-generator.js';
+import { sanitizeAPIParameters } from '../../common/utils.js';
+import { queueSubmit } from '../../common/queue-utils.js';
 import {
   DEFAULT_MUSIC_API_ENDPOINT,
   DEFAULT_AUDIO_DURATION,
-} from '../../asset-generate/common/constants.js';
-import { logger } from '../../../utils/logging.js';
+} from '../../common/constants.js';
+import { logger } from '../../../../utils/logging.js';
 
 /**
  * Music Generator Tool for generating music tracks based on text descriptions.
@@ -47,7 +47,7 @@ Use this tool when you need to:
 [IMPORTANT NOTE]
 - This tool is specifically designed for generating music tracks.
 - For sound effects (SFX), please use the 'sfx_generate' tool instead.
-- For visual assets, use the appropriate tools like 'static_asset_generate' or 'skybox_generate'.
+- For visual assets, use the appropriate tools like 'image_asset_generate' or 'skybox_generate'.
 - Music generation may take 5-10 seconds to complete. Use 'audio_wait' tool with about 10 seconds wait time, then check with 'audio_status' tool using the requestId to see if generation is complete.
 - Once status shows 'COMPLETED', use 'audio_result' tool to get the final result.
 - IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.
@@ -67,6 +67,14 @@ Use this tool when you need to:
 - Be specific about the emotional impact you want the music to have
 - Consider how the music will fit with other elements of your game`;
 
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
+
   inputSchema = {
     type: 'object',
     properties: {
@@ -83,14 +91,14 @@ Use this tool when you need to:
     required: ['prompt'],
   };
 
-  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
+  protected sanitizeAudioArgs(args: Record<string, any>): Record<string, any> {
     return {
       prompt: args.prompt,
       duration: args.duration || DEFAULT_AUDIO_DURATION,
     };
   }
 
-  protected getApiEndpoint(): string {
+  protected getAudioEndpoint(): string {
     return DEFAULT_MUSIC_API_ENDPOINT;
   }
 
@@ -98,11 +106,11 @@ Use this tool when you need to:
     return 'music';
   }
 
-  protected async generateAudio(
-    args: Record<string, unknown>,
+  protected async generateAsset(
+    args: Record<string, any>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<Record<string, unknown>> {
+  ): Promise<any> {
     const { progressCallback } = context;
 
     // Prepare request parameters

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { BLOCKADE_API_KEY_ENV_VAR, DEFAULT_TIMEOUT, BLOCKADE_LABS_API_URL } from './constants.js';
-import { logger } from '../../utils/logging.js';
-import { env } from '../../utils/env.js';
+import { logger } from '../../../utils/logging.js';
+import { env } from '../../../utils/env.js';
 
 /**
  * Gets Blockade Labs API key from environment

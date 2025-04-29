@@ -3,6 +3,33 @@ import { CallToolRequest, Progress } from '@modelcontextprotocol/sdk/types.js';
 import { V8User } from '../types/v8user.js';
 
 /**
+ * Tool category/type enumeration
+ */
+export enum ToolCategory {
+  // Asset generation categories
+  IMAGE_GENERATION = 'image_generation',
+  CINEMATIC_GENERATION = 'cinematic_generation',
+  AUDIO_GENERATION = 'audio_generation',
+  SKYBOX_GENERATION = 'skybox_generation',
+
+  // Vector search categories
+  CODE_EXAMPLE_SEARCH = 'code_example_search',
+  GAME_RESOURCE_SEARCH = 'game_resource_search',
+
+  // Group categories
+  ASSET_GENERATION = 'asset_generation',
+  VECTOR_SEARCH = 'vector_search'
+}
+
+/**
+ * Tool metadata interface
+ */
+export interface ToolMetadata {
+  // Array of categories this tool belongs to
+  categories: ToolCategory[];
+}
+
+/**
  * Progress callback interface for reporting tool execution progress
  */
 export interface ProgressCallback {
@@ -26,6 +53,8 @@ export interface Tool {
   name: string;
   description: string;
   inputSchema: Record<string, unknown>;
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata;
   execute: (args: Record<string, any>, context: ToolExecutionContext) => Promise<ToolResult>;
 }
 

@@ -1,12 +1,12 @@
-import { ToolExecutionContext } from '../../types.js';
-import { AudioGeneratorBase } from '../common/types.js';
-import { sanitizeAPIParameters } from '../../asset-generate/common/utils.js';
-import { queueSubmit } from '../common/queue-utils.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../../types.js';
+import { AudioGeneratorBase } from '../audio-generator.js';
+import { sanitizeAPIParameters } from '../../common/utils.js';
+import { queueSubmit } from '../../common/queue-utils.js';
 import {
   DEFAULT_SFX_API_ENDPOINT,
   DEFAULT_AUDIO_DURATION,
-} from '../../asset-generate/common/constants.js';
-import { logger } from '../../../utils/logging.js';
+} from '../../common/constants.js';
+import { logger } from '../../../../utils/logging.js';
 
 /**
  * Sound Effects Generator Tool
@@ -36,7 +36,7 @@ Use this tool when you need to:
   4. If status is not 'COMPLETED', wait again and check status until complete
 - Sound effect generation typically takes 5-15 seconds to complete depending on duration
 - For music tracks and longer compositions, please use the 'music_generate' tool instead
-- For visual assets, use appropriate tools like 'static_asset_generate' or 'skybox_generate'
+- For visual assets, use appropriate tools like 'image_asset_generate' or 'skybox_generate'
 - IMPORTANT: Prompts MUST be written in English only. The API does not support other languages, and non-English prompts may result in errors or unexpected results.
 
 [KEY FEATURES]
@@ -52,6 +52,14 @@ Use this tool when you need to:
 - Describe the sound's intensity, duration, and character
 - Consider how the sound will fit with other audio in your game
 - Keep descriptions clear and focused on the specific sound needed`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -69,14 +77,14 @@ Use this tool when you need to:
     required: ['prompt'],
   };
 
-  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
+  protected sanitizeAudioArgs(args: Record<string, any>): Record<string, any> {
     return {
       prompt: args.prompt,
       duration: args.duration || DEFAULT_AUDIO_DURATION,
     };
   }
 
-  protected getApiEndpoint(): string {
+  protected getAudioEndpoint(): string {
     return DEFAULT_SFX_API_ENDPOINT;
   }
 
@@ -84,11 +92,11 @@ Use this tool when you need to:
     return 'sound effect';
   }
 
-  protected async generateAudio(
-    args: Record<string, unknown>,
+  protected async generateAsset(
+    args: Record<string, any>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<Record<string, unknown>> {
+  ): Promise<any> {
     const { progressCallback } = context;
 
     // Prepare request parameters

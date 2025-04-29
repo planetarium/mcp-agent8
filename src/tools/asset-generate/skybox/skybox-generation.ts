@@ -1,16 +1,17 @@
-import { ToolExecutionContext, ToolResult } from '../types.js';
-import { SkyboxGeneratorBase, SkyboxStatusResponse, SkyboxStyle } from './types.js';
+import { ToolExecutionContext, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
+import { SkyboxStatusResponse, SkyboxStyle } from './types.js';
 import { blockadeRequest } from './utils.js';
-import { DEFAULT_POLLING_INTERVAL } from './constants.js';
-import { logger } from '../../utils/logging.js';
-import { Tool } from '../types.js';
+import { DEFAULT_POLLING_INTERVAL, TOOL_TYPE_SKYBOX_GENERATION } from './constants.js';
+import { logger } from '../../../utils/logging.js';
+import { Tool } from '../../types.js';
+import { AssetGeneratorBase } from '../common/asset-generator.js';
 
 /**
  * Skybox Generator Tool
  *
  * Generates immersive 360° skybox environments based on text prompts.
  */
-export class SkyboxGeneratorTool extends SkyboxGeneratorBase {
+export class SkyboxGeneratorTool extends AssetGeneratorBase {
   name = 'skybox_generate';
   description = `Generates immersive 360° skybox environments based on text prompts.
 
@@ -25,7 +26,7 @@ Use this tool when you need to:
 
 [IMPORTANT NOTE]
 - This tool is specifically optimized for creating 360° environments and skyboxes.
-- For standard 2D game assets (sprites, UI elements, items, etc.), please use the 'static_asset_generate' tool instead.
+- For standard 2D game assets (sprites, UI elements, items, etc.), please use the 'image_asset_generate' tool instead.
 
 [STYLE SELECTION]
 First use skybox_styles tool to find a style ID that matches your needs.
@@ -39,6 +40,14 @@ Different styles offer different aesthetic qualities, for example:
 - Specify the style or aesthetic you want
 - Use skybox_styles tool to find the best style for your needs
 - Pay attention to character limits for each style`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -113,6 +122,20 @@ Different styles offer different aesthetic qualities, for example:
       throw new Error(`Failed to initiate skybox generation: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
+
+  protected getToolType(): string {
+    return TOOL_TYPE_SKYBOX_GENERATION;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const styleId = args.skybox_style_id || 67;
+    return `Skybox generation with style ${styleId}: "${String(args.prompt).substring(0, 30)}..."`;
+  }
 }
 
 /**
@@ -126,6 +149,14 @@ export class SkyboxStylesTool implements Tool {
   
 Use this tool to discover available skybox style options before using the skybox_generate tool.
 Each style has a unique ID and influences the overall aesthetic of generated skyboxes.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -213,6 +244,14 @@ export class SkyboxStatusTool implements Tool {
   description = `Checks the status of a queued skybox generation request.
   
 Use this tool to monitor the progress of a skybox generation request initiated with skybox_generate.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -313,6 +352,14 @@ export class SkyboxWaitTool implements Tool {
   description = `Polls a skybox generation request until it completes or fails.
   
 This tool continuously checks the status of a skybox generation and returns the final result when completed.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

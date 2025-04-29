@@ -7,7 +7,7 @@ import {
   SUPPORTED_STATIC_TYPES,
   DEFAULT_TIMEOUT,
 } from './constants.js';
-import { AssetUploadResponse } from '../types.js';
+import { AssetUploadResponse } from './types.js';
 import { v4 as uuidv4 } from 'uuid';
 import FormData from 'form-data';
 import { env } from '../../../utils/env.js';
@@ -27,6 +27,8 @@ import { env } from '../../../utils/env.js';
 export async function consumeToolUsageCredits(
   userUid: string,
   toolType: string,
+  usageCount: number = 1,
+  description: string = '',
 ): Promise<any> {
   try {
     // Check if required env vars are set
@@ -46,8 +48,8 @@ export async function consumeToolUsageCredits(
     const data = {
       userUid,
       toolType,
-      usageCount: 1,
-      description: '',
+      usageCount,
+      description,
     };
 
     // Make authenticated request
@@ -168,7 +170,7 @@ export function validateStaticAssetType(assetType: string): string {
 }
 
 /**
- * Generates optimized prompt for 2D static assets
+ * Generates optimized prompt for 2D image assets
  */
 export function generateStaticAssetPrompt(params: {
   description: string;

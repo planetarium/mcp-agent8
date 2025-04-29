@@ -1,4 +1,4 @@
-import { ToolExecutionContext, Tool, ToolResult } from '../../types.js';
+import { ToolExecutionContext, Tool, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
 import { queueStatus, queueResult } from './queue-utils.js';
 import { logger } from '../../../utils/logging.js';
 
@@ -14,6 +14,14 @@ export class AudioStatusTool implements Tool {
 Use this tool to check the current status of an audio generation job in the queue. Note that status updates may not be immediate - please allow approximately 5-10 seconds between status checks for updates to propagate.
 
 When you receive 'COMPLETED' status, use the audio_result tool with the same requestId to get the final output.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -93,6 +101,14 @@ export class AudioResultTool implements Tool {
   description = `Retrieves the final result of a completed audio generation request.
 
 Use this tool after audio_status reports 'COMPLETED' status to get the final audio file URL.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -187,98 +203,6 @@ Use this tool after audio_status reports 'COMPLETED' status to get the final aud
       logger.error('Failed to retrieve audio result:', error);
       return {
         content: [{ type: 'text', text: `Error: ${errorMessage}` }],
-        isError: true,
-      };
-    }
-  }
-}
-
-/**
- * Audio Wait Tool
- *
- * A utility tool that allows the LLM to wait a specified amount of time before checking status again.
- */
-export class AudioWaitTool implements Tool {
-  name = 'audio_wait';
-  description = `Allows waiting for a specified number of seconds before continuing execution.
-
-Use this tool between status checks to give time for audio generation to progress.
-The recommended wait time is 5-10 seconds between status checks for music generation and 2-5 seconds for sound effects.`;
-
-  inputSchema = {
-    type: 'object',
-    properties: {
-      seconds: {
-        type: 'integer',
-        description: 'Number of seconds to wait. Default is 10 seconds.',
-        default: 10,
-        minimum: 1,
-        maximum: 60,
-      },
-      status_message: {
-        type: 'string',
-        description: 'Optional status message to display during the wait',
-      },
-    },
-    required: ['seconds'],
-  };
-
-  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
-    try {
-      const seconds = (args.seconds as number) || 10;
-      const statusMessage =
-        (args.status_message as string) || `Waiting ${seconds} seconds for audio generation...`;
-
-      // Limit waiting time to a reasonable amount (between 1 and 60 seconds)
-      const waitTime = Math.max(1, Math.min(60, seconds));
-
-      // Initial progress update
-      if (context.progressCallback) {
-        await context.progressCallback({
-          progress: 0,
-          total: waitTime,
-          message: statusMessage,
-        });
-      }
-
-      // Wait loop with progress updates
-      for (let i = 1; i <= waitTime; i++) {
-        // Wait for 1 second
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Update progress every second
-        if (context.progressCallback) {
-          await context.progressCallback({
-            progress: i,
-            total: waitTime,
-            message: `${statusMessage} (${i}/${waitTime}s)`,
-          });
-        }
-      }
-
-      // Final progress update
-      if (context.progressCallback) {
-        await context.progressCallback({
-          progress: waitTime,
-          total: waitTime,
-          message: 'Wait completed. You can now check the status again.',
-        });
-      }
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Waited for ${waitTime} seconds. You can now check the status of your audio generation.`,
-          },
-        ],
-        isError: false,
-      };
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error('Failed to execute wait:', error);
-      return {
-        content: [{ type: 'text', text: `Error during wait: ${errorMessage}` }],
         isError: true,
       };
     }

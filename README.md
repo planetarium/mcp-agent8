@@ -14,9 +14,12 @@ This Agent8 MCP Server implements the following MCP specification capabilities:
 
 - **Code Examples Search**: Retrieves relevant Agent8 game development code examples from a vector database using the `search_code_examples` tool.
 - **Game Resource Search**: Searches for game development assets (sprites, animations, sounds, etc.) using semantic similarity matching via the `search_game_resources` tool.
-- **Asset Generation**: Generates game assets including static images and cinematics using the `static_asset_generate` and `cinematic_asset_generate` tools.
-- **Skybox Generation**: Creates immersive 360° skybox environments for VR/AR applications and games using the `skybox_generate` tool, `skybox_status` tool, and `skybox_wait` tool.
-- **Audio Generation**: Creates custom music tracks and sound effects for games using the `music_generate` and `sfx_generate` tools, with support for status checking via `audio_status` and result retrieval via `audio_result`.
+- **Asset Generation**: Comprehensive toolset for game asset creation:
+  - **Images**: Generate 2D game assets using the `image_asset_generate` tool
+  - **Cinematics**: Create cinematic sequences with `cinematic_asset_generate` tool
+  - **Audio**: Generate music tracks and sound effects with `music_generate` and `sfx_generate` tools
+  - **Skyboxes**: Create 360° environmental backgrounds with `skybox_generate` tool
+  - **Support Tools**: Status checking, result retrieval, and wait utilities for asynchronous generation
 
 ## Installation
 
@@ -175,40 +178,45 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 #### Supported Environment Variables
 
-| Variable                         | Description                                     | Default                                                  |
-| -------------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
-| MCP_TRANSPORT                    | Transport type (stdio or sse)                   | stdio                                                    |
-| PORT                             | Port to use for SSE transport                   | 3000                                                     |
-| LOG_LEVEL                        | Log level (debug, info, warn, error)            | info                                                     |
-| LOG_DESTINATION                  | Log destination (stdout, stderr, file, none)    | stderr (for stdio transport), stdout (for sse transport) |
-| LOG_FILE                         | Path to log file (when LOG_DESTINATION is file) | (none)                                                   |
-| DEBUG                            | Enable debug mode (true/false)                  | false                                                    |
-| V8_AUTH_API_ENDPOINT             | Authentication API endpoint URL                 | (none)                                                   |
-| V8_AUTH_REQUIRE                  | Require authentication for API endpoints        | false                                                    |
-| SUPABASE_URL                     | Supabase URL for database connection            | (required)                                               |
-| SUPABASE_SERVICE_ROLE_KEY        | Supabase service role key for authentication    | (required)                                               |
-| OPENAI_API_KEY                   | OpenAI API key for AI functionality             | (required)                                               |
-| FAL_KEY                          | fal.ai API key for asset generation             | (required)                                               |
-| BLOCKADE_LABS_API_KEY            | Blockade Labs API key for skybox generation     | (required for skybox generation)                         |
-| V8_CREDIT_CLIENT_ID              | Client ID for credit consumption API            | (none, optional for asset generation)                    |
-| V8_CREDIT_CLIENT_SECRET          | Client secret for credit consumption API        | (none, optional for asset generation)                    |
-| V8_CREDIT_API_ENDPOINT           | API endpoint for credit consumption             | (required for asset generation)                          |
-| ENABLE_ALL_TOOLS                 | Enable or disable all tools globally            | true                                                     |
-| ENABLE_VECTOR_SEARCH_TOOLS       | Enable or disable all vector search tools       | true                                                     |
-| ENABLE_ASSET_GENERATE_TOOLS      | Enable or disable all asset generation tools    | true                                                     |
-| ENABLE_SKYBOX_GENERATION_TOOL    | Enable or disable skybox generation tools       | true                                                     |
-| ENABLE_AUDIO_GENERATION_TOOLS    | Enable or disable audio generation tools        | true                                                     |
-| ENABLE_CODE_EXAMPLE_SEARCH_TOOL  | Enable or disable code example search tool      | true                                                     |
-| ENABLE_GAME_RESOURCE_SEARCH_TOOL | Enable or disable game resource search tool     | true                                                     |
+| Variable                          | Description                                                                        | Default                                                  |
+| --------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| MCP_TRANSPORT                     | Transport type (stdio or sse)                                                      | stdio                                                    |
+| PORT                              | Port to use for SSE transport                                                      | 3000                                                     |
+| LOG_LEVEL                         | Log level (debug, info, warn, error)                                               | info                                                     |
+| LOG_DESTINATION                   | Log destination (stdout, stderr, file, none)                                       | stderr (for stdio transport), stdout (for sse transport) |
+| LOG_FILE                          | Path to log file (when LOG_DESTINATION is file)                                    | (none)                                                   |
+| DEBUG                             | Enable debug mode (true/false)                                                     | false                                                    |
+| V8_AUTH_API_ENDPOINT              | Authentication API endpoint URL                                                    | (none)                                                   |
+| V8_AUTH_REQUIRE                   | Require authentication for API endpoints                                           | false                                                    |
+| SUPABASE_URL                      | Supabase URL for database connection                                               | (required)                                               |
+| SUPABASE_SERVICE_ROLE_KEY         | Supabase service role key for authentication                                       | (required)                                               |
+| OPENAI_API_KEY                    | OpenAI API key for AI functionality                                                | (required)                                               |
+| FAL_KEY                           | fal.ai API key for asset generation                                                | (required)                                               |
+| BLOCKADE_LABS_API_KEY             | Blockade Labs API key for skybox generation                                        | (required for skybox generation)                         |
+| V8_CREDIT_CLIENT_ID               | Client ID for credit consumption API                                               | (none, optional for asset generation)                    |
+| V8_CREDIT_CLIENT_SECRET           | Client secret for credit consumption API                                           | (none, optional for asset generation)                    |
+| V8_CREDIT_API_ENDPOINT            | API endpoint for credit consumption                                                | (required for asset generation)                          |
+| ENABLE_ALL_TOOLS                  | Enable or disable all tools globally                                               | true                                                     |
+| ENABLE_VECTOR_SEARCH_TOOLS        | Enable or disable all vector search tools                                          | true                                                     |
+| ENABLE_ASSET_GENERATE_TOOLS       | Enable or disable all asset generation tools (images, cinematics, audio, skyboxes) | true                                                     |
+| ENABLE_IMAGE_GENERATION_TOOLS     | Enable or disable image generation tools                                           | true                                                     |
+| ENABLE_CINEMATIC_GENERATION_TOOLS | Enable or disable cinematic generation tools                                       | true                                                     |
+| ENABLE_AUDIO_GENERATION_TOOLS     | Enable or disable audio generation tools                                           | true                                                     |
+| ENABLE_SKYBOX_GENERATION_TOOLS    | Enable or disable skybox generation tools                                          | true                                                     |
+| ENABLE_CODE_EXAMPLE_SEARCH_TOOL   | Enable or disable code example search tool                                         | true                                                     |
+| ENABLE_GAME_RESOURCE_SEARCH_TOOL  | Enable or disable game resource search tool                                        | true                                                     |
 
 **Tool Activation Priority**:
 The tool activation settings follow this priority order:
 
 1. Individual tool settings (e.g., `ENABLE_CODE_EXAMPLE_SEARCH_TOOL`)
-2. Tool group settings (e.g., `ENABLE_VECTOR_SEARCH_TOOLS`, `ENABLE_ASSET_GENERATE_TOOLS`)
-3. Global tool setting (`ENABLE_ALL_TOOLS`)
+2. Asset type settings (e.g., `ENABLE_IMAGE_GENERATION_TOOLS`, `ENABLE_CINEMATIC_GENERATION_TOOLS`)
+3. Tool group settings (e.g., `ENABLE_VECTOR_SEARCH_TOOLS`, `ENABLE_ASSET_GENERATE_TOOLS`)
+4. Global tool setting (`ENABLE_ALL_TOOLS`)
 
-For example, if you set `ENABLE_ALL_TOOLS=false` but `ENABLE_VECTOR_SEARCH_TOOLS=true`, only vector search tools will be enabled while other tools remain disabled. Similarly, individual tool settings override their respective group settings.
+Individual settings always override group settings, and group settings override the global setting. When individual settings are explicitly set, they take precedence over their parent settings.
+
+**Important**: To enable only specific tools, you should set all higher-level settings to `false` and only enable the specific tools you need. This approach provides a more consistent and predictable configuration.
 
 **Examples**:
 
@@ -217,13 +225,21 @@ For example, if you set `ENABLE_ALL_TOOLS=false` but `ENABLE_VECTOR_SEARCH_TOOLS
 ENABLE_ALL_TOOLS=false
 ENABLE_VECTOR_SEARCH_TOOLS=true
 
-# Enable only asset generation tools
+# Enable only image generation tool, disable all others
 ENABLE_ALL_TOOLS=false
-ENABLE_ASSET_GENERATE_TOOLS=true
+ENABLE_ASSET_GENERATE_TOOLS=false
+ENABLE_IMAGE_GENERATION_TOOLS=true
 
-# Disable a specific tool while keeping others enabled
-ENABLE_ALL_TOOLS=true
-ENABLE_CODE_EXAMPLE_SEARCH_TOOL=false
+# Enable only code example search tool, disable all others
+ENABLE_ALL_TOOLS=false
+ENABLE_VECTOR_SEARCH_TOOLS=false
+ENABLE_CODE_EXAMPLE_SEARCH_TOOL=true
+
+# Enable only cinematic and audio generation tools
+ENABLE_ALL_TOOLS=false
+ENABLE_ASSET_GENERATE_TOOLS=false
+ENABLE_CINEMATIC_GENERATION_TOOLS=true
+ENABLE_AUDIO_GENERATION_TOOLS=true
 ```
 
 ### Using Stdio Transport

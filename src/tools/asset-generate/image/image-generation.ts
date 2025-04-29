@@ -1,4 +1,4 @@
-import { ToolExecutionContext } from '../../types.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../types.js';
 import {
   authenticatedRequest,
   sanitizeAPIParameters,
@@ -12,20 +12,20 @@ import {
   DEFAULT_STATIC_HEIGHT,
   TOOL_TYPE_IMAGE_GENERATION_2D,
 } from '../common/constants.js';
-import { AssetGeneratorBase } from '../common/types.js';
+import { AssetGeneratorBase } from '../common/asset-generator.js';
 import { uploadAssetToServer } from '../common/utils.js';
 import { logger } from '../../../utils/logging.js';
 
 /**
- * Game 2D Static Asset Generator Tool
+ * Game 2D Image Asset Generator Tool
  *
  * Generates 2D assets for game development.
  * Utilizes fal.ai API to help game developers easily create various 2D assets
  * for characters, items, backgrounds, UI elements, and more.
  */
-export class StaticAssetGeneratorTool extends AssetGeneratorBase {
-  name = 'static_asset_generate';
-  description = `Generates 2D static assets for game development.
+export class ImageAssetGeneratorTool extends AssetGeneratorBase {
+  name = 'image_asset_generate';
+  description = `Generates 2D image assets for game development.
 
 This tool helps game developers quickly create 2D assets for their games.
 
@@ -38,7 +38,7 @@ Use this tool when you need to:
 5. Generate tilemap elements
 
 [IMPORTANT NOTE]
-- This tool is specifically designed for 2D game assets and static images.
+- This tool is specifically designed for 2D game assets and images.
 - For creating immersive 360° environments or skyboxes for VR/AR applications, please use the 'skybox_generate' tool instead.
 
 [KEY FEATURES]
@@ -53,6 +53,14 @@ Use this tool when you need to:
 - Set appropriate asset dimensions (default: 128x128)
 - Include game type information (platformer, shooter, etc.)
 - Always adhere to the schema constraints for style, assetType, and gameType parameters`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.IMAGE_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -179,7 +187,7 @@ Use this tool when you need to:
     if (imageUrl) {
       const uploadedAsset = await uploadAssetToServer(
         imageUrl,
-        `static-${args.assetType || 'character'}`
+        `image-${args.assetType || 'character'}`
       );
 
       if (uploadedAsset.success && uploadedAsset.url) {
@@ -196,8 +204,8 @@ Use this tool when you need to:
         }
       } else {
         // Log upload failure
-        logger.warn(`Failed to upload static asset to server: ${uploadedAsset.error}`);
-        throw new Error(`Failed to upload static asset to server: ${uploadedAsset.error}`);
+        logger.warn(`Failed to upload image asset to server: ${uploadedAsset.error}`);
+        throw new Error(`Failed to upload image asset to server: ${uploadedAsset.error}`);
       }
     } else {
       logger.warn('Expected image URL not found in result format');
@@ -215,5 +223,16 @@ Use this tool when you need to:
 
   protected getToolType(): string {
     return TOOL_TYPE_IMAGE_GENERATION_2D;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const style = args.style || 'pixel art';
+    const assetType = args.assetType || 'character';
+    return `2D ${style} ${assetType} image generation: "${String(args.description).substring(0, 30)}..."`;
   }
 }

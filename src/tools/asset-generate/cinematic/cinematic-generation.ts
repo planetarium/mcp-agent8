@@ -6,8 +6,9 @@ import {
   uploadAssetToServer,
 } from '../common/utils.js';
 import { FAL_QUEUE_URL, TOOL_TYPE_VIDEO_GENERATION } from '../common/constants.js';
-import { AssetGeneratorBase, AssetResultBase } from '../common/types.js';
+import { AssetGeneratorBase, AssetResultBase } from '../common/asset-generator.js';
 import { logger } from '../../../utils/logging.js';
+import { Tool, ToolCategory, ToolMetadata } from '../../types.js';
 
 /**
  * Game Cinematic Asset Generator Tool
@@ -42,6 +43,14 @@ Use this tool when you need to:
 - Choose reference images that best represent your desired style and game art direction
 - Clearly specify desired camera angles, lighting, and color palettes
 - Include sufficient references to maintain consistency with your game's actual assets`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -256,6 +265,16 @@ Use this tool when you need to:
   protected getToolType(): string {
     return TOOL_TYPE_VIDEO_GENERATION;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const aspectRatio = args.parameters?.aspect_ratio || '16:9';
+    return `Cinematic video generation: "${String(args.parameters?.prompt || '').substring(0, 30)}..." (${aspectRatio})`;
+  }
 }
 
 /**
@@ -268,6 +287,14 @@ export class CinematicAssetResultTool extends AssetResultBase {
   description = `Retrieves the result of a queued cinematic generation request.
 
 When queue processing is complete, the generated cinematic assets (image or video URLs) will be returned.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
 
   protected async fetchResult(url: string): Promise<any> {
     // Get original result
@@ -368,11 +395,19 @@ When queue processing is complete, the generated cinematic assets (image or vide
  *
  * Checks the status of a queued cinematic generation request.
  */
-export class CinematicStatusTool {
+export class CinematicStatusTool implements Tool {
   name = 'cinematic_status';
   description = `Checks the status of a queued cinematic generation request.
 
-Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 30 seconds between status checks for updates to propagate.`;
+Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 60 seconds between status checks for updates to propagate.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -418,98 +453,6 @@ Use this tool to check the current status of a cinematic generation job in the q
       logger.error('Failed to check cinematic status:', error);
       return {
         content: [{ type: 'text', text: `Error: ${errorMessage}` }],
-        isError: true,
-      };
-    }
-  }
-}
-
-/**
- * Cinematic Wait Tool
- *
- * A utility tool that allows the LLM to wait a specified amount of time before checking status again.
- */
-export class CinematicWaitTool {
-  name = 'cinematic_wait';
-  description = `Allows waiting for a specified number of seconds before continuing execution.
-
-Use this tool between status checks to give time for cinematic generation to progress.
-The recommended wait time is 30 seconds between status checks.`;
-
-  inputSchema = {
-    type: 'object',
-    properties: {
-      seconds: {
-        type: 'integer',
-        description: 'Number of seconds to wait. Default is 30 seconds.',
-        default: 30,
-        minimum: 1,
-        maximum: 120,
-      },
-      status_message: {
-        type: 'string',
-        description: 'Optional status message to display during the wait',
-      },
-    },
-    required: ['seconds'],
-  };
-
-  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<any> {
-    try {
-      const seconds = args.seconds || 30;
-      const statusMessage =
-        args.status_message || `Waiting ${seconds} seconds for cinematic generation...`;
-
-      // Limit waiting time to a reasonable amount (between 1 and 120 seconds)
-      const waitTime = Math.max(1, Math.min(120, seconds));
-
-      // Initial progress update
-      if (context.progressCallback) {
-        await context.progressCallback({
-          progress: 0,
-          total: waitTime,
-          message: statusMessage,
-        });
-      }
-
-      // Wait loop with progress updates
-      for (let i = 1; i <= waitTime; i++) {
-        // Wait for 1 second
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Update progress every second
-        if (context.progressCallback) {
-          await context.progressCallback({
-            progress: i,
-            total: waitTime,
-            message: `${statusMessage} (${i}/${waitTime}s)`,
-          });
-        }
-      }
-
-      // Final progress update
-      if (context.progressCallback) {
-        await context.progressCallback({
-          progress: waitTime,
-          total: waitTime,
-          message: 'Wait completed. You can now check the status again.',
-        });
-      }
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Waited for ${waitTime} seconds. You can now check the status of your cinematic generation.`,
-          },
-        ],
-        isError: false,
-      };
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error('Failed to execute wait:', error);
-      return {
-        content: [{ type: 'text', text: `Error during wait: ${errorMessage}` }],
         isError: true,
       };
     }
