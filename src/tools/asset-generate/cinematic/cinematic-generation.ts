@@ -115,7 +115,7 @@ Use this tool when you need to:
       parameters: {
         prompt: args.prompt,
         aspect_ratio: args.aspect_ratio || '16:9',
-        reference_image_urls: referenceImages, // Use maximum of 3 images, with 3D 변환 처리
+        reference_image_urls: referenceImages, // Use maximum of 3 images
         seed: args.seed,
         movement_amplitude: args.movement_amplitude || 'auto',
       },
