@@ -94,12 +94,20 @@ Use this tool when you need to:
 
   protected sanitizeToolArgs(args: Record<string, any>): Record<string, any> {
     // Limit reference images to maximum of 3
-    const referenceImages = args.reference_image_urls || [];
+    let referenceImages = args.reference_image_urls || [];
     if (referenceImages.length > 3) {
       logger.warn(
         'Too many reference images provided. Maximum allowed is 3. Using only the first 3 images.'
       );
     }
+
+    // Map 3D files (glb/gltf/vrm) to flowkit conversion URL
+    referenceImages = referenceImages.slice(0, 3).map((url: string) => {
+      if (url.match(/\.(glb|gltf|vrm)(\?.*)?$/i)) {
+        return `https://www.flowkit.app/s/demo/r/${url}`;
+      }
+      return url;
+    });
 
     return {
       model: 'fal-ai/vidu/reference-to-video',
@@ -107,7 +115,7 @@ Use this tool when you need to:
       parameters: {
         prompt: args.prompt,
         aspect_ratio: args.aspect_ratio || '16:9',
-        reference_image_urls: referenceImages.slice(0, 3), // Use maximum of 3 images
+        reference_image_urls: referenceImages, // Use maximum of 3 images, with 3D 변환 처리
         seed: args.seed,
         movement_amplitude: args.movement_amplitude || 'auto',
       },
@@ -298,7 +306,7 @@ When queue processing is complete, the generated cinematic assets (image or vide
 
   protected async fetchResult(url: string): Promise<any> {
     // Get original result
-    const result = await authenticatedRequest(url);
+    const result = await authenticatedRequest(url, 'GET');
 
     // Check for cinematic asset URLs in the result
     let assetUrls: string[] = [];
