@@ -83,14 +83,14 @@ Use this tool when you need to:
     required: ['prompt'],
   };
 
-  protected sanitizeArgs(args: Record<string, unknown>): Record<string, unknown> {
+  protected sanitizeAudioArgs(args: Record<string, any>): Record<string, any> {
     return {
       prompt: args.prompt,
       duration: args.duration || DEFAULT_AUDIO_DURATION,
     };
   }
 
-  protected getApiEndpoint(): string {
+  protected getAudioEndpoint(): string {
     return DEFAULT_MUSIC_API_ENDPOINT;
   }
 
@@ -98,11 +98,11 @@ Use this tool when you need to:
     return 'music';
   }
 
-  protected async generateAudio(
-    args: Record<string, unknown>,
+  protected async generateAsset(
+    args: Record<string, any>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<Record<string, unknown>> {
+  ): Promise<any> {
     const { progressCallback } = context;
 
     // Prepare request parameters
