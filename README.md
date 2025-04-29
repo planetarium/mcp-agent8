@@ -1,6 +1,6 @@
 # MCP Server for Agent8
 
-A server implementing the Model Context Protocol (MCP) to support Agent8 SDK development. Developed with TypeScript and pnpm, supporting stdio and SSE transports.
+A server implementing the Model Context Protocol (MCP) to support Agent8 SDK development. Developed with TypeScript and pnpm, supporting stdio, SSE, and streamable-http transports.
 
 ## Features
 
@@ -133,8 +133,8 @@ pnpm start --version
 Supported options:
 
 - `--debug`: Enable debug mode
-- `--transport <type>`: Transport type (stdio or sse), default: stdio
-- `--port <number>`: Port to use for SSE transport, default: 3000
+- `--transport <type>`: Transport type (stdio, sse, or streamable-http), default: stdio
+- `--port <number>`: Port to use for SSE or HTTP transport, default: 3000
 - `--log-destination <dest>`: Log destination (stdout, stderr, file, none)
 - `--log-file <path>`: Path to log file (when log-destination is file)
 - `--log-level <level>`: Log level (debug, info, warn, error), default: info
@@ -180,7 +180,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 | Variable                          | Description                                                                        | Default                                                  |
 | --------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| MCP_TRANSPORT                     | Transport type (stdio or sse)                                                      | stdio                                                    |
+| MCP_TRANSPORT                     | Transport type (stdio, sse or streamable-htttp)                                    | stdio                                                    |
 | PORT                              | Port to use for SSE transport                                                      | 3000                                                     |
 | LOG_LEVEL                         | Log level (debug, info, warn, error)                                               | info                                                     |
 | LOG_DESTINATION                   | Log destination (stdout, stderr, file, none)                                       | stderr (for stdio transport), stdout (for sse transport) |
@@ -257,6 +257,14 @@ pnpm start --transport=stdio
 # Build and run (default port: 3000)
 pnpm build
 pnpm start --transport=sse --port=3000
+```
+
+### Using Streamable HTTP Transport
+
+```bash
+# Build and run (default port: 3000)
+pnpm build
+pnpm start --transport=streamable-http --port=3000
 ```
 
 ### Debug Mode
