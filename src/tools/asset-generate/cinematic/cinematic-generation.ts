@@ -256,6 +256,16 @@ Use this tool when you need to:
   protected getToolType(): string {
     return TOOL_TYPE_VIDEO_GENERATION;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const aspectRatio = args.parameters?.aspect_ratio || '16:9';
+    return `Cinematic video generation: "${String(args.parameters?.prompt || '').substring(0, 30)}..." (${aspectRatio})`;
+  }
 }
 
 /**

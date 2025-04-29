@@ -118,6 +118,16 @@ Different styles offer different aesthetic qualities, for example:
   protected getToolType(): string {
     return TOOL_TYPE_SKYBOX_GENERATION;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const styleId = args.skybox_style_id || 67;
+    return `Skybox generation with style ${styleId}: "${String(args.prompt).substring(0, 30)}..."`;
+  }
 }
 
 /**

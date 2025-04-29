@@ -216,4 +216,15 @@ Use this tool when you need to:
   protected getToolType(): string {
     return TOOL_TYPE_IMAGE_GENERATION_2D;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return 1;
+  }
+
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const style = args.style || 'pixel art';
+    const assetType = args.assetType || 'character';
+    return `2D ${style} ${assetType} image generation: "${String(args.description).substring(0, 30)}..."`;
+  }
 }

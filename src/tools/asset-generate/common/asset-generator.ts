@@ -32,7 +32,9 @@ export abstract class AssetGeneratorBase implements Tool {
       if (userId) {
         try {
           const toolType = this.getToolType();
-          await consumeToolUsageCredits(userId, toolType);
+          const usageCount = this.getToolUsageCount(args);
+          const description = this.getToolUsageDescription(args);
+          await consumeToolUsageCredits(userId, toolType, usageCount, description);
           if (progressCallback) {
             await progressCallback({
               progress: 0.15,
@@ -102,6 +104,20 @@ export abstract class AssetGeneratorBase implements Tool {
    * Must be implemented by child classes
    */
   protected abstract getToolType(): string;
+
+  /**
+   * Returns the usage count for credit consumption based on tool arguments
+   * @param args The arguments for the tool
+   * @returns Number of credits to consume
+   */
+  protected abstract getToolUsageCount(args: Record<string, any>): number;
+
+  /**
+   * Returns the description for credit consumption
+   * @param args The arguments for the tool
+   * @returns Description of the tool usage
+   */
+  protected abstract getToolUsageDescription(args: Record<string, any>): string;
 
   /**
    * Sanitizes the arguments for the tool

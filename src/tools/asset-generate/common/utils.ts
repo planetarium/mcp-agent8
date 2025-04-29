@@ -27,6 +27,8 @@ import { env } from '../../../utils/env.js';
 export async function consumeToolUsageCredits(
   userUid: string,
   toolType: string,
+  usageCount: number = 1,
+  description: string = '',
 ): Promise<any> {
   try {
     // Check if required env vars are set
@@ -46,8 +48,8 @@ export async function consumeToolUsageCredits(
     const data = {
       userUid,
       toolType,
-      usageCount: 1,
-      description: '',
+      usageCount,
+      description,
     };
 
     // Make authenticated request

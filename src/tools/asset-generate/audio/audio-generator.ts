@@ -1,4 +1,4 @@
-import { TOOL_TYPE_AUDIO_GENERATION } from '../common/constants.js';
+import { DEFAULT_AUDIO_DURATION, TOOL_TYPE_AUDIO_GENERATION } from '../common/constants.js';
 import { AssetGeneratorBase } from '../common/asset-generator.js';
 
 /**
@@ -10,6 +10,26 @@ export abstract class AudioGeneratorBase extends AssetGeneratorBase {
    */
   protected getToolType(): string {
     return TOOL_TYPE_AUDIO_GENERATION;
+  }
+
+  /**
+   * Returns the usage count for credit consumption based on tool arguments
+   * @param _args The arguments for the tool
+   * @returns Number of credits to consume
+   */
+  protected getToolUsageCount(args: Record<string, any>): number {
+    return args.duration || DEFAULT_AUDIO_DURATION;
+  }
+
+  /**
+   * Returns the description for credit consumption
+   * @param args The arguments for the tool
+   * @returns Description of the tool usage
+   */
+  protected getToolUsageDescription(args: Record<string, any>): string {
+    const audioType = this.getAudioType();
+    const duration = args.duration || 30;
+    return `${audioType} generation (${duration}s): "${String(args.prompt).substring(0, 30)}..."`;
   }
 
   /**
