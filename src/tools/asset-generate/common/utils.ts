@@ -7,7 +7,7 @@ import {
   SUPPORTED_STATIC_TYPES,
   DEFAULT_TIMEOUT,
 } from './constants.js';
-import { AssetUploadResponse } from '../types.js';
+import { AssetUploadResponse } from './types.js';
 import { v4 as uuidv4 } from 'uuid';
 import FormData from 'form-data';
 import { env } from '../../../utils/env.js';
