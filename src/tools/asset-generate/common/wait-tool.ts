@@ -12,7 +12,7 @@ export class AssetWaitTool implements Tool {
   description = `A universal tool for waiting a specified amount of time.
 
 Common use cases:
-- Wait between cinematic generation status checks (recommended: 30 seconds)
+- Wait between cinematic generation status checks (recommended: 60 seconds)
 - Wait between skybox generation status checks (recommended: 10-20 seconds)
 - Wait between audio generation status checks (recommended: 5-10 seconds)
 

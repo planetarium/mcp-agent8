@@ -372,7 +372,7 @@ export class CinematicStatusTool {
   name = 'cinematic_status';
   description = `Checks the status of a queued cinematic generation request.
 
-Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 30 seconds between status checks for updates to propagate.`;
+Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 60 seconds between status checks for updates to propagate.`;
 
   inputSchema = {
     type: 'object',
