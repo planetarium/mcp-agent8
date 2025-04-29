@@ -1,4 +1,4 @@
-import { ToolExecutionContext, ToolResult } from '../../types.js';
+import { ToolExecutionContext, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
 import { SkyboxStatusResponse, SkyboxStyle } from './types.js';
 import { blockadeRequest } from './utils.js';
 import { DEFAULT_POLLING_INTERVAL, TOOL_TYPE_SKYBOX_GENERATION } from './constants.js';
@@ -40,6 +40,14 @@ Different styles offer different aesthetic qualities, for example:
 - Specify the style or aesthetic you want
 - Use skybox_styles tool to find the best style for your needs
 - Pay attention to character limits for each style`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -142,6 +150,14 @@ export class SkyboxStylesTool implements Tool {
 Use this tool to discover available skybox style options before using the skybox_generate tool.
 Each style has a unique ID and influences the overall aesthetic of generated skyboxes.`;
 
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
+
   inputSchema = {
     type: 'object',
     properties: {}
@@ -228,6 +244,14 @@ export class SkyboxStatusTool implements Tool {
   description = `Checks the status of a queued skybox generation request.
   
 Use this tool to monitor the progress of a skybox generation request initiated with skybox_generate.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -328,6 +352,14 @@ export class SkyboxWaitTool implements Tool {
   description = `Polls a skybox generation request until it completes or fails.
   
 This tool continuously checks the status of a skybox generation and returns the final result when completed.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

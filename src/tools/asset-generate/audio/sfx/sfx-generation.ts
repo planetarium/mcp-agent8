@@ -1,4 +1,4 @@
-import { ToolExecutionContext } from '../../../types.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../../types.js';
 import { AudioGeneratorBase } from '../audio-generator.js';
 import { sanitizeAPIParameters } from '../../common/utils.js';
 import { queueSubmit } from '../../common/queue-utils.js';
@@ -52,6 +52,14 @@ Use this tool when you need to:
 - Describe the sound's intensity, duration, and character
 - Consider how the sound will fit with other audio in your game
 - Keep descriptions clear and focused on the specific sound needed`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

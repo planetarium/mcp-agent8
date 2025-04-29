@@ -8,6 +8,7 @@ import {
 import { FAL_QUEUE_URL, TOOL_TYPE_VIDEO_GENERATION } from '../common/constants.js';
 import { AssetGeneratorBase, AssetResultBase } from '../common/asset-generator.js';
 import { logger } from '../../../utils/logging.js';
+import { Tool, ToolCategory, ToolMetadata } from '../../types.js';
 
 /**
  * Game Cinematic Asset Generator Tool
@@ -42,6 +43,14 @@ Use this tool when you need to:
 - Choose reference images that best represent your desired style and game art direction
 - Clearly specify desired camera angles, lighting, and color palettes
 - Include sufficient references to maintain consistency with your game's actual assets`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -279,6 +288,14 @@ export class CinematicAssetResultTool extends AssetResultBase {
 
 When queue processing is complete, the generated cinematic assets (image or video URLs) will be returned.`;
 
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
+
   protected async fetchResult(url: string): Promise<any> {
     // Get original result
     const result = await authenticatedRequest(url);
@@ -378,11 +395,19 @@ When queue processing is complete, the generated cinematic assets (image or vide
  *
  * Checks the status of a queued cinematic generation request.
  */
-export class CinematicStatusTool {
+export class CinematicStatusTool implements Tool {
   name = 'cinematic_status';
   description = `Checks the status of a queued cinematic generation request.
 
 Use this tool to check the current status of a cinematic generation job in the queue. Note that status updates may not be immediate - please allow approximately 60 seconds between status checks for updates to propagate.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

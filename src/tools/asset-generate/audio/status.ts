@@ -1,4 +1,4 @@
-import { ToolExecutionContext, Tool, ToolResult } from '../../types.js';
+import { ToolExecutionContext, Tool, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
 import { queueStatus, queueResult } from './queue-utils.js';
 import { logger } from '../../../utils/logging.js';
 
@@ -14,6 +14,14 @@ export class AudioStatusTool implements Tool {
 Use this tool to check the current status of an audio generation job in the queue. Note that status updates may not be immediate - please allow approximately 5-10 seconds between status checks for updates to propagate.
 
 When you receive 'COMPLETED' status, use the audio_result tool with the same requestId to get the final output.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',
@@ -93,6 +101,14 @@ export class AudioResultTool implements Tool {
   description = `Retrieves the final result of a completed audio generation request.
 
 Use this tool after audio_status reports 'COMPLETED' status to get the final audio file URL.`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

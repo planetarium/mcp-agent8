@@ -1,4 +1,4 @@
-import { ToolExecutionContext, Tool, ToolResult } from '../../types.js';
+import { ToolExecutionContext, Tool, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
 import { logger } from '../../../utils/logging.js';
 
 /**
@@ -17,6 +17,17 @@ Common use cases:
 - Wait between audio generation status checks (recommended: 5-10 seconds)
 
 Can be used with any asset generation process.`;
+
+  // Tool metadata - this tool belongs to multiple categories
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.IMAGE_GENERATION,
+      ToolCategory.CINEMATIC_GENERATION,
+      ToolCategory.AUDIO_GENERATION,
+      ToolCategory.SKYBOX_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

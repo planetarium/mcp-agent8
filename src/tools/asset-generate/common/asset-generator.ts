@@ -1,4 +1,4 @@
-import { Tool, ToolExecutionContext, ToolResult } from '../../types.js';
+import { Tool, ToolExecutionContext, ToolMetadata, ToolResult } from '../../types.js';
 import { consumeToolUsageCredits } from './utils.js';
 import { logger } from '../../../utils/logging.js';
 
@@ -7,6 +7,7 @@ export abstract class AssetGeneratorBase implements Tool {
   abstract name: string;
   abstract description: string;
   abstract inputSchema: Record<string, unknown>;
+  abstract metadata: ToolMetadata;
 
   execute = async (
     args: Record<string, any>,
@@ -137,6 +138,7 @@ export abstract class AssetGeneratorBase implements Tool {
 export abstract class AssetResultBase implements Tool {
   abstract name: string;
   abstract description: string;
+  abstract metadata: ToolMetadata;
 
   inputSchema = {
     type: 'object',

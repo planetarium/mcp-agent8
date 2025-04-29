@@ -1,7 +1,7 @@
 import { embed, generateText, LanguageModel } from 'ai';
 import { createOpenAI, OpenAIProvider } from '@ai-sdk/openai';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Tool, ToolResult, Example, FileMap, ToolExecutionContext } from '../types.js';
+import { Tool, ToolResult, Example, FileMap, ToolExecutionContext, ToolCategory, ToolMetadata } from '../types.js';
 import { logger } from '../../utils/logging.js';
 import { env } from '../../utils/env.js';
 
@@ -15,6 +15,14 @@ export class CodeExampleSearchTool implements Tool {
   name = 'search_code_examples';
   description =
     'Searches and retrieves relevant game development code examples from a vector database based on specific game development requirements or programming challenges. This tool performs semantic search to find code snippets and examples that match the user\'s game development needs. It analyzes both the user message and associated tags to identify the most appropriate game code examples from the database. [WHEN TO USE THIS TOOL] You should use this tool whenever the user asks about game implementation details, game programming patterns, specific game feature implementations, or requests examples of how to implement something in game development. USE THIS TOOL if the user mentions specific game programming tasks, asks "how do I code X in my game", or needs reference implementations for game mechanics, rendering, physics, AI, or other game-specific systems. The results are returned in a structured format containing game client code, game server code, and descriptive explanations when available. The userMessage parameter should include detailed context about the game programming challenge or implementation requirement, while the tags parameter should specify relevant game engines, frameworks, or concepts to narrow the search scope. Note: This tool does not generate complete games but rather provides existing code snippets and examples that address specific game implementation challenges. The quality of search results heavily depends on the clarity and specificity of the provided user message and tags. Examples typically demonstrate solutions to common game implementation problems and can be used as reference material for your own game development work. Common scenarios where this tool is useful include: 1) When a user asks "How do I implement character movement in Unity?", 2) When they need examples of game state management for specific operations, 3) When they want to see how others have implemented a specific game UI component, 4) When they need patterns for game networking, 5) When they request code for handling specific game physics edge cases. IMPORTANT: You should proactively offer to search for game code examples whenever a user is discussing game implementation details or asking how to build something in a game, even if they don\'t explicitly request examples. Always prefer showing existing, tested game code examples over generating new code when possible. If you are uncertain whether relevant game code examples exist for a user\'s question, it is better to use this tool and check rather than assume none are available. Even partial matches can provide valuable game implementation insights to users.';
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.VECTOR_SEARCH,
+      ToolCategory.CODE_EXAMPLE_SEARCH
+    ]
+  };
 
   // Tool input schema in JSONSchema format
   inputSchema = {

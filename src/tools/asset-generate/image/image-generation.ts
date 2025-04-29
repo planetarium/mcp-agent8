@@ -1,4 +1,4 @@
-import { ToolExecutionContext } from '../../types.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../types.js';
 import {
   authenticatedRequest,
   sanitizeAPIParameters,
@@ -53,6 +53,14 @@ Use this tool when you need to:
 - Set appropriate asset dimensions (default: 128x128)
 - Include game type information (platformer, shooter, etc.)
 - Always adhere to the schema constraints for style, assetType, and gameType parameters`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.IMAGE_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

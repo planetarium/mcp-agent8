@@ -1,4 +1,4 @@
-import { ToolExecutionContext } from '../../../types.js';
+import { ToolExecutionContext, ToolCategory, ToolMetadata } from '../../../types.js';
 import { AudioGeneratorBase } from '../audio-generator.js';
 import { sanitizeAPIParameters } from '../../common/utils.js';
 import { queueSubmit } from '../../common/queue-utils.js';
@@ -66,6 +66,14 @@ Use this tool when you need to:
 - Include tempo, key, or other musical attributes if relevant
 - Be specific about the emotional impact you want the music to have
 - Consider how the music will fit with other elements of your game`;
+
+  // Tool metadata for categorization and filtering
+  metadata: ToolMetadata = {
+    categories: [
+      ToolCategory.ASSET_GENERATION,
+      ToolCategory.AUDIO_GENERATION
+    ]
+  };
 
   inputSchema = {
     type: 'object',

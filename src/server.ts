@@ -14,6 +14,7 @@ import { ToolProvider } from './tools/provider.js';
 import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
 import { env } from './utils/env.js';
+import { ToolCategory } from './tools/types.js';
 
 /**
  * MCP Server Implementation
@@ -63,26 +64,83 @@ export class McpServer {
     const enableAllTools = env.getBoolean('ENABLE_ALL_TOOLS', true);
     let registeredToolCount = 0;
 
-    // Register asset generation tools (includes image, cinematic, audio, and skybox)
-    const enableAssetGenerateTools = enableAllTools && env.getBoolean('ENABLE_ASSET_GENERATE_TOOLS', true);
-    if (enableAssetGenerateTools && assetGenerateTools.length > 0) {
+    // Check asset generation tools group setting
+    const enableAssetGenerateTools = env.getBoolean('ENABLE_ASSET_GENERATE_TOOLS', enableAllTools) ?? false;
+
+    // Check individual asset tool type settings - enable if group is enabled or individual setting is true
+    const enableImageTools = env.getBoolean('ENABLE_IMAGE_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
+    const enableCinematicTools = env.getBoolean('ENABLE_CINEMATIC_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
+    const enableAudioTools = env.getBoolean('ENABLE_AUDIO_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
+    const enableSkyboxTools = env.getBoolean('ENABLE_SKYBOX_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
+
+    // Create a map of category to enabled status
+    const categoryEnabledMap = new Map<ToolCategory, boolean>([
+      [ToolCategory.ASSET_GENERATION, enableAssetGenerateTools],
+      [ToolCategory.IMAGE_GENERATION, enableImageTools],
+      [ToolCategory.CINEMATIC_GENERATION, enableCinematicTools],
+      [ToolCategory.AUDIO_GENERATION, enableAudioTools],
+      [ToolCategory.SKYBOX_GENERATION, enableSkyboxTools],
+    ]);
+
+    // Register asset generation tools if any are enabled
+    if ((enableImageTools || enableCinematicTools || enableAudioTools || enableSkyboxTools) &&
+      assetGenerateTools.length > 0) {
+
+      // Register tools based on their metadata
       assetGenerateTools.forEach((tool) => {
-        this.toolProvider.getRegistry().register(tool);
-        registeredToolCount++;
+        // A tool should be registered if at least one of its categories is enabled
+        const shouldRegister = tool.metadata.categories.some((category: ToolCategory) =>
+          categoryEnabledMap.get(category) === true
+        );
+
+        if (shouldRegister) {
+          this.toolProvider.getRegistry().register(tool);
+          registeredToolCount++;
+        }
       });
-      logger.info(`${assetGenerateTools.length} asset generation tools registered (including image, cinematic, audio, and skybox)`);
+
+      // Log registered tools
+      logger.info('Asset generation tools registered:');
+      if (enableImageTools) logger.info('- Image generation tools enabled');
+      if (enableCinematicTools) logger.info('- Cinematic generation tools enabled');
+      if (enableAudioTools) logger.info('- Audio generation tools enabled');
+      if (enableSkyboxTools) logger.info('- Skybox generation tools enabled');
     } else {
       logger.info('Asset generation tools are disabled');
     }
 
-    // Register vector search tools
-    const enableVectorSearchTools = enableAllTools && env.getBoolean('ENABLE_VECTOR_SEARCH_TOOLS', true);
-    if (enableVectorSearchTools && vectorSearchTools.length > 0) {
+    // Check vector search tools group setting
+    const enableVectorSearchTools = env.getBoolean('ENABLE_VECTOR_SEARCH_TOOLS', enableAllTools) ?? false;
+
+    // Check individual vector search tool settings
+    const enableCodeExampleSearchTool = env.getBoolean('ENABLE_CODE_EXAMPLE_SEARCH_TOOL', enableVectorSearchTools) ?? false;
+    const enableGameResourceSearchTool = env.getBoolean('ENABLE_GAME_RESOURCE_SEARCH_TOOL', enableVectorSearchTools) ?? false;
+
+    // Add vector search categories to the map
+    categoryEnabledMap.set(ToolCategory.VECTOR_SEARCH, enableVectorSearchTools);
+    categoryEnabledMap.set(ToolCategory.CODE_EXAMPLE_SEARCH, enableCodeExampleSearchTool);
+    categoryEnabledMap.set(ToolCategory.GAME_RESOURCE_SEARCH, enableGameResourceSearchTool);
+
+    // Register vector search tools if any are enabled
+    if ((enableCodeExampleSearchTool || enableGameResourceSearchTool) &&
+      vectorSearchTools.length > 0) {
+
       vectorSearchTools.forEach((tool) => {
-        this.toolProvider.getRegistry().register(tool);
-        registeredToolCount++;
+        // A tool should be registered if at least one of its categories is enabled
+        const shouldRegister = tool.metadata.categories.some((category: ToolCategory) =>
+          categoryEnabledMap.get(category) === true
+        );
+
+        if (shouldRegister) {
+          this.toolProvider.getRegistry().register(tool);
+          registeredToolCount++;
+        }
       });
-      logger.info(`${vectorSearchTools.length} vector search tools registered`);
+
+      // Log registered tools
+      logger.info('Vector search tools registered:');
+      if (enableCodeExampleSearchTool) logger.info('- Code example search tool enabled');
+      if (enableGameResourceSearchTool) logger.info('- Game resource search tool enabled');
     } else {
       logger.info('Vector search tools are disabled');
     }
