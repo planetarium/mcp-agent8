@@ -12,7 +12,7 @@ import {
   DEFAULT_STATIC_HEIGHT,
   TOOL_TYPE_IMAGE_GENERATION_2D,
 } from '../common/constants.js';
-import { AssetGeneratorBase } from '../common/types.js';
+import { AssetGeneratorBase } from '../common/asset-generator.js';
 import { uploadAssetToServer } from '../common/utils.js';
 import { logger } from '../../../utils/logging.js';
 

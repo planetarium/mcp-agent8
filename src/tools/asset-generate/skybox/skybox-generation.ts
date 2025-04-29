@@ -4,7 +4,7 @@ import { blockadeRequest } from './utils.js';
 import { DEFAULT_POLLING_INTERVAL, TOOL_TYPE_SKYBOX_GENERATION } from './constants.js';
 import { logger } from '../../../utils/logging.js';
 import { Tool } from '../../types.js';
-import { AssetGeneratorBase } from '../common/types.js';
+import { AssetGeneratorBase } from '../common/asset-generator.js';
 
 /**
  * Skybox Generator Tool
