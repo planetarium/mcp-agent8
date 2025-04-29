@@ -11,7 +11,7 @@
 
 import { MusicGeneratorTool } from './music/music-generation.js';
 import { SoundEffectsGeneratorTool } from './sfx/sfx-generation.js';
-import { AudioStatusTool, AudioResultTool, AudioWaitTool } from './wait-tools.js';
+import { AudioStatusTool, AudioResultTool } from './status.js';
 
 // Export individual tools
 export {
@@ -19,5 +19,4 @@ export {
   SoundEffectsGeneratorTool,
   AudioStatusTool,
   AudioResultTool,
-  AudioWaitTool,
 };
