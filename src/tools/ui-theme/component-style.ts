@@ -8,7 +8,37 @@ import { logger } from '../../utils/logging.js';
  */
 export class ComponentStyleTool implements Tool {
   name = 'ui_component_style';
-  description = 'Gets CSS styles for a specific component in a selected theme';
+  description = `STEP 3 (OPTIONAL): Retrieves styles for a specific UI component from a selected theme.
+
+This tool can be used AFTER selecting a theme with 'ui_theme_list', either instead of or in addition to 'ui_theme_style' when you only need styles for specific components.
+
+[USAGE SEQUENCE]
+1. FIRST: Use 'ui_theme_list' to see all available themes and select one
+2. THEN: Either use 'ui_theme_style' for the full theme, OR
+3. Use this tool (ui_component_style) for specific component styles
+
+[KEY FEATURES]
+- Provides focused styling for individual UI components
+- Returns only the styles needed for a specific component type
+- Works with all available UI themes in the system
+
+[COMMON COMPONENT TYPES]
+- button: Basic button styles
+- card: Container/card element styles
+- input: Form input field styles
+- modal: Modal/dialog styles
+- navbar: Navigation bar styles
+- sidebar: Side navigation panel styles
+- toggle: Toggle/switch control styles
+- dropdown: Dropdown menu styles
+- tab: Tab navigation styles
+
+[TIPS]
+- Use the exact theme name from 'ui_theme_list' results
+- Be specific about the component type you need
+- Check the 'found' property to verify if styles were found
+- This tool is ideal when you only need styles for specific elements`;
+
   metadata: ToolMetadata = {
     categories: [UI_THEME_CATEGORY]
   };
@@ -18,11 +48,11 @@ export class ComponentStyleTool implements Tool {
     properties: {
       theme: {
         type: 'string',
-        description: 'Theme name'
+        description: 'Theme name (e.g., default, dark, neon-arcade, space-tech)'
       },
       component: {
         type: 'string',
-        description: 'Component type, e.g., button, card, input'
+        description: 'Component type (e.g., button, card, input, modal, navbar)'
       }
     },
     required: ['theme', 'component']

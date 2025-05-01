@@ -15,7 +15,13 @@ let themesCache: any = null;
 const componentStyleCache = new Map<string, any>();
 
 /**
- * Load theme list
+ * Load and return the complete list of UI themes
+ *
+ * This function loads theme metadata from the index.json file in the themes directory.
+ * For performance, it caches the results after the first call.
+ *
+ * @returns {Promise<any>} Theme list object containing themes array and metadata
+ * @throws {Error} If themes cannot be loaded from the filesystem
  */
 export async function loadThemeList(): Promise<any> {
   try {
@@ -34,7 +40,14 @@ export async function loadThemeList(): Promise<any> {
 }
 
 /**
- * Get specific theme information
+ * Load detailed information for a specific theme
+ *
+ * Retrieves complete theme data including variables, style features, and font mappings
+ * from the theme.json file in the theme's directory.
+ *
+ * @param {string} themeName - Name of the theme to load
+ * @returns {Promise<any>} Complete theme data object
+ * @throws {Error} If theme does not exist or cannot be loaded
  */
 export async function getTheme(themeName: string): Promise<any> {
   try {
@@ -51,7 +64,15 @@ export async function getTheme(themeName: string): Promise<any> {
 }
 
 /**
- * Get component style
+ * Get component-specific styles from a theme
+ *
+ * Loads the style definition for a specific UI component from the theme's components.json file.
+ * Uses caching to improve performance for repeated requests of the same component.
+ *
+ * @param {string} themeName - Name of the theme
+ * @param {string} componentName - Name of the component to get styles for
+ * @returns {Promise<any>} Component style object or null if not found
+ * @throws {Error} If there's an error reading or parsing the components file
  */
 export async function getComponentStyle(
   themeName: string,
