@@ -285,8 +285,8 @@ Effect Types:
 
     const uploadedAsset = await uploadAssetToServer(
       imageUrl,
-      `${assetType}-${Date.now()}`,
-      `${assetType}.png`
+      `${assetType}`,
+      `${assetType}-${Date.now()}.png`
     );
 
     if (!uploadedAsset.success || !uploadedAsset.url) {
