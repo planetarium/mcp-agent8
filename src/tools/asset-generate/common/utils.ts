@@ -4,8 +4,9 @@ import {
   API_KEY_ENV_VAR,
   AUTHENTICATED_TIMEOUT,
   SUPPORTED_STYLES,
-  SUPPORTED_STATIC_TYPES,
   DEFAULT_TIMEOUT,
+  GAME_ASSET_TYPES,
+  GameAssetType,
 } from './constants.js';
 import { AssetUploadResponse } from './types.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -88,7 +89,11 @@ export function getApiKey(): string {
 /**
  * Makes authenticated request to fal.ai API
  */
-export async function authenticatedRequest(url: string, method = 'GET', data?: any): Promise<any> {
+export async function authenticatedRequest(
+  url: string,
+  method = 'GET',
+  data?: Record<string, unknown>
+): Promise<Record<string, unknown>> {
   try {
     const config: AxiosRequestConfig = {
       method,
@@ -112,7 +117,11 @@ export async function authenticatedRequest(url: string, method = 'GET', data?: a
 /**
  * Makes public request to APIs without authentication
  */
-export async function publicRequest(url: string, method = 'GET', data?: any): Promise<any> {
+export async function publicRequest(
+  url: string,
+  method = 'GET',
+  data?: Record<string, unknown>
+): Promise<Record<string, unknown>> {
   try {
     const config: AxiosRequestConfig = {
       method,
@@ -135,7 +144,9 @@ export async function publicRequest(url: string, method = 'GET', data?: any): Pr
 /**
  * Sanitizes parameters for API requests
  */
-export function sanitizeAPIParameters(parameters: Record<string, any>): Record<string, any> {
+export function sanitizeAPIParameters(
+  parameters: Record<string, unknown>
+): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries(parameters).filter(([, v]) => v !== null && v !== undefined)
   );
@@ -158,15 +169,20 @@ export function validateStyle(style: string): string {
 /**
  * Validates static asset type
  */
-export function validateStaticAssetType(assetType: string): string {
+export function validateStaticAssetType(assetType: string): GameAssetType {
   const normalizedType = assetType.toLowerCase().trim();
 
-  if (!SUPPORTED_STATIC_TYPES.includes(normalizedType)) {
+  // Convert normalized type to GameAssetType
+  const matchingType = Object.entries(GAME_ASSET_TYPES).find(
+    ([, value]) => value.toLowerCase() === normalizedType
+  );
+
+  if (!matchingType) {
     logger.warn(`Unsupported asset type: ${assetType}. Defaulting to 'character'.`);
-    return 'character';
+    return GAME_ASSET_TYPES.CHARACTER;
   }
 
-  return normalizedType;
+  return matchingType[1] as GameAssetType;
 }
 
 /**
@@ -204,18 +220,30 @@ export function generateStaticAssetPrompt(params: {
   }
 
   // Asset type-specific optimizations (pixel style)
-  if (validatedStyle === 'pixel art' && validatedAssetType === 'character') {
-    prompt += ', character sprite, game sprite, flat design, 2D character';
-  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'item') {
-    prompt += ', game item, collectible, power-up, game object';
-  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'background') {
-    prompt += ', game background, seamless pattern, tileable';
-  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'tilemap') {
-    prompt += ', game tile, seamless tile, tileset, tilemap element';
-  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'ui') {
-    prompt += ', game interface, UI element, menu item, button';
-  } else if (validatedStyle === 'pixel art' && validatedAssetType === 'icon') {
-    prompt += ', game icon, skill icon, menu icon, small icon';
+  if (validatedStyle === 'pixel art') {
+    switch (validatedAssetType) {
+      case GAME_ASSET_TYPES.CHARACTER:
+        prompt += ', character sprite, game sprite, flat design, 2D character';
+        break;
+      case GAME_ASSET_TYPES.ITEM:
+        prompt += ', game item, collectible, power-up, game object';
+        break;
+      case GAME_ASSET_TYPES.BACKGROUND:
+        prompt += ', game background, seamless pattern, tileable';
+        break;
+      case GAME_ASSET_TYPES.TILEMAP:
+        prompt += ', game tile, seamless tile, tileset, tilemap element';
+        break;
+      case GAME_ASSET_TYPES.UI_ICON:
+      case GAME_ASSET_TYPES.UI_BUTTON:
+      case GAME_ASSET_TYPES.UI_FRAME:
+        prompt += ', game interface, UI element, menu item, button';
+        break;
+      case GAME_ASSET_TYPES.FX_PARTICLE:
+      case GAME_ASSET_TYPES.FX_FLASH:
+        prompt += ', game effect, visual effect, particle effect';
+        break;
+    }
   }
 
   // Game type-specific optimizations
