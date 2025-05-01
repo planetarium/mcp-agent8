@@ -1,0 +1,125 @@
+{
+  "timestamp": "2025-05-01T07:57:09.974Z",
+  "themes": [
+    {
+      "name": "default",
+      "displayName": "Default Theme",
+      "description": "A clean, modern light theme suitable for most application interfaces",
+      "tags": ["light", "clean", "modern"]
+    },
+    {
+      "name": "space-tech",
+      "displayName": "Space Tech",
+      "description": "Space tech style with dark backgrounds and bright cyan and blue accents, creating a futuristic feel",
+      "tags": ["futuristic", "tech", "space", "dark"]
+    },
+    {
+      "name": "dark",
+      "displayName": "dark",
+      "description": "dark theme",
+      "tags": []
+    },
+    {
+      "name": "mono-round",
+      "displayName": "Mono Round",
+      "description": "Minimalist rounded design with soft colors and large rounded elements for a modern look",
+      "tags": ["minimal", "rounded", "clean"]
+    },
+    {
+      "name": "neon-arcade",
+      "displayName": "Neon Arcade",
+      "description": "Vibrant neon style with bright purples, blues and pinks, perfect for arcade or cyberpunk games",
+      "tags": ["cyberpunk", "arcade", "neon", "vibrant"]
+    },
+    {
+      "name": "dark-rpg",
+      "displayName": "Dark RPG",
+      "description": "Dark RPG style with deep tones and mysterious purple elements, suitable for role-playing games",
+      "tags": ["dark", "game", "fantasy", "rpg"]
+    },
+    {
+      "name": "fantasy",
+      "displayName": "Fantasy",
+      "description": "Fantasy world theme with ancient styles and textures, perfect for medieval or magical games",
+      "tags": ["medieval", "magic", "rpg"]
+    },
+    {
+      "name": "scifi",
+      "displayName": "Sci-Fi",
+      "description": "Sci-fi theme with futuristic blue tones and sharp edges, ideal for space or tech themed games",
+      "tags": ["futuristic", "tech", "space"]
+    },
+    {
+      "name": "retro",
+      "displayName": "Retro",
+      "description": "Retro style with pixel feel and vibrant contrasting colors, nostalgic game interface",
+      "tags": ["vintage", "old-school", "pixel"]
+    },
+    {
+      "name": "apocalypse",
+      "displayName": "Apocalypse",
+      "description": "Apocalypse style, dark and gritty tones, suitable for post-apocalyptic themes",
+      "tags": ["dark", "gritty", "dystopian"]
+    },
+    {
+      "name": "cyberpunk",
+      "displayName": "Cyberpunk",
+      "description": "Cyberpunk style with neon colors and future urban aesthetics",
+      "tags": ["neon", "futuristic", "dystopian"]
+    },
+    {
+      "name": "candy",
+      "displayName": "Candy",
+      "description": "Candy style, bright and colorful, suitable for casual or children's games",
+      "tags": ["colorful", "fun", "bright"]
+    },
+    {
+      "name": "super-retro",
+      "displayName": "Super Retro",
+      "description": "Super retro style, 8-bit pixel art, extreme old-school game feel",
+      "tags": ["pixel", "8bit", "vintage"]
+    },
+    {
+      "name": "cartoon-game",
+      "displayName": "Cartoon Game",
+      "description": "Cartoon game style, lively and cute, suitable for casual games",
+      "tags": ["fun", "colorful", "animated"]
+    },
+    {
+      "name": "minimalist-dark",
+      "displayName": "Minimalist Dark",
+      "description": "Minimalist dark theme, clean and simple dark tone design",
+      "tags": ["minimal", "dark", "clean"]
+    },
+    {
+      "name": "glossy-cyan",
+      "displayName": "Glossy Cyan",
+      "description": "Glossy cyan theme, smooth surfaces and reflective effects, modern tech feel",
+      "tags": ["glossy", "modern", "tech"]
+    },
+    {
+      "name": "clash-style",
+      "displayName": "Clash Style",
+      "description": "Game UI style inspired by Clash of Clans with vibrant colors and visual hierarchy",
+      "tags": ["game", "colorful", "mobile"]
+    },
+    {
+      "name": "neon-teal",
+      "displayName": "Neon Teal",
+      "description": "Neon teal style, modern bright tones, suitable for fashionable game interfaces",
+      "tags": ["neon", "vibrant", "modern"]
+    },
+    {
+      "name": "neon-blue",
+      "displayName": "Neon Blue",
+      "description": "Neon blue tones, cool neon effects with strong tech feel",
+      "tags": ["neon", "vibrant", "cool"]
+    },
+    {
+      "name": "amber-gold",
+      "displayName": "Amber Gold",
+      "description": "Amber gold style, warm gold tones with luxurious feel",
+      "tags": ["warm", "luxury", "elegant"]
+    }
+  ]
+}

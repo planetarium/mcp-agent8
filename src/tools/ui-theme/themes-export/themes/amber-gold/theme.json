@@ -1,0 +1,60 @@
+{
+  "name": "amber-gold",
+  "displayName": "Amber Gold",
+  "description": "Amber gold style, warm gold tones with luxurious feel",
+  "tags": ["warm", "luxury", "elegant"],
+  "variables": {
+    "colors": {
+      "background": "0 0% 0%",
+      "foreground": "45 100% 90%",
+      "card": "30 15% 10%",
+      "card-foreground": "45 100% 90%",
+      "popover": "30 15% 10%",
+      "popover-foreground": "45 100% 90%",
+      "primary": "36 100% 50%",
+      "primary-foreground": "0 0% 0%",
+      "secondary": "30 30% 15%",
+      "secondary-foreground": "45 100% 90%",
+      "muted": "30 30% 20%",
+      "muted-foreground": "45 70% 70%",
+      "accent": "36 100% 50%",
+      "accent-foreground": "0 0% 0%",
+      "destructive": "0 100% 50%",
+      "destructive-foreground": "45 100% 90%",
+      "border": "36 50% 30%",
+      "ring": "36 100% 50%",
+      "accent1": "20 90% 55%",
+      "accent1-foreground": "0 0% 0%",
+      "accent2": "45 80% 60%",
+      "accent2-foreground": "0 0% 0%",
+      "accent3": "80 70% 40%",
+      "accent3-foreground": "0 0% 0%",
+      "warning": "15 100% 55%",
+      "warning-foreground": "0 0% 0%"
+    },
+    "fonts": {},
+    "radius": "0.25rem",
+    "other": {
+      "input": "36 50% 30%"
+    }
+  },
+  "styleFeatures": {
+    "background": "hsl(var(--warning))",
+    "backgroundColor": "hsl(var(--primary) / 0.2)",
+    "border": "1px solid hsl(var(--primary) / 0.5)",
+    "borderRadius": "0.25rem",
+    "overflow": "hidden",
+    "color": "hsl(var(--primary))",
+    "fontWeight": "600",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.05em",
+    "boxShadow": "0 0 8px hsl(var(--primary) / 0.3)"
+  },
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  },
+  "exportTimestamp": "2025-05-01T07:57:09.974Z"
+}

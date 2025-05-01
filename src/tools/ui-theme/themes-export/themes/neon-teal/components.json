@@ -1,0 +1,30 @@
+{
+  "button-accent1": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent1)), hsl(var(--accent1) / 0.8))",
+      "borderColor": "hsl(var(--accent1))",
+      "boxShadow": "0 0 5px hsl(var(--accent1) / 0.7), inset 0 0 5px hsl(var(--accent1) / 0.7)"
+    }
+  },
+  "button-accent2": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent2)), hsl(var(--accent2) / 0.8))",
+      "borderColor": "hsl(var(--accent2))",
+      "boxShadow": "0 0 5px hsl(var(--accent2) / 0.7), inset 0 0 5px hsl(var(--accent2) / 0.7)"
+    }
+  },
+  "button-accent3": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent3)), hsl(var(--accent3) / 0.8))",
+      "borderColor": "hsl(var(--accent3))",
+      "boxShadow": "0 0 5px hsl(var(--accent3) / 0.7), inset 0 0 5px hsl(var(--accent3) / 0.7)"
+    }
+  },
+  "button-warning": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--warning)), hsl(var(--warning) / 0.8))",
+      "borderColor": "hsl(var(--warning))",
+      "boxShadow": "0 0 5px hsl(var(--warning) / 0.7), inset 0 0 5px hsl(var(--warning) / 0.7)"
+    }
+  }
+}

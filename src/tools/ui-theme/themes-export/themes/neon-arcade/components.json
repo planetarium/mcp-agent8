@@ -1,0 +1,44 @@
+{
+  "button-accent1": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent1)), hsl(var(--accent1) / 0.8))",
+      "boxShadow": "0 0 10px hsl(var(--accent1) / 0.5)"
+    }
+  },
+  "button-accent2": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent2)), hsl(var(--accent2) / 0.8))",
+      "boxShadow": "0 0 10px hsl(var(--accent2) / 0.5)"
+    }
+  },
+  "button-accent3": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent3)), hsl(var(--accent3) / 0.8))",
+      "boxShadow": "0 0 10px hsl(var(--accent3) / 0.5)"
+    }
+  },
+  "button-warning": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--warning)), hsl(var(--warning) / 0.8))",
+      "boxShadow": "0 0 10px hsl(var(--warning) / 0.5)"
+    }
+  },
+  "button-default": {
+    "styles": {
+      "background": "linear-gradient(to bottom, #a855f7, #9333ea)",
+      "border": "1px solid #7e22ce",
+      "boxShadow": "0 0 15px rgba(168, 85, 247, 0.7)",
+      "color": "white",
+      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
+    }
+  },
+  "button-destructive": {
+    "styles": {
+      "background": "linear-gradient(to bottom, #f43f5e, #e11d48)",
+      "border": "1px solid #be123c",
+      "boxShadow": "0 0 15px rgba(244, 63, 94, 0.7)",
+      "color": "white",
+      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
+    }
+  }
+}

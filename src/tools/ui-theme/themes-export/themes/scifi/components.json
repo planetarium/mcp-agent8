@@ -1,0 +1,68 @@
+{
+  "button-accent1": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent1)), hsl(var(--accent1) / 0.9))",
+      "borderTopWidth": "2px",
+      "borderColor": "hsla(var(--accent1), 0.3)"
+    }
+  },
+  "button-accent2": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent2)), hsl(var(--accent2) / 0.9))",
+      "borderTopWidth": "2px",
+      "borderColor": "hsla(var(--accent2), 0.3)"
+    }
+  },
+  "button-accent3": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--accent3)), hsl(var(--accent3) / 0.9))",
+      "borderTopWidth": "2px",
+      "borderColor": "hsla(var(--accent3), 0.3)"
+    }
+  },
+  "button-warning": {
+    "styles": {
+      "background": "linear-gradient(to bottom, hsl(var(--warning)), hsl(var(--warning) / 0.9))",
+      "borderTopWidth": "2px",
+      "borderColor": "hsla(var(--warning), 0.3)"
+    }
+  },
+  "card": {
+    "styles": {
+      "borderTopWidth": "2px",
+      "borderColor": "hsla(var(--primary), 0.3)",
+      "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      "backgroundImage": "linear-gradient(to bottom, hsl(var(--card)), hsla(var(--card), 0.9))",
+      "backdropFilter": "blur(4px)"
+    }
+  },
+  "badge": {
+    "styles": {
+      "boxShadow": "0 0 5px hsla(var(--primary), 0.4)"
+    }
+  },
+  "progress": {
+    "styles": {
+      "backgroundImage": "linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)))",
+      "boxShadow": "0 0 10px hsla(var(--primary), 0.5)"
+    }
+  },
+  "button-default": {
+    "styles": {
+      "background": "linear-gradient(to bottom, #0ea5e9, #0284c7)",
+      "border": "1px solid #0369a1",
+      "boxShadow": "0 0 8px rgba(14, 165, 233, 0.5)",
+      "color": "white",
+      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
+    }
+  },
+  "button-destructive": {
+    "styles": {
+      "background": "linear-gradient(to bottom, #e11d48, #be123c)",
+      "border": "1px solid #9f1239",
+      "boxShadow": "0 0 8px rgba(225, 29, 72, 0.5)",
+      "color": "white",
+      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
+    }
+  }
+}

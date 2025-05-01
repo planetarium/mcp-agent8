@@ -1,0 +1,57 @@
+{
+  "name": "cyberpunk",
+  "displayName": "Cyberpunk",
+  "description": "Cyberpunk style with neon colors and future urban aesthetics",
+  "tags": ["neon", "futuristic", "dystopian"],
+  "variables": {
+    "colors": {
+      "background": "0 0% 0%",
+      "foreground": "0 0% 100%",
+      "card": "0 0% 10%",
+      "card-foreground": "0 0% 100%",
+      "popover": "0 0% 10%",
+      "popover-foreground": "0 0% 100%",
+      "primary": "320 100% 50%",
+      "primary-foreground": "0 0% 100%",
+      "secondary": "180 100% 50%",
+      "secondary-foreground": "0 0% 0%",
+      "muted": "0 0% 20%",
+      "muted-foreground": "0 0% 70%",
+      "accent": "60 100% 50%",
+      "accent-foreground": "0 0% 0%",
+      "destructive": "0 100% 50%",
+      "destructive-foreground": "0 0% 100%",
+      "border": "320 100% 50%",
+      "ring": "320 100% 50%",
+      "accent1": "180 100% 50%",
+      "accent1-foreground": "0 0% 0%",
+      "accent2": "60 100% 50%",
+      "accent2-foreground": "0 0% 0%",
+      "accent3": "270 100% 65%",
+      "accent3-foreground": "0 0% 100%",
+      "warning": "30 100% 50%",
+      "warning-foreground": "0 0% 0%"
+    },
+    "fonts": {},
+    "radius": "0",
+    "other": {
+      "input": "0 0% 20%"
+    }
+  },
+  "styleFeatures": {
+    "background": "linear-gradient(to bottom, #ef4444, #dc2626)",
+    "border": "1px solid #b91c1c",
+    "boxShadow": "0 0 12px rgba(239, 68, 68, 0.6)",
+    "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)",
+    "color": "white",
+    "letterSpacing": "0.05em",
+    "textTransform": "uppercase"
+  },
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  },
+  "exportTimestamp": "2025-05-01T07:57:09.974Z"
+}

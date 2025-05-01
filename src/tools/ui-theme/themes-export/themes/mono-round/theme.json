@@ -1,0 +1,60 @@
+{
+  "name": "mono-round",
+  "displayName": "Mono Round",
+  "description": "Minimalist rounded design with soft colors and large rounded elements for a modern look",
+  "tags": ["minimal", "rounded", "clean"],
+  "variables": {
+    "colors": {
+      "background": "36 33% 97%",
+      "foreground": "215 25% 27%",
+      "card": "0 0% 100%",
+      "card-foreground": "215 25% 27%",
+      "popover": "0 0% 100%",
+      "popover-foreground": "215 25% 27%",
+      "primary": "176 56% 55%",
+      "primary-foreground": "0 0% 100%",
+      "secondary": "220 13% 91%",
+      "secondary-foreground": "215 25% 27%",
+      "muted": "220 13% 91%",
+      "muted-foreground": "215 25% 40%",
+      "accent": "12 97% 67%",
+      "accent-foreground": "0 0% 100%",
+      "destructive": "0 84% 60%",
+      "destructive-foreground": "0 0% 100%",
+      "border": "220 13% 91%",
+      "ring": "176 56% 55%",
+      "accent1": "12 97% 67%",
+      "accent1-foreground": "0 0% 100%",
+      "accent2": "262 83% 58%",
+      "accent2-foreground": "0 0% 100%",
+      "accent3": "48 96% 53%",
+      "accent3-foreground": "215 25% 27%",
+      "warning": "32 95% 44%",
+      "warning-foreground": "0 0% 100%"
+    },
+    "fonts": {},
+    "radius": "1.5rem",
+    "other": {
+      "input": "220 13% 91%"
+    }
+  },
+  "styleFeatures": {
+    "backgroundColor": "#f43f5e",
+    "borderRadius": "1.5rem",
+    "padding": "0.25rem",
+    "overflow": "hidden",
+    "color": "white",
+    "fontWeight": "500",
+    "boxShadow": "0 2px 5px rgba(0, 0, 0, 0.1)",
+    "border": "none",
+    "fontSize": "0.9em",
+    "letterSpacing": "-0.02em"
+  },
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  },
+  "exportTimestamp": "2025-05-01T07:57:09.974Z"
+}
