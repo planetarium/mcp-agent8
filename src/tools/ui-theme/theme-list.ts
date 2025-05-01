@@ -46,7 +46,6 @@ This is the FIRST TOOL you should use in the UI theming process. It returns a co
       const themeList = await loadThemeList();
       // Filter by tags (if provided)
       let filteredThemes = themeList.themes;
-      console.log('filteredThemes', filteredThemes);
       if (tags && tags.length > 0) {
         filteredThemes = filteredThemes.filter((theme: any) =>
           tags.some(tag => theme.tags.includes(tag))
