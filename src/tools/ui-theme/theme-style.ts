@@ -15,23 +15,15 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
 [USAGE SEQUENCE]
 1. FIRST: Use 'ui_theme_list' to see all available themes and select one
 2. THEN: Use this tool (ui_theme_style) with your chosen theme name
-3. OPTIONALLY: Use 'ui_component_style' for specific component styles
 
 [KEY FEATURES]
 - Returns all theme variables in a structured format
-- Provides ready-to-use CSS variable definitions
 - Includes complete color schemes and styling specifications
 
 [RETURNED DATA]
 - variables: Complete set of theme variables (colors, radius, etc.)
 - styleFeatures: Common style patterns used in the theme
-- fontMappings: Typography settings for different text elements
-- cssVariables: Ready-to-use CSS variable definitions
-
-[TIPS]
-- Use the exact theme name from 'ui_theme_list' results (e.g., 'neon-arcade', 'space-tech')
-- The 'cssVariables' field contains ready-to-use CSS that can be directly applied
-- Check the 'found' property in the response to verify the theme exists`;
+- fontMappings: Typography settings for different text elements`;
 
   metadata: ToolMetadata = {
     categories: [UI_THEME_CATEGORY]
@@ -75,7 +67,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
       }
 
       // Create CSS variables representation
-      const cssVars = this.generateCssVariables(themeData);
+      // const cssVars = this.generateCssVariables(themeData);
 
       return {
         content: [
@@ -86,7 +78,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
               variables: themeData.variables,
               styleFeatures: themeData.styleFeatures,
               fontMappings: themeData.fontMappings,
-              cssVariables: cssVars,
+              // cssVariables: cssVars,
               found: true
             }, null, 2)
           }
