@@ -12,7 +12,7 @@ const THEMES_DIR = path.join(__dirname, 'themes-export');
 const THEMES_INDEX_PATH = path.join(THEMES_DIR, 'index.json');
 
 let themesCache: any = null;
-const componentStyleCache = new Map<string, any>();
+const themeDataCache = new Map<string, any>();
 
 /**
  * Load and return the complete list of UI themes
@@ -44,6 +44,7 @@ export async function loadThemeList(): Promise<any> {
  *
  * Retrieves complete theme data including variables, style features, and font mappings
  * from the theme.json file in the theme's directory.
+ * For performance, it caches the results after the first call for each theme.
  *
  * @param {string} themeName - Name of the theme to load
  * @returns {Promise<any>} Complete theme data object
@@ -51,10 +52,18 @@ export async function loadThemeList(): Promise<any> {
  */
 export async function getTheme(themeName: string): Promise<any> {
   try {
+    if (themeDataCache.has(themeName)) {
+      return themeDataCache.get(themeName);
+    }
+
     const themePath = path.join(THEMES_DIR, 'themes', themeName, 'theme.json');
     if (fs.existsSync(themePath)) {
       const themeData = fs.readFileSync(themePath, 'utf-8');
-      return JSON.parse(themeData);
+      const parsedData = JSON.parse(themeData);
+
+      themeDataCache.set(themeName, parsedData);
+
+      return parsedData;
     }
     throw new Error(`Theme '${themeName}' does not exist`);
   } catch (error) {
@@ -63,48 +72,3 @@ export async function getTheme(themeName: string): Promise<any> {
   }
 }
 
-/**
- * Get component-specific styles from a theme
- *
- * Loads the style definition for a specific UI component from the theme's components.json file.
- * Uses caching to improve performance for repeated requests of the same component.
- *
- * @param {string} themeName - Name of the theme
- * @param {string} componentName - Name of the component to get styles for
- * @returns {Promise<any>} Component style object or null if not found
- * @throws {Error} If there's an error reading or parsing the components file
- */
-export async function getComponentStyle(
-  themeName: string,
-  componentName: string
-): Promise<any> {
-  try {
-    // Generate cache key
-    const cacheKey = `${themeName}_${componentName}`;
-
-    // Check cache
-    if (componentStyleCache.has(cacheKey)) {
-      return componentStyleCache.get(cacheKey);
-    }
-
-    // Read components.json
-    const componentsPath = path.join(THEMES_DIR, 'themes', themeName, 'components.json');
-    if (!fs.existsSync(componentsPath)) {
-      logger.warn(`Theme '${themeName}' has no components definition file`);
-      return null;
-    }
-
-    const componentsData = JSON.parse(fs.readFileSync(componentsPath, 'utf-8'));
-
-    // Find component style
-    const componentStyle = componentsData[componentName];
-
-    // Cache result
-    componentStyleCache.set(cacheKey, componentStyle || null);
-
-    return componentStyle || null;
-  } catch (error) {
-    logger.error(`Failed to get component style:`, error);
-    throw error;
-  }
-}
