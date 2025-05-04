@@ -67,7 +67,7 @@ Basic Types:
 - Backgrounds (scenes, environments)
 - Tilemaps (terrain, platforms)
 
-Enhanced UI Types:
+UI Types:
 - Icons (skills, items, status)
 - Buttons (menus, actions)
 - Frames (windows, panels)
@@ -78,7 +78,8 @@ Effect Types:
 
 [KEY FEATURES]
 - Creates 2D assets based on detailed descriptions
-- Supports various styles (pixel art, cartoon, vector, fantasy, etc.)
+- Supports various styles: pixel art, cartoon (western/Disney style), anime (Japanese animation style), vector, fantasy, realistic, retro, etc.
+- "cartoon" and "anime" are clearly distinguished. "cartoon" refers to western/Disney style, while "anime" refers to Japanese animation style.
 - Automatic background removal for transparent assets
 - Asset-type specific optimizations
 - Outputs in formats compatible with game engines
@@ -96,7 +97,9 @@ Effect Types:
    - For pixel art: specify pixel dimensions and color limitations
    - For vector art: mention if you need sharp edges or gradients
    - For realistic style: describe the level of detail needed
-   - For cartoon style: specify if you want cel-shading or outlines
+   - For cartoon style: specify if you want western/Disney style
+   - For anime style: specify if you want Japanese animation style, and describe character features (e.g. big eyes, cel shading)
+   - For fantasy/retro: describe the era or fantasy elements
 
 3. Size Recommendations:
    - Characters: 512x512px for main characters
@@ -135,8 +138,9 @@ Effect Types:
       },
       style: {
         type: 'string',
-        description: 'Asset style. Must be one of: pixel art, cartoon, vector, realistic, fantasy, or retro.',
+        description: 'Asset style. Must be one of: pixel art, cartoon, anime, vector, realistic, fantasy, or retro. "cartoon" is for western/Disney style, "anime" is for Japanese animation style.',
         default: 'pixel art',
+        enum: ['pixel art', 'cartoon', 'anime', 'vector', 'realistic', 'fantasy', 'retro'],
       },
       assetType: {
         type: 'string',
@@ -160,8 +164,25 @@ Effect Types:
         type: 'string',
         description: 'Additional prompt information to fine-tune the generation result.',
       },
+      model: {
+        type: 'string',
+        description: 'Image generation model to use. "auto" will select the best model for the chosen style. "recraft-v3" for vector/UI/icon, "hidream-i1" for concept art, anime, detailed raster images.',
+        default: 'auto',
+        enum: ['auto', 'recraft-v3', 'hidream-i1'],
+      },
     },
     required: ['description'],
+  };
+
+  // Style to model mapping for auto selection
+  private static readonly STYLE_MODEL_MAP: Record<string, string> = {
+    'pixel art': 'recraft-v3',
+    'cartoon': 'recraft-v3',
+    'anime': 'hidream-i1',
+    'vector': 'recraft-v3',
+    'realistic': 'recraft-v3',
+    'fantasy': 'hidream-i1',
+    'retro': 'recraft-v3',
   };
 
   private async removeBackground(imageUrl: string): Promise<string> {
@@ -198,6 +219,7 @@ Effect Types:
         height: args.height || config.defaultHeight,
         gameType: args.gameType,
         additionalPrompt: args.additionalPrompt,
+        model: args.model || 'recraft-v3',
       };
     }
 
@@ -210,10 +232,20 @@ Effect Types:
       height: args.height || DEFAULT_STATIC_HEIGHT,
       gameType: args.gameType,
       additionalPrompt: args.additionalPrompt,
+      model: args.model || 'recraft-v3',
     };
   }
 
-  protected getApiEndpoint(): string {
+  protected getApiEndpoint(args?: Record<string, unknown>): string {
+    // Determine model based on style if model is 'auto'
+    let model = args?.model as string || 'auto';
+    if (model === 'auto') {
+      const style = args?.style as string || 'pixel art';
+      model = ImageAssetGeneratorTool.STYLE_MODEL_MAP[style] || 'recraft-v3';
+    }
+    if (model === 'hidream-i1') {
+      return 'fal-ai/hidream-i1-full';
+    }
     return DEFAULT_STATIC_API_ENDPOINT;
   }
 
@@ -226,6 +258,11 @@ Effect Types:
     const style = args.style as string;
     const width = args.width as number;
     const height = args.height as number;
+    let model = args.model as string || 'auto';
+
+    if (model === 'auto') {
+      model = ImageAssetGeneratorTool.STYLE_MODEL_MAP[style] || 'recraft-v3';
+    }
 
     // Check if it's an enhanced asset type
     const isEnhancedType = Object.values(GAME_ASSET_TYPES).includes(assetType);
@@ -249,13 +286,30 @@ Effect Types:
       });
     }
 
+    // 모델별 파라미터 분기
+    let requestParams: any;
+    if (model === 'hidream-i1') {
+      requestParams = {
+        prompt,
+        image_size: { width, height },
+        num_inference_steps: 50,
+        guidance_scale: 5,
+        num_images: 1,
+        enable_safety_checker: true,
+        output_format: 'png',
+        // Add negative_prompt, etc. if needed
+      };
+    } else {
+      requestParams = {
+        prompt,
+        image_size: { width, height },
+        style: mapToRecraftStyle(style),
+      };
+    }
+
     // Generate initial image
     const url = `${FAL_DIRECT_URL}/${apiEndpoint}`;
-    const result = await authenticatedRequest(url, 'POST', sanitizeAPIParameters({
-      prompt: prompt,
-      image_size: { width, height },
-      style: mapToRecraftStyle(style),
-    })) as ImageGenerationResponse;
+    const result = await authenticatedRequest(url, 'POST', sanitizeAPIParameters(requestParams)) as ImageGenerationResponse;
 
     let imageUrl = result.images?.[0]?.url;
     if (!imageUrl) {

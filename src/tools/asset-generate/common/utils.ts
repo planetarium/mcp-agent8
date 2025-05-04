@@ -435,10 +435,16 @@ export function mapToRecraftStyle(style: string): string {
       return 'vector_illustration';
     case 'cartoon':
       return 'digital_illustration/hand_drawn';
-    case 'noir':
-      return 'digital_illustration/noir';
+    case 'anime':
+      // recraft-v3 does not natively support anime, use cartoon/hand_drawn as closest
+      logger.warn(`'anime' style is not natively supported by recraft-v3. Using 'any' as fallback.`);
+      return 'any';
+    case 'fantasy':
+      return 'any';
+    case 'retro':
+      return 'digital_illustration/pixel_art';
     default:
-      logger.warn(`Unsupported style for recraft-v3: ${style}. Defaulting to 'realistic_image'.`);
-      return 'realistic_image';
+      logger.warn(`Unsupported style for recraft-v3: ${style}. Defaulting to 'any'.`);
+      return 'any';
   }
 }

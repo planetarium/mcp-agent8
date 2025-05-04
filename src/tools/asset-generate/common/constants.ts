@@ -28,11 +28,13 @@ export const DEFAULT_AUDIO_DURATION = 30; // seconds
 
 // Common style list with recraft-v3 supported styles only
 export const SUPPORTED_STYLES = [
-  'realistic', // Realistic style - maps to 'realistic_image'
-  'pixel art', // Pixel art style - maps to 'digital_illustration/pixel_art'
-  'vector', // Vector graphic style - maps to 'vector_illustration'
-  'cartoon', // Cartoon style - maps to 'digital_illustration/hand_drawn'
-  'noir', // Noir style - maps to 'digital_illustration/noir'
+  'pixel art',
+  'cartoon',
+  'anime',
+  'vector',
+  'realistic',
+  'fantasy',
+  'retro',
 ];
 
 // Enhanced asset types for game development
