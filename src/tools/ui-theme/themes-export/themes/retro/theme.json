@@ -52,6 +52,5 @@
     "headings": "var(--theme-font-heading)",
     "accent": "var(--theme-font-accent)",
     "buttons": "var(--theme-font-heading)"
-  },
-  "exportTimestamp": "2025-05-01T07:57:09.974Z"
+  }
 }

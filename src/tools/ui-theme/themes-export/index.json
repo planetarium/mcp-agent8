@@ -1,5 +1,4 @@
 {
-  "timestamp": "2025-05-01T07:57:09.974Z",
   "themes": [
     {
       "name": "default",
@@ -15,9 +14,9 @@
     },
     {
       "name": "dark",
-      "displayName": "dark",
-      "description": "dark theme",
-      "tags": []
+      "displayName": "Dark Mode",
+      "description": "A sleek dark mode theme with blue accents, providing reduced eye strain and modern aesthetics suitable for both professional and gaming applications",
+      "tags": ["dark", "minimal", "modern", "clean"]
     },
     {
       "name": "mono-round",

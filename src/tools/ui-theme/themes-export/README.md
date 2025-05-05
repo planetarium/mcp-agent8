@@ -1,7 +1,5 @@
 # UI Theme Export
 
-> Last updated: 2025. 5. 1. 오후 4:57:10
-
 This directory contains automatically exported theme data from the UI component library for MCP service.
 
 ## Available Themes
@@ -10,7 +8,7 @@ A total of **20** themes were exported:
 
 - **Default Theme** (default): A clean, modern light theme suitable for most application interfaces
 - **Space Tech** (space-tech): Space tech style with dark backgrounds and bright cyan and blue accents, creating a futuristic feel
-- **dark** (dark): dark theme
+- **Dark Mode** (dark): A sleek dark mode theme with blue accents, providing reduced eye strain and modern aesthetics suitable for both professional and gaming applications
 - **Mono Round** (mono-round): Minimalist rounded design with soft colors and large rounded elements for a modern look
 - **Neon Arcade** (neon-arcade): Vibrant neon style with bright purples, blues and pinks, perfect for arcade or cyberpunk games
 - **Dark RPG** (dark-rpg): Dark RPG style with deep tones and mysterious purple elements, suitable for role-playing games
