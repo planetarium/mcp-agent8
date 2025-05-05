@@ -66,9 +66,6 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
         };
       }
 
-      // Create CSS variables representation
-      // const cssVars = this.generateCssVariables(themeData);
-
       return {
         content: [
           {
@@ -78,7 +75,6 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
               variables: themeData.variables,
               styleFeatures: themeData.styleFeatures,
               fontMappings: themeData.fontMappings,
-              // cssVariables: cssVars,
               found: true
             }, null, 2)
           }
@@ -97,33 +93,5 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
         isError: true
       };
     }
-  }
-
-  // Helper to generate CSS variables from theme data
-  private generateCssVariables(theme: any): string {
-    let css = `:root {\n`;
-
-    // Add color variables
-    if (theme.variables && theme.variables.colors) {
-      Object.entries(theme.variables.colors).forEach(([key, value]) => {
-        css += `  --${key}: ${value};\n`;
-      });
-    }
-
-    // Add other variable categories
-    ['radius', 'other'].forEach(category => {
-      if (theme.variables && theme.variables[category]) {
-        if (typeof theme.variables[category] === 'string') {
-          css += `  --${category}: ${theme.variables[category]};\n`;
-        } else if (typeof theme.variables[category] === 'object') {
-          Object.entries(theme.variables[category]).forEach(([key, value]) => {
-            css += `  --${category}-${key}: ${value};\n`;
-          });
-        }
-      }
-    });
-
-    css += `}\n`;
-    return css;
   }
 }
