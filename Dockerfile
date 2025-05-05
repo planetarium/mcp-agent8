@@ -23,6 +23,7 @@ WORKDIR /app
 # Copy package files and built files
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/tools/ui-theme/themes-export ./dist/tools/ui-theme/themes-export
 
 # Install production dependencies only
 RUN npm install --omit=dev --ignore-scripts
@@ -31,4 +32,4 @@ RUN npm install --omit=dev --ignore-scripts
 EXPOSE ${PORT}
 
 # Start the application
-CMD ["node", "dist/index.js"] 
+CMD ["node", "dist/index.js"]
