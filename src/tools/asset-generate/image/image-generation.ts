@@ -57,15 +57,13 @@ Use this tool when you need to:
 2. Generate game item images
 3. Create game background images
 4. Design UI elements or icons
-5. Generate tilemap elements
-6. Create particle and effect assets
+5. Create particle and effect assets for 2D games or 2D objects only
 
 [SUPPORTED ASSET TYPES]
 Basic Types:
 - Characters (sprites, avatars)
 - Items (objects, collectibles)
 - Backgrounds (scenes, environments)
-- Tilemaps (terrain, platforms)
 
 UI Types:
 - Icons (skills, items, status)
@@ -73,13 +71,13 @@ UI Types:
 - Frames (windows, panels)
 
 Effect Types:
-- Particles (magic, explosions)
-- Flash Effects (impacts, highlights)
+- Particles (magic, explosions) [2D only]
+- Flash Effects (impacts, highlights) [2D only]
 
 [KEY FEATURES]
 - Creates 2D assets based on detailed descriptions
 - Supports various styles: pixel art, cartoon (western/Disney style), anime (Japanese animation style), vector, fantasy, realistic, retro, etc.
-- "cartoon" and "anime" are clearly distinguished. "cartoon" refers to western/Disney style, while "anime" refers to Japanese animation style.
+- "cartoon" and "anime" are clearly distinguished. "cartoon" refers to western style, while "anime" refers to Japanese animation style.
 - Automatic background removal for transparent assets
 - Asset-type specific optimizations
 - Outputs in formats compatible with game engines
@@ -91,6 +89,8 @@ Effect Types:
    - Specify materials, colors, and textures for items
    - Describe lighting and atmosphere for backgrounds
    - Mention any special effects or glows needed
+   - For UI Icons, prefer a single color (monochrome/flat) style to allow flexible CSS styling later.
+   - For particle and flash effects, describe the 2D effect you want for your 2D game or 2D object. Avoid 3D terminology or requests.
 
 2. Style Guidelines:
    - Choose a style that matches your game's aesthetic
@@ -100,12 +100,14 @@ Effect Types:
    - For cartoon style: specify if you want western/Disney style
    - For anime style: specify if you want Japanese animation style, and describe character features (e.g. big eyes, cel shading)
    - For fantasy/retro: describe the era or fantasy elements
+   - For UI Icons: use a flat, single-color (monochrome) style for best CSS compatibility
+   - For effects: always describe 2D visual effects, not 3D
 
 3. Size Recommendations:
    - Characters: 512x512px for main characters
    - Items: 256x256px for collectibles and equipment
-   - UI Elements: 512x128px for buttons, 512x512px for frames
-   - Effects: 1024x1024px for particles and flashes
+   - UI Elements: 128x128px for icons, 256x64px for buttons, 512x512px for frames
+   - Effects: 256x256px for particles and flashes (2D only)
    - Backgrounds: 1024x1024px or larger for scenes
 
 4. Technical Considerations:

@@ -43,7 +43,6 @@ export const GAME_ASSET_TYPES = {
   CHARACTER: 'character' as const,
   ITEM: 'item' as const,
   BACKGROUND: 'background' as const,
-  TILEMAP: 'tilemap' as const,
 
   // UI types
   UI_ICON: 'ui_icon' as const,
@@ -63,7 +62,6 @@ export const SUPPORTED_STATIC_TYPES = [
   GAME_ASSET_TYPES.CHARACTER,
   GAME_ASSET_TYPES.ITEM,
   GAME_ASSET_TYPES.BACKGROUND,
-  GAME_ASSET_TYPES.TILEMAP,
 
   // UI Elements
   GAME_ASSET_TYPES.UI_ICON,
@@ -128,18 +126,6 @@ export const ASSET_TYPE_CONFIGS: Record<GameAssetType, {
       "detailed environment",
       "good depth",
       "balanced composition"
-    ]
-  },
-  [GAME_ASSET_TYPES.TILEMAP]: {
-    defaultWidth: 256,
-    defaultHeight: 256,
-    requiresTransparency: true,
-    enhanceContrast: true,
-    promptModifiers: [
-      "tileable pattern",
-      "seamless edges",
-      "clear texture",
-      ...BACKGROUND_PROMPT_MODIFIERS
     ]
   },
   [GAME_ASSET_TYPES.UI_ICON]: {
