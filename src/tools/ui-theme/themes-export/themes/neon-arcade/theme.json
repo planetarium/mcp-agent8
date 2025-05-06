@@ -1,0 +1,60 @@
+{
+  "name": "neon-arcade",
+  "displayName": "Neon Arcade",
+  "description": "Vibrant neon style with bright purples, blues and pinks, perfect for arcade or cyberpunk games",
+  "tags": ["cyberpunk", "arcade", "neon", "vibrant"],
+  "variables": {
+    "colors": {
+      "background": "240 10% 10%",
+      "foreground": "0 0% 100%",
+      "card": "240 10% 15%",
+      "card-foreground": "0 0% 100%",
+      "popover": "240 10% 15%",
+      "popover-foreground": "0 0% 100%",
+      "primary": "270 100% 65%",
+      "primary-foreground": "0 0% 100%",
+      "secondary": "180 100% 50%",
+      "secondary-foreground": "240 10% 10%",
+      "muted": "240 10% 20%",
+      "muted-foreground": "240 5% 65%",
+      "accent": "330 100% 65%",
+      "accent-foreground": "0 0% 100%",
+      "destructive": "0 100% 50%",
+      "destructive-foreground": "0 0% 100%",
+      "border": "240 10% 20%",
+      "ring": "270 100% 65%",
+      "accent1": "330 100% 65%",
+      "accent1-foreground": "0 0% 100%",
+      "accent2": "180 100% 50%",
+      "accent2-foreground": "240 10% 10%",
+      "accent3": "120 100% 45%",
+      "accent3-foreground": "240 10% 10%",
+      "warning": "40 100% 50%",
+      "warning-foreground": "240 10% 10%"
+    },
+    "fonts": {},
+    "radius": "1rem",
+    "other": {
+      "input": "240 10% 20%"
+    }
+  },
+  "styleFeatures": {
+    "background": "linear-gradient(to bottom, #f43f5e, #e11d48)",
+    "boxShadow": "0 0 15px rgba(244, 63, 94, 0.7)",
+    "backgroundColor": "hsl(var(--primary))",
+    "border": "1px solid #be123c",
+    "borderRadius": "0.75rem",
+    "overflow": "hidden",
+    "padding": "0.25rem",
+    "color": "white",
+    "fontWeight": "600",
+    "textTransform": "uppercase",
+    "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
+  },
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  }
+}

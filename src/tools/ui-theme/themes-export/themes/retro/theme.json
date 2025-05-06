@@ -1,0 +1,56 @@
+{
+  "name": "retro",
+  "displayName": "Retro",
+  "description": "Retro style with pixel feel and vibrant contrasting colors, nostalgic game interface",
+  "tags": ["vintage", "old-school", "pixel"],
+  "variables": {
+    "colors": {
+      "background": "60 10% 95%",
+      "foreground": "60 5% 10%",
+      "card": "60 10% 98%",
+      "card-foreground": "60 5% 10%",
+      "popover": "60 10% 98%",
+      "popover-foreground": "60 5% 10%",
+      "primary": "130 50% 50%",
+      "primary-foreground": "60 10% 98%",
+      "secondary": "340 50% 50%",
+      "secondary-foreground": "60 10% 98%",
+      "muted": "60 10% 90%",
+      "muted-foreground": "60 5% 40%",
+      "accent": "40 100% 50%",
+      "accent-foreground": "60 10% 98%",
+      "destructive": "0 100% 40%",
+      "destructive-foreground": "60 10% 98%",
+      "border": "60 5% 75%",
+      "ring": "130 50% 50%",
+      "accent1": "340 50% 50%",
+      "accent1-foreground": "60 10% 98%",
+      "accent2": "190 50% 50%",
+      "accent2-foreground": "60 10% 98%",
+      "accent3": "40 100% 50%",
+      "accent3-foreground": "60 5% 10%",
+      "warning": "35 100% 50%",
+      "warning-foreground": "60 5% 10%"
+    },
+    "fonts": {},
+    "radius": "0rem",
+    "other": {
+      "input": "60 5% 75%"
+    }
+  },
+  "styleFeatures": {
+    "backgroundColor": "#ef4444",
+    "border": "2px solid #991b1b",
+    "color": "white",
+    "borderRadius": "0",
+    "fontWeight": "bold",
+    "fontSize": "0.75em",
+    "lineHeight": "1.6"
+  },
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  }
+}

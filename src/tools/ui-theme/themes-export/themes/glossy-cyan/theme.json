@@ -1,0 +1,40 @@
+{
+  "name": "glossy-cyan",
+  "displayName": "Glossy Cyan",
+  "description": "Glossy cyan theme, smooth surfaces and reflective effects, modern tech feel",
+  "tags": ["glossy", "modern", "tech"],
+  "variables": {
+    "colors": {
+      "background": "220 70% 10%",
+      "foreground": "210 40% 98%",
+      "card": "220 70% 15%",
+      "card-foreground": "210 40% 98%",
+      "popover": "220 70% 15%",
+      "popover-foreground": "210 40% 98%",
+      "primary": "195 100% 50%",
+      "primary-foreground": "210 40% 98%",
+      "secondary": "220 70% 20%",
+      "secondary-foreground": "210 40% 98%",
+      "muted": "220 70% 20%",
+      "muted-foreground": "215 20% 65%",
+      "accent": "195 100% 50%",
+      "accent-foreground": "210 40% 98%",
+      "destructive": "0 100% 50%",
+      "destructive-foreground": "210 40% 98%",
+      "border": "220 70% 30%",
+      "ring": "195 100% 50%"
+    },
+    "fonts": {},
+    "radius": "0.5rem",
+    "other": {
+      "input": "220 70% 20%"
+    }
+  },
+  "styleFeatures": {},
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  }
+}
