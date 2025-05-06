@@ -231,9 +231,6 @@ export function generateStaticAssetPrompt(params: {
       case GAME_ASSET_TYPES.BACKGROUND:
         prompt += ', game background, seamless pattern, tileable';
         break;
-      case GAME_ASSET_TYPES.TILEMAP:
-        prompt += ', game tile, seamless tile, tileset, tilemap element';
-        break;
       case GAME_ASSET_TYPES.UI_ICON:
       case GAME_ASSET_TYPES.UI_BUTTON:
       case GAME_ASSET_TYPES.UI_FRAME:
