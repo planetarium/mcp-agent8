@@ -18,7 +18,10 @@ export enum ToolCategory {
 
   // Group categories
   ASSET_GENERATION = 'asset_generation',
-  VECTOR_SEARCH = 'vector_search'
+  VECTOR_SEARCH = 'vector_search',
+
+  // UI theme categories
+  UI_THEME = 'ui_theme',
 }
 
 /**

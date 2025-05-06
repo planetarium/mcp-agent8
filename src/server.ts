@@ -15,6 +15,7 @@ import { vectorSearchTools } from './tools/vector-search/index.js';
 import { assetGenerateTools } from './tools/asset-generate/index.js';
 import { env } from './utils/env.js';
 import { ToolCategory } from './tools/types.js';
+import { uiThemeTools } from './tools/ui-theme/index.js';
 
 /**
  * MCP Server Implementation
@@ -72,6 +73,7 @@ export class McpServer {
     const enableCinematicTools = env.getBoolean('ENABLE_CINEMATIC_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
     const enableAudioTools = env.getBoolean('ENABLE_AUDIO_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
     const enableSkyboxTools = env.getBoolean('ENABLE_SKYBOX_GENERATION_TOOLS', enableAssetGenerateTools) ?? false;
+    const enableUiThemeTools = env.getBoolean('ENABLE_UI_THEME_TOOLS', enableAllTools) ?? false;
 
     // Create a map of category to enabled status
     const categoryEnabledMap = new Map<ToolCategory, boolean>([
@@ -80,6 +82,7 @@ export class McpServer {
       [ToolCategory.CINEMATIC_GENERATION, enableCinematicTools],
       [ToolCategory.AUDIO_GENERATION, enableAudioTools],
       [ToolCategory.SKYBOX_GENERATION, enableSkyboxTools],
+      [ToolCategory.UI_THEME, enableUiThemeTools],
     ]);
 
     // Register asset generation tools if any are enabled
@@ -143,6 +146,25 @@ export class McpServer {
       if (enableGameResourceSearchTool) logger.info('- Game resource search tool enabled');
     } else {
       logger.info('Vector search tools are disabled');
+    }
+
+
+    // Register UI theme tools if any are enabled
+    if (enableUiThemeTools && uiThemeTools.length > 0) {
+      uiThemeTools.forEach((tool) => {
+        const shouldRegister = tool.metadata.categories.some((category: ToolCategory) =>
+          categoryEnabledMap.get(category) === true
+        );
+
+        if (shouldRegister) {
+          this.toolProvider.getRegistry().register(tool);
+          registeredToolCount++;
+        }
+      });
+
+      logger.info('UI theme tools registered');
+    } else {
+      logger.info('UI theme tools are disabled');
     }
 
     logger.info(`Total ${registeredToolCount} tools registered`);

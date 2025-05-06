@@ -1,0 +1,40 @@
+{
+  "name": "minimalist-dark",
+  "displayName": "Minimalist Dark",
+  "description": "Minimalist dark theme, clean and simple dark tone design",
+  "tags": ["minimal", "dark", "clean"],
+  "variables": {
+    "colors": {
+      "background": "222 47% 11%",
+      "foreground": "210 40% 98%",
+      "card": "229 43% 15%",
+      "card-foreground": "210 40% 98%",
+      "popover": "229 43% 15%",
+      "popover-foreground": "210 40% 98%",
+      "primary": "196 100% 50%",
+      "primary-foreground": "222 47% 11%",
+      "secondary": "215 28% 25%",
+      "secondary-foreground": "210 40% 98%",
+      "muted": "217 33% 20%",
+      "muted-foreground": "215 20% 65%",
+      "accent": "196 100% 50%",
+      "accent-foreground": "222 47% 11%",
+      "destructive": "0 100% 50%",
+      "destructive-foreground": "210 40% 98%",
+      "border": "217 33% 25%",
+      "ring": "196 100% 50%"
+    },
+    "fonts": {},
+    "radius": "0.5rem",
+    "other": {
+      "input": "217 33% 25%"
+    }
+  },
+  "styleFeatures": {},
+  "fontMappings": {
+    "body": "var(--theme-font-base)",
+    "headings": "var(--theme-font-heading)",
+    "accent": "var(--theme-font-accent)",
+    "buttons": "var(--theme-font-heading)"
+  }
+}

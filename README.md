@@ -205,6 +205,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 | ENABLE_SKYBOX_GENERATION_TOOLS    | Enable or disable skybox generation tools                                          | true                                                     |
 | ENABLE_CODE_EXAMPLE_SEARCH_TOOL   | Enable or disable code example search tool                                         | true                                                     |
 | ENABLE_GAME_RESOURCE_SEARCH_TOOL  | Enable or disable game resource search tool                                        | true                                                     |
+| ENABLE_UI_THEME_TOOLS             | Enable or disable UI theme tool                                                    | true                                                     |
 
 **Tool Activation Priority**:
 The tool activation settings follow this priority order:
