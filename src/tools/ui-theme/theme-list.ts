@@ -3,6 +3,16 @@ import { UI_THEME_CATEGORY } from './index.js';
 import { loadThemeList } from './loader.js';
 import { logger } from '../../utils/logging.js';
 
+let themeList: any = null;
+
+loadThemeList().then(list => {
+  themeList = list;
+  logger.info(`Successfully loaded ${themeList.themes.length} themes`);
+}).catch(err => {
+  logger.error('Theme list initialization failed:', err);
+  themeList = { themes: [] };
+});
+
 /**
  * Theme List Tool - Lists all available UI themes
  */
@@ -40,13 +50,11 @@ This is the FIRST TOOL you should use in the UI theming process.
   async execute(args: Record<string, any>): Promise<ToolResult> {
     try {
       const tags = args.tags as string[] || [];
-      // Load theme list
-      const themeList = await loadThemeList();
       // Filter by tags (if provided)
       let filteredThemes = themeList.themes;
       if (tags && tags.length > 0) {
         filteredThemes = filteredThemes.filter((theme: any) =>
-          tags.some(tag => theme.tags.includes(tag))
+          tags.some(tag => theme.tags && theme.tags.includes(tag))
         );
       }
       return {
@@ -55,8 +63,7 @@ This is the FIRST TOOL you should use in the UI theming process.
             type: 'text',
             text: JSON.stringify({
               themes: filteredThemes,
-              count: filteredThemes.length,
-              timestamp: themeList.timestamp
+              count: filteredThemes.length
             }, null, 2)
           }
         ],
