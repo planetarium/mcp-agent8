@@ -8,13 +8,30 @@ import {
 import {
   FAL_DIRECT_URL,
   DEFAULT_STATIC_API_ENDPOINT,
+  BACKGROUND_REMOVAL_API_ENDPOINT,
+  GAME_ASSET_TYPES,
+  ASSET_TYPE_CONFIGS,
+  TOOL_TYPE_IMAGE_GENERATION_2D,
+  CHROMA_KEY_MAGENTA,
+  GameAssetType,
   DEFAULT_STATIC_WIDTH,
   DEFAULT_STATIC_HEIGHT,
-  TOOL_TYPE_IMAGE_GENERATION_2D,
 } from '../common/constants.js';
 import { AssetGeneratorBase } from '../common/asset-generator.js';
 import { uploadAssetToServer } from '../common/utils.js';
 import { logger } from '../../../utils/logging.js';
+
+interface ImageGenerationResponse {
+  images?: Array<{
+    url: string;
+  }>;
+}
+
+interface BackgroundRemovalResponse {
+  image?: {
+    url: string;
+  };
+}
 
 /**
  * Game 2D Image Asset Generator Tool
@@ -22,6 +39,11 @@ import { logger } from '../../../utils/logging.js';
  * Generates 2D assets for game development.
  * Utilizes fal.ai API to help game developers easily create various 2D assets
  * for characters, items, backgrounds, UI elements, and more.
+ *
+ * Enhanced features:
+ * - Automatic background removal for transparent assets
+ * - Asset-type specific optimizations
+ * - Advanced UI and effect asset support
  */
 export class ImageAssetGeneratorTool extends AssetGeneratorBase {
   name = 'image_asset_generate';
@@ -35,26 +57,73 @@ Use this tool when you need to:
 2. Generate game item images
 3. Create game background images
 4. Design UI elements or icons
-5. Generate tilemap elements
+5. Create particle and effect assets for 2D games or 2D objects only
 
-[IMPORTANT NOTE]
-- This tool is specifically designed for 2D game assets and images.
-- For creating immersive 360° environments or skyboxes for VR/AR applications, please use the 'skybox_generate' tool instead.
+[SUPPORTED ASSET TYPES]
+Basic Types:
+- Characters (sprites, avatars)
+- Items (objects, collectibles)
+- Backgrounds (scenes, environments)
+
+UI Types:
+- Icons (skills, items, status)
+- Buttons (menus, actions)
+- Frames (windows, panels)
+
+Effect Types:
+- Particles (magic, explosions) [2D only]
+- Flash Effects (impacts, highlights) [2D only]
 
 [KEY FEATURES]
 - Creates 2D assets based on detailed descriptions
-- Supports various styles (pixel art, cartoon, vector, fantasy, etc.)
-- Provides optimized generation parameters for different asset types
+- Supports various styles: pixel art, cartoon (western/Disney style), anime (Japanese animation style), vector, fantasy, realistic, retro, etc.
+- "cartoon" and "anime" are clearly distinguished. "cartoon" refers to western style, while "anime" refers to Japanese animation style.
+- Automatic background removal for transparent assets
+- Asset-type specific optimizations
 - Outputs in formats compatible with game engines
 
 [TIPS FOR BEST RESULTS]
-- Provide specific and detailed descriptions of the desired asset
-- Specify the desired style clearly (e.g., pixel art, cartoon)
-- Set appropriate asset dimensions (default: 128x128)
-- Include game type information (platformer, shooter, etc.)
-- Always adhere to the schema constraints for style, assetType, and gameType parameters`;
+1. Asset Description Tips:
+   - Provide clear, specific descriptions of what you want
+   - Include details about pose, expression, or state for characters
+   - Specify materials, colors, and textures for items
+   - Describe lighting and atmosphere for backgrounds
+   - Mention any special effects or glows needed
+   - For UI Icons, prefer a single color (monochrome/flat) style to allow flexible CSS styling later.
+   - For particle and flash effects, describe the 2D effect you want for your 2D game or 2D object. Avoid 3D terminology or requests.
 
-  // Tool metadata for categorization and filtering
+2. Style Guidelines:
+   - Choose a style that matches your game's aesthetic
+   - For pixel art: specify pixel dimensions and color limitations
+   - For vector art: mention if you need sharp edges or gradients
+   - For realistic style: describe the level of detail needed
+   - For cartoon style: specify if you want western/Disney style
+   - For anime style: specify if you want Japanese animation style, and describe character features (e.g. big eyes, cel shading)
+   - For fantasy/retro: describe the era or fantasy elements
+   - For UI Icons: use a flat, single-color (monochrome) style for best CSS compatibility
+   - For effects: always describe 2D visual effects, not 3D
+
+3. Size Recommendations:
+   - Characters: 512x512px for main characters
+   - Items: 256x256px for collectibles and equipment
+   - UI Elements: 128x128px for icons, 256x64px for buttons, 512x512px for frames
+   - Effects: 256x256px for particles and flashes (2D only)
+   - Backgrounds: 1024x1024px or larger for scenes
+
+4. Technical Considerations:
+   - Consider the final asset placement in your game
+   - Request transparent backgrounds when needed
+   - Specify if the asset needs to be tileable
+   - Mention any animation requirements
+   - Consider platform/engine specific requirements
+
+5. Context Matters:
+   - Describe how the asset will be used in the game
+   - Mention the viewing distance/scale in the game
+   - Specify any color schemes to match your game
+   - Consider how it fits with existing assets
+   - Think about performance requirements`;
+
   metadata: ToolMetadata = {
     categories: [
       ToolCategory.ASSET_GENERATION,
@@ -67,28 +136,26 @@ Use this tool when you need to:
     properties: {
       description: {
         type: 'string',
-        description:
-          'Detailed description of the asset to generate. More specific descriptions yield better results.',
+        description: 'Detailed description of the asset to generate. More specific descriptions yield better results.',
       },
       style: {
         type: 'string',
-        description: 'Asset style. Must be one of: pixel art, cartoon, vector, realistic, fantasy, or retro.',
+        description: 'Asset style. Must be one of: pixel art, cartoon, anime, vector, realistic, fantasy, or retro. "cartoon" is for western/Disney style, "anime" is for Japanese animation style.',
         default: 'pixel art',
+        enum: ['pixel art', 'cartoon', 'anime', 'vector', 'realistic', 'fantasy', 'retro'],
       },
       assetType: {
         type: 'string',
-        description: 'Asset type. Must be one of: character, item, background, ui, tilemap, or icon.',
+        description: 'Asset type. Supports both basic types (character, item, background, etc.) and enhanced types (ui_icon, fx_particle, etc.).',
         default: 'character',
       },
       width: {
         type: 'number',
         description: 'Asset width in pixels',
-        default: DEFAULT_STATIC_WIDTH,
       },
       height: {
         type: 'number',
         description: 'Asset height in pixels',
-        default: DEFAULT_STATIC_HEIGHT,
       },
       gameType: {
         type: 'string',
@@ -99,24 +166,88 @@ Use this tool when you need to:
         type: 'string',
         description: 'Additional prompt information to fine-tune the generation result.',
       },
+      model: {
+        type: 'string',
+        description: 'Image generation model to use. "auto" will select the best model for the chosen style. "recraft-v3" for vector/UI/icon, "hidream-i1" for concept art, anime, detailed raster images.',
+        default: 'auto',
+        enum: ['auto', 'recraft-v3', 'hidream-i1'],
+      },
     },
     required: ['description'],
   };
 
+  // Style to model mapping for auto selection
+  private static readonly STYLE_MODEL_MAP: Record<string, string> = {
+    'pixel art': 'recraft-v3',
+    'cartoon': 'recraft-v3',
+    'anime': 'hidream-i1',
+    'vector': 'recraft-v3',
+    'realistic': 'recraft-v3',
+    'fantasy': 'hidream-i1',
+    'retro': 'recraft-v3',
+  };
+
+  private async removeBackground(imageUrl: string): Promise<string> {
+    try {
+      const url = `${FAL_DIRECT_URL}/${BACKGROUND_REMOVAL_API_ENDPOINT}`;
+      const result = await authenticatedRequest(url, 'POST', {
+        image_url: imageUrl,
+        format: 'png',
+        remove_color: CHROMA_KEY_MAGENTA
+      }) as BackgroundRemovalResponse;
+
+      if (!result.image?.url) {
+        throw new Error('Background removal failed: No image URL in response');
+      }
+
+      return result.image.url;
+    } catch (error) {
+      logger.error('Background removal failed:', error);
+      throw error;
+    }
+  }
+
   protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
+    const assetType = args.assetType as GameAssetType;
+
+    // Check if it's an enhanced asset type
+    if (Object.values(GAME_ASSET_TYPES).includes(assetType)) {
+      const config = ASSET_TYPE_CONFIGS[assetType];
+      return {
+        description: args.description,
+        style: args.style || 'clean',
+        assetType: assetType,
+        width: args.width || config.defaultWidth,
+        height: args.height || config.defaultHeight,
+        gameType: args.gameType,
+        additionalPrompt: args.additionalPrompt,
+        model: args.model || 'recraft-v3',
+      };
+    }
+
+    // Handle legacy asset types with default type
     return {
       description: args.description,
       style: args.style || 'pixel art',
-      assetType: args.assetType || 'character',
+      assetType: GAME_ASSET_TYPES.CHARACTER,
       width: args.width || DEFAULT_STATIC_WIDTH,
       height: args.height || DEFAULT_STATIC_HEIGHT,
       gameType: args.gameType,
       additionalPrompt: args.additionalPrompt,
+      model: args.model || 'recraft-v3',
     };
   }
 
-  protected getApiEndpoint(): string {
-    // Use default API endpoint
+  protected getApiEndpoint(args?: Record<string, unknown>): string {
+    // Determine model based on style if model is 'auto'
+    let model = args?.model as string || 'auto';
+    if (model === 'auto') {
+      const style = args?.style as string || 'pixel art';
+      model = ImageAssetGeneratorTool.STYLE_MODEL_MAP[style] || 'recraft-v3';
+    }
+    if (model === 'hidream-i1') {
+      return 'fal-ai/hidream-i1-full';
+    }
     return DEFAULT_STATIC_API_ENDPOINT;
   }
 
@@ -125,99 +256,105 @@ Use this tool when you need to:
     apiEndpoint: string,
     context: ToolExecutionContext
   ): Promise<Record<string, unknown>> {
+    const assetType = args.assetType as GameAssetType;
     const style = args.style as string;
     const width = args.width as number;
     const height = args.height as number;
+    let model = args.model as string || 'auto';
 
-    // Generate asset prompt
+    if (model === 'auto') {
+      model = ImageAssetGeneratorTool.STYLE_MODEL_MAP[style] || 'recraft-v3';
+    }
+
+    // Check if it's an enhanced asset type
+    const isEnhancedType = Object.values(GAME_ASSET_TYPES).includes(assetType);
+    const config = isEnhancedType ? ASSET_TYPE_CONFIGS[assetType] : null;
+
+    // Generate optimized prompt
     const prompt = generateStaticAssetPrompt({
       description: args.description as string,
       style: style,
-      assetType: args.assetType as string,
+      assetType: assetType,
       gameType: args.gameType as string,
-      additionalPrompt: args.additionalPrompt as string | undefined,
+      additionalPrompt: args.additionalPrompt as string,
     });
 
-    // Map to recraft-v3 style format
-    const recraftStyle = mapToRecraftStyle(style);
-
-    // Set API parameters for recraft-v3
-    const parameters = {
-      prompt: prompt,
-      image_size: {
-        width: width,
-        height: height,
-      },
-      style: recraftStyle,
-    };
-
-    const sanitizedParams = sanitizeAPIParameters(parameters);
-
-    // Update progress
+    // Initial generation progress
     if (context.progressCallback) {
       await context.progressCallback({
         progress: 0.3,
         total: 1,
-        message: `Generating ${style} style ${args.assetType || 'asset'}... (${width}x${height})`,
+        message: `Generating ${style} style ${assetType}... (${width}x${height})`,
       });
     }
 
-    // Execute model using the API endpoint
-    const url = `${FAL_DIRECT_URL}/${apiEndpoint}`;
-    const result = await authenticatedRequest(url, 'POST', sanitizedParams);
-
-    // Check for image URL in the result
-    let imageUrl = '';
-    if (result.images && result.images.length > 0 && result.images[0].url) {
-      imageUrl = result.images[0].url;
+    // 모델별 파라미터 분기
+    let requestParams: any;
+    if (model === 'hidream-i1') {
+      requestParams = {
+        prompt,
+        image_size: { width, height },
+        num_inference_steps: 50,
+        guidance_scale: 5,
+        num_images: 1,
+        enable_safety_checker: true,
+        output_format: 'png',
+        // Add negative_prompt, etc. if needed
+      };
     } else {
-      throw new Error('Expected image URL not found in result format');
+      requestParams = {
+        prompt,
+        image_size: { width, height },
+        style: mapToRecraftStyle(style),
+      };
     }
 
-    // Update progress
+    // Generate initial image
+    const url = `${FAL_DIRECT_URL}/${apiEndpoint}`;
+    const result = await authenticatedRequest(url, 'POST', sanitizeAPIParameters(requestParams)) as ImageGenerationResponse;
+
+    let imageUrl = result.images?.[0]?.url;
+    if (!imageUrl) {
+      throw new Error('Image generation failed: No image URL in response');
+    }
+
+    // Background removal for enhanced types that require it
+    if (config?.requiresTransparency) {
+      if (context.progressCallback) {
+        await context.progressCallback({
+          progress: 0.6,
+          total: 1,
+          message: 'Removing background...',
+        });
+      }
+      imageUrl = await this.removeBackground(imageUrl);
+    }
+
+    // Upload to server
     if (context.progressCallback) {
       await context.progressCallback({
-        progress: 0.7,
+        progress: 0.8,
         total: 1,
-        message: 'Uploading generated image to server...',
+        message: 'Uploading processed image...',
       });
     }
 
-    // Upload to server if we have a URL
-    if (imageUrl) {
-      const uploadedAsset = await uploadAssetToServer(
-        imageUrl,
-        `image-${args.assetType || 'character'}`
-      );
+    const uploadedAsset = await uploadAssetToServer(
+      imageUrl,
+      `${assetType}`,
+      `${assetType}-${Date.now()}.png`
+    );
 
-      if (uploadedAsset.success && uploadedAsset.url) {
-        // Add the uploaded URL to the original result
-        result.agent8_url = uploadedAsset.url;
-
-        // Update progress
-        if (context.progressCallback) {
-          await context.progressCallback({
-            progress: 0.9,
-            total: 1,
-            message: 'Image successfully uploaded to server',
-          });
-        }
-      } else {
-        // Log upload failure
-        logger.warn(`Failed to upload image asset to server: ${uploadedAsset.error}`);
-        throw new Error(`Failed to upload image asset to server: ${uploadedAsset.error}`);
-      }
-    } else {
-      logger.warn('Expected image URL not found in result format');
-      throw new Error('Expected image URL not found in result format');
+    if (!uploadedAsset.success || !uploadedAsset.url) {
+      throw new Error(`Upload failed: ${uploadedAsset.error || 'Unknown error'}`);
     }
 
-    // Return an object containing only the uploaded asset's URL
     return {
-      url: result.agent8_url || null,
-      message: result.agent8_url
-        ? 'Asset successfully generated and uploaded to server'
-        : 'Asset generated but upload to server failed',
+      url: uploadedAsset.url,
+      message: 'Asset successfully generated and processed',
+      assetType: assetType,
+      style: style,
+      dimensions: { width, height }
     };
   }
 
@@ -225,14 +362,13 @@ Use this tool when you need to:
     return TOOL_TYPE_IMAGE_GENERATION_2D;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected getToolUsageCount(args: Record<string, any>): number {
+  protected getToolUsageCount(): number {
     return 1;
   }
 
-  protected getToolUsageDescription(args: Record<string, any>): string {
-    const style = args.style || 'pixel art';
-    const assetType = args.assetType || 'character';
+  protected getToolUsageDescription(args: Record<string, unknown>): string {
+    const style = args.style as string || 'pixel art';
+    const assetType = args.assetType as string || 'character';
     return `2D ${style} ${assetType} image generation: "${String(args.description).substring(0, 30)}..."`;
   }
 }

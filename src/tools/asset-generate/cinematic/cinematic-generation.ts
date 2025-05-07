@@ -161,37 +161,49 @@ Use this tool when you need to:
     let assetUrls: string[] = [];
 
     // Extract URLs based on result format and schema
-    if (result.video && typeof result.video === 'object' && result.video.url) {
+    if (
+      result.video &&
+      typeof result.video === 'object' &&
+      result.video !== null &&
+      'url' in result.video &&
+      typeof (result.video as any).url === 'string'
+    ) {
       // Handle vidu/reference-to-video schema format
-      assetUrls.push(result.video.url);
-    } else if (result.video && typeof result.video === 'string') {
+      assetUrls.push((result.video as any).url);
+    } else if (typeof result.video === 'string') {
       // Handle string URL format
       assetUrls.push(result.video);
-    } else if (result.image && typeof result.image === 'object' && result.image.url) {
+    } else if (
+      result.image &&
+      typeof result.image === 'object' &&
+      result.image !== null &&
+      'url' in result.image &&
+      typeof (result.image as any).url === 'string'
+    ) {
       // Handle image object with url property
-      assetUrls.push(result.image.url);
-    } else if (result.image && typeof result.image === 'string') {
+      assetUrls.push((result.image as any).url);
+    } else if (typeof result.image === 'string') {
       // Handle string image URL format
       assetUrls.push(result.image);
-    } else if (result.videos && result.videos.length > 0) {
+    } else if (Array.isArray(result.videos) && result.videos.length > 0) {
       // Handle array of video URLs or objects
       result.videos.forEach((video: any) => {
-        if (typeof video === 'object' && video.url) {
+        if (video && typeof video === 'object' && 'url' in video && typeof video.url === 'string') {
           assetUrls.push(video.url);
         } else if (typeof video === 'string') {
           assetUrls.push(video);
         }
       });
-    } else if (result.images && result.images.length > 0) {
+    } else if (Array.isArray(result.images) && result.images.length > 0) {
       // Handle array of image URLs or objects
       result.images.forEach((image: any) => {
-        if (typeof image === 'object' && image.url) {
+        if (image && typeof image === 'object' && 'url' in image && typeof image.url === 'string') {
           assetUrls.push(image.url);
         } else if (typeof image === 'string') {
           assetUrls.push(image);
         }
       });
-    } else if (typeof result === 'string' && result.startsWith('http')) {
+    } else if (typeof result === 'string' && (result as string).startsWith('http')) {
       // Handle direct URL string response
       assetUrls.push(result);
     }
@@ -312,37 +324,49 @@ When queue processing is complete, the generated cinematic assets (image or vide
     let assetUrls: string[] = [];
 
     // Extract URLs based on result format and schema
-    if (result.video && typeof result.video === 'object' && result.video.url) {
+    if (
+      result.video &&
+      typeof result.video === 'object' &&
+      result.video !== null &&
+      'url' in result.video &&
+      typeof (result.video as any).url === 'string'
+    ) {
       // Handle vidu/reference-to-video schema format
-      assetUrls.push(result.video.url);
-    } else if (result.video && typeof result.video === 'string') {
+      assetUrls.push((result.video as any).url);
+    } else if (typeof result.video === 'string') {
       // Handle string URL format
       assetUrls.push(result.video);
-    } else if (result.image && typeof result.image === 'object' && result.image.url) {
+    } else if (
+      result.image &&
+      typeof result.image === 'object' &&
+      result.image !== null &&
+      'url' in result.image &&
+      typeof (result.image as any).url === 'string'
+    ) {
       // Handle image object with url property
-      assetUrls.push(result.image.url);
-    } else if (result.image && typeof result.image === 'string') {
+      assetUrls.push((result.image as any).url);
+    } else if (typeof result.image === 'string') {
       // Handle string image URL format
       assetUrls.push(result.image);
-    } else if (result.videos && result.videos.length > 0) {
+    } else if (Array.isArray(result.videos) && result.videos.length > 0) {
       // Handle array of video URLs or objects
       result.videos.forEach((video: any) => {
-        if (typeof video === 'object' && video.url) {
+        if (video && typeof video === 'object' && 'url' in video && typeof video.url === 'string') {
           assetUrls.push(video.url);
         } else if (typeof video === 'string') {
           assetUrls.push(video);
         }
       });
-    } else if (result.images && result.images.length > 0) {
+    } else if (Array.isArray(result.images) && result.images.length > 0) {
       // Handle array of image URLs or objects
       result.images.forEach((image: any) => {
-        if (typeof image === 'object' && image.url) {
+        if (image && typeof image === 'object' && 'url' in image && typeof image.url === 'string') {
           assetUrls.push(image.url);
         } else if (typeof image === 'string') {
           assetUrls.push(image);
         }
       });
-    } else if (typeof result === 'string' && result.startsWith('http')) {
+    } else if (typeof result === 'string' && (result as string).startsWith('http')) {
       // Handle direct URL string response
       assetUrls.push(result);
     }
