@@ -12,7 +12,6 @@ import {
   GAME_ASSET_TYPES,
   ASSET_TYPE_CONFIGS,
   TOOL_TYPE_IMAGE_GENERATION_2D,
-  CHROMA_KEY_MAGENTA,
   GameAssetType,
   DEFAULT_STATIC_WIDTH,
   DEFAULT_STATIC_HEIGHT,
@@ -189,11 +188,17 @@ Effect Types:
 
   private async removeBackground(imageUrl: string): Promise<string> {
     try {
+      // Check if the image URL has a supported format
+      const supportedFormats = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'];
+      const fileExtension = imageUrl.split('.').pop()?.toLowerCase();
+
+      if (!fileExtension || !supportedFormats.includes(fileExtension)) {
+        throw new Error(`Unsupported image format: ${fileExtension}. Only jpg, jpeg, png, webp, gif, avif formats are supported.`);
+      }
+
       const url = `${FAL_DIRECT_URL}/${BACKGROUND_REMOVAL_API_ENDPOINT}`;
       const result = await authenticatedRequest(url, 'POST', {
         image_url: imageUrl,
-        format: 'png',
-        remove_color: CHROMA_KEY_MAGENTA
       }) as BackgroundRemovalResponse;
 
       if (!result.image?.url) {
@@ -327,7 +332,13 @@ Effect Types:
           message: 'Removing background...',
         });
       }
-      imageUrl = await this.removeBackground(imageUrl);
+
+      try {
+        imageUrl = await this.removeBackground(imageUrl);
+      } catch (error) {
+        // Log the error but continue with the original image
+        logger.error('Background removal failed:', error);
+      }
     }
 
     // Upload to server
@@ -338,11 +349,13 @@ Effect Types:
         message: 'Uploading processed image...',
       });
     }
+    // Extract file extension from the image URL
+    const fileExtension = imageUrl.split('.').pop() || 'png';
 
     const uploadedAsset = await uploadAssetToServer(
       imageUrl,
       `${assetType}`,
-      `${assetType}-${Date.now()}.png`
+      `${assetType}-${Date.now()}.${fileExtension}`
     );
 
     if (!uploadedAsset.success || !uploadedAsset.url) {
