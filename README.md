@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/planetarium-mcp-agent8-badge.png)](https://mseep.ai/app/planetarium-mcp-agent8)
+
 # MCP Server for Agent8
 
 A server implementing the Model Context Protocol (MCP) to support Agent8 SDK development. Developed with TypeScript and pnpm, supporting stdio and SSE transports.
