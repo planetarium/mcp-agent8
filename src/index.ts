@@ -2,6 +2,8 @@
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import express from 'express';
 import cors from 'cors';
 import { Command } from 'commander';
@@ -10,6 +12,7 @@ import { logger, LogLevel, LogDestination } from './utils/logging.js';
 import { env } from './utils/env.js';
 import path from 'path';
 import { authMiddleware } from './middleware/auth.js';
+import { randomUUID } from 'node:crypto';
 
 /**
  * Main Entry Point
@@ -25,11 +28,11 @@ async function main() {
       .description('Agent8 MCP Server')
       .version('1.0.0')
       .option('--debug', 'Enable debug mode')
-      .option('--transport <type>', 'Transport method (stdio or sse)', 'stdio')
-      .option('--port <number>', 'Port to use for SSE transport', '3000')
+      .option('--transport <type>', 'Transport method (stdio, sse, or streamable-http)', 'stdio')
+      .option('--port <number>', 'Port to use for SSE or HTTP transport', '3000')
       .option(
         '--log-destination <dest>',
-        'Log destination (stdout, stderr, file, none) (defaults to stderr for stdio transport, stdout for sse transport)'
+        'Log destination (stdout, stderr, file, none) (defaults to stderr for stdio transport, stdout for sse/http transport)'
       )
       .option('--log-file <path>', 'Path to log file (when log-destination is file)')
       .option('--log-level <level>', 'Log level (debug, info, warn, error)', 'info')
@@ -113,15 +116,131 @@ async function main() {
       version: '1.0.0',
     });
 
-    const sessions: Record<string, SSEServerTransport> = {};
+    if (transportType === 'streamable-http') {
+      logger.info(`Streamable HTTP transport configured, port: ${port}`);
 
-    if (transportType === 'sse') {
+      // Create Express app for Streamable HTTP transport
+      const app = express();
+      app.use(cors());
+      app.use(express.json());
+
+      const httpSessions: Record<string, StreamableHTTPServerTransport> = {};
+
+      // Handle POST requests for client-to-server communication
+      const handlePost = async (req: express.Request, res: express.Response) => {
+        // Check for existing session ID
+        const sessionId = req.headers['mcp-session-id'] as string | undefined;
+        let transport: StreamableHTTPServerTransport;
+
+        if (sessionId && httpSessions[sessionId]) {
+          // Reuse existing transport
+          transport = httpSessions[sessionId];
+          // Log authenticated user info if available
+          if (req.user) {
+            logger.info(`POST to HTTP transport from user: ${req.user.email} (session ${sessionId})`);
+            // Add user information to request params
+            if (!req.body.params) {
+              req.body.params = {};
+            }
+            req.body.params._user = req.user;
+          } else {
+            logger.info(`POST to HTTP transport (session ${sessionId})`);
+          }
+        } else if (!sessionId && isInitializeRequest(req.body)) {
+          // New initialization request
+          transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: () => randomUUID(),
+            onsessioninitialized: (newSessionId) => {
+              // Store the transport by session ID
+              httpSessions[newSessionId] = transport;
+              // Log authenticated user info if available
+              if (req.user) {
+                logger.info(`New HTTP connection established for user: ${req.user.email}, sessionId: ${newSessionId}`);
+              } else {
+                logger.info(`New HTTP connection established, sessionId: ${newSessionId}`);
+              }
+            }
+          });
+
+          // Clean up transport when closed
+          transport.onclose = () => {
+            if (transport.sessionId) {
+              logger.info(`HTTP connection closed (session ${transport.sessionId})`);
+              delete httpSessions[transport.sessionId];
+            }
+          };
+
+          transport.onerror = (err) => {
+            if (transport.sessionId) {
+              logger.error(`HTTP error (session ${transport.sessionId}):`, err);
+              delete httpSessions[transport.sessionId];
+            }
+          };
+
+          await server.connect(transport);
+        } else {
+          // Invalid request
+          res.status(400).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Bad Request: No valid session ID provided',
+            },
+            id: null,
+          });
+          return;
+        }
+
+        // Handle the request
+        await transport.handleRequest(req, res, req.body);
+      };
+
+      // Reusable handler for GET and DELETE requests
+      const handleSessionRequest = async (req: express.Request, res: express.Response) => {
+        const sessionId = req.headers['mcp-session-id'] as string | undefined;
+        if (!sessionId || !httpSessions[sessionId]) {
+          res.status(400).send('Invalid or missing session ID');
+          return;
+        }
+        const transport = httpSessions[sessionId];
+        // Log authenticated user info if available
+        if (req.user) {
+          logger.info(`${req.method} to HTTP transport from user: ${req.user.email} (session ${sessionId})`);
+        } else {
+          logger.info(`${req.method} to HTTP transport (session ${sessionId})`);
+        }
+        await transport.handleRequest(req, res);
+      };
+
+      // Apply appropriate middleware based on authentication requirements
+      if (requireAuth) {
+        logger.info('Authentication middleware activated');
+        app.post('/mcp', authMiddleware(), handlePost);
+        app.get('/mcp', authMiddleware(), handleSessionRequest);
+        app.delete('/mcp', authMiddleware(), handleSessionRequest);
+      } else {
+        app.post('/mcp', handlePost);
+        app.get('/mcp', handleSessionRequest);
+        app.delete('/mcp', handleSessionRequest);
+      }
+
+      // Start Express server
+      app.listen(port, () => {
+        logger.info(`HTTP server listening on port ${port}`);
+        logger.info(`MCP endpoint: http://localhost:${port}/mcp`);
+        if (requireAuth) {
+          logger.info('Authentication required. Provide a Bearer token in the Authorization header.');
+        }
+      });
+    } else if (transportType === 'sse') {
       logger.info(`SSE transport configured, port: ${port}`);
 
       // Create Express app for SSE transport
       const app = express();
       app.use(cors());
       app.use(express.json());
+
+      const sessions: Record<string, SSEServerTransport> = {};
 
       // Extract SSE connection handler function to avoid duplication
       const handleSseConnection = async (req: express.Request, res: express.Response) => {
