@@ -15,6 +15,61 @@ import { authMiddleware } from './middleware/auth.js';
 import { randomUUID } from 'node:crypto';
 
 /**
+ * HTTP request/response logging middleware
+ * Logs detailed request and response information at debug level
+ */
+const httpLoggingMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const startTime = Date.now();
+  const requestId = randomUUID();
+
+  // Log request details
+  logger.debug(`[HTTP][${requestId}] Request:`, {
+    method: req.method,
+    url: req.originalUrl,
+    params: req.params,
+    query: req.query,
+    headers: req.headers,
+    body: req.body,
+    ip: req.ip
+  });
+
+  // Save original response methods to intercept
+  const originalSend = res.send;
+  const originalJson = res.json;
+
+  // Capture response body
+  let responseBody: any;
+
+  // Override send
+  res.send = function (body: any) {
+    responseBody = body;
+    return originalSend.call(this, body);
+  };
+
+  // Override json
+  res.json = function (body: any) {
+    responseBody = body;
+    return originalJson.call(this, body);
+  };
+
+  // Listen for finish event to log response
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+
+    logger.debug(`[HTTP][${requestId}] Response:`, {
+      statusCode: res.statusCode,
+      statusMessage: res.statusMessage,
+      headers: res.getHeaders(),
+      body: responseBody,
+      responseTime: duration
+    });
+  });
+
+  // Continue to next middleware
+  next();
+};
+
+/**
  * Main Entry Point
  * Starts the MCP server.
  */
@@ -123,6 +178,9 @@ async function main() {
       const app = express();
       app.use(cors());
       app.use(express.json());
+
+      // Add HTTP logging middleware
+      app.use(httpLoggingMiddleware);
 
       const httpSessions: Record<string, StreamableHTTPServerTransport> = {};
 
@@ -239,6 +297,9 @@ async function main() {
       const app = express();
       app.use(cors());
       app.use(express.json());
+
+      // Add HTTP logging middleware
+      app.use(httpLoggingMiddleware);
 
       const sessions: Record<string, SSEServerTransport> = {};
 
