@@ -26,8 +26,18 @@ async function convertWithSystemFfmpeg(wavBuffer: Buffer): Promise<Buffer> {
   });
 
   const oggBuffer = await fs.readFile(outputPath);
-  await fs.unlink(inputPath).catch(() => {});
-  await fs.unlink(outputPath).catch(() => {});
+
+  try {
+    await fs.unlink(inputPath);
+  } catch (err) {
+    logger.warn(`Failed to unlink temporary input file: ${inputPath}, error: ${err}`);
+  }
+
+  try {
+    await fs.unlink(outputPath);
+  } catch (err) {
+    logger.warn(`Failed to unlink temporary output file: ${outputPath}, error: ${err}`);
+  }
 
   return oggBuffer;
 }
@@ -59,8 +69,18 @@ async function convertWithWasm(wavBuffer: Buffer): Promise<Buffer> {
   wasmFFmpeg.FS('writeFile', inputName, new Uint8Array(wavBuffer));
   await wasmFFmpeg.run('-i', inputName, '-c:a', 'libvorbis', outputName);
   const data = wasmFFmpeg.FS('readFile', outputName);
-  wasmFFmpeg.FS('unlink', inputName);
-  wasmFFmpeg.FS('unlink', outputName);
+
+  try {
+    wasmFFmpeg.FS('unlink', inputName);
+  } catch (err) {
+    logger.warn(`Failed to unlink temporary WASM input file: ${inputName}, error: ${err}`);
+  }
+
+  try {
+    wasmFFmpeg.FS('unlink', outputName);
+  } catch (err) {
+    logger.warn(`Failed to unlink temporary WASM output file: ${outputName}, error: ${err}`);
+  }
 
   return Buffer.from(data);
 }
