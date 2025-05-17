@@ -351,6 +351,10 @@ export async function uploadAssetToServer(
         fileExt = '.mp4';
       } else if (contentType.includes('video/webm')) {
         fileExt = '.webm';
+      } else if (contentType.includes('audio/wav')) {
+        fileExt = '.wav';
+      } else if (contentType.includes('audio/ogg')) {
+        fileExt = '.ogg';
       }
     }
 
