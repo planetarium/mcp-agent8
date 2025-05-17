@@ -1,6 +1,9 @@
 import { ToolExecutionContext, Tool, ToolResult, ToolCategory, ToolMetadata } from '../../types.js';
 import { queueStatus, queueResult } from './queue-utils.js';
 import { logger } from '../../../utils/logging.js';
+import axios from 'axios';
+import { uploadAssetToServer } from '../common/utils.js';
+import { convertWavToOgg } from '../../../utils/audio.js';
 
 /**
  * Audio Status Tool
@@ -100,7 +103,7 @@ export class AudioResultTool implements Tool {
   name = 'audio_result';
   description = `Retrieves the final result of a completed audio generation request.
 
-Use this tool after audio_status reports 'COMPLETED' status to get the final audio file URL.`;
+Use this tool after audio_status reports 'COMPLETED' status to get the final audio file URL. The server automatically converts WAV output to the smaller OGG format using ffmpeg or a wasm fallback.`;
 
   // Tool metadata for categorization and filtering
   metadata: ToolMetadata = {
@@ -178,6 +181,28 @@ Use this tool after audio_status reports 'COMPLETED' status to get the final aud
         throw new Error('Expected audio file URL not found in result');
       }
 
+      // Download audio data
+      const response = await axios.get<ArrayBuffer>(audioUrl, {
+        responseType: 'arraybuffer'
+      });
+      const wavBuffer = Buffer.from(response.data);
+
+      let uploadedUrl = audioUrl;
+      try {
+        const oggBuffer = await convertWavToOgg(wavBuffer);
+        const dataUrl = `data:audio/ogg;base64,${oggBuffer.toString('base64')}`;
+        const uploaded = await uploadAssetToServer(
+          dataUrl,
+          'audio',
+          `audio-${requestId}.ogg`
+        );
+        if (uploaded.success && uploaded.url) {
+          uploadedUrl = uploaded.url;
+        }
+      } catch (conversionError) {
+        logger.error('Audio conversion failed:', conversionError);
+      }
+
       // Report completion
       if (context.progressCallback) {
         await context.progressCallback({
@@ -192,7 +217,7 @@ Use this tool after audio_status reports 'COMPLETED' status to get the final aud
           type: 'text',
           text: JSON.stringify({
             request_id: requestId,
-            url: audioUrl,
+            url: uploadedUrl,
             message: 'Audio generated successfully'
           })
         }],
