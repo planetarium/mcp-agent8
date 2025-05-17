@@ -31,14 +31,21 @@ async function convertWithSystemFfmpeg(wavBuffer: Buffer): Promise<Buffer> {
 
   return oggBuffer;
 }
-
 async function convertWithWasm(wavBuffer: Buffer): Promise<Buffer> {
   if (!wasmFFmpeg) {
     try {
-      const ffmpegModule = await import('@ffmpeg/ffmpeg');
-      wasmFFmpeg = ffmpegModule.createFFmpeg({ log: false });
+      // For @ffmpeg/ffmpeg v0.11.0, createFFmpeg is typically a direct named export.
+      const { createFFmpeg } = await import('@ffmpeg/ffmpeg');
+
+      if (!createFFmpeg) {
+        logger.error('createFFmpeg function not found in @ffmpeg/ffmpeg module');
+        throw new Error('createFFmpeg function not found in @ffmpeg/ffmpeg module assets');
+      }
+
+      wasmFFmpeg = createFFmpeg({ log: false });
     } catch (err) {
-      throw new Error('ffmpeg.wasm module not available');
+      logger.error(`Failed to initialize ffmpeg.wasm: ${err}`);
+      throw new Error(`ffmpeg.wasm module not available: ${(err as Error).message}`);
     }
   }
 
