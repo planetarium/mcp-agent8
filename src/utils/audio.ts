@@ -31,6 +31,7 @@ async function convertWithSystemFfmpeg(wavBuffer: Buffer): Promise<Buffer> {
 
   return oggBuffer;
 }
+
 async function convertWithWasm(wavBuffer: Buffer): Promise<Buffer> {
   if (!wasmFFmpeg) {
     try {
