@@ -70,7 +70,7 @@ Use this tool when you need to:
       },
       duration: {
         type: 'number',
-        description: 'Duration of the sound effect in seconds (1-30)',
+        description: 'Duration of the sound effect in seconds (1-30, integer values only)',
         default: DEFAULT_AUDIO_DURATION,
       },
     },
@@ -78,9 +78,13 @@ Use this tool when you need to:
   };
 
   protected sanitizeAudioArgs(args: Record<string, any>): Record<string, any> {
+    const duration = args.duration || DEFAULT_AUDIO_DURATION;
+    if (!Number.isInteger(duration) || duration < 1 || duration > 30) {
+      throw new Error('Duration must be an integer between 1 and 30 seconds.');
+    }
     return {
       prompt: args.prompt,
-      duration: args.duration || DEFAULT_AUDIO_DURATION,
+      duration: duration,
     };
   }
 
