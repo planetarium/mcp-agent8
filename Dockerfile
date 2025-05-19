@@ -20,6 +20,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Attempt to install ffmpeg, but continue if it fails
+# This allows the application to use system ffmpeg if available,
+# and fall back to WASM if not.
+RUN apk add --no-cache ffmpeg || true
+
 # Copy package files and built files
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
