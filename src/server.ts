@@ -22,11 +22,13 @@ import { uiThemeTools } from './tools/ui-theme/index.js';
  * Provides prompt functionality
  */
 export class McpServer {
-  private server: Server;
+  private servers: Map<Transport, Server> = new Map();
   private promptProvider: PromptProvider;
   private toolProvider: ToolProvider;
+  private serverOptions: { name: string; version: string };
 
   constructor(options: { name: string; version: string }) {
+    this.serverOptions = options;
     // Initialize prompt provider
     this.promptProvider = new PromptProvider();
 
@@ -34,27 +36,7 @@ export class McpServer {
     this.toolProvider = new ToolProvider();
     this.registerTools();
 
-    // Initialize MCP server
-    this.server = new Server(
-      {
-        name: options.name,
-        version: options.version,
-      },
-      {
-        capabilities: {
-          prompts: {},
-          tools: {},
-        },
-      }
-    );
-
-    // Set up prompt-related handlers
-    this.setupPromptHandlers();
-
-    // Set up tool-related handlers
-    this.setupToolHandlers();
-
-    logger.info(`MCP server '${options.name}' v${options.version} initialized`);
+    logger.info(`MCP server wrapper '${options.name}' v${options.version} initialized`);
   }
 
   /**
@@ -171,18 +153,18 @@ export class McpServer {
   }
 
   /**
-   * Set up prompt handlers
+   * Set up prompt handlers for a given Server instance
    */
-  private setupPromptHandlers(): void {
+  private setupPromptHandlers(serverInstance: Server): void {
     // Handle prompt list requests
-    this.server.setRequestHandler(ListPromptsRequestSchema, async () => {
+    serverInstance.setRequestHandler(ListPromptsRequestSchema, async () => {
       const prompts = this.promptProvider.getRegistry().list();
       logger.debug('Processing prompt list request:', prompts.length);
       return { prompts };
     });
 
     // Handle prompt detail requests
-    this.server.setRequestHandler(GetPromptRequestSchema, async (request: GetPromptRequest) => {
+    serverInstance.setRequestHandler(GetPromptRequestSchema, async (request: GetPromptRequest) => {
       const name = request.params.name;
       const args = request.params.arguments;
       logger.debug(`Processing prompt '${name}' request:`, args);
@@ -201,11 +183,11 @@ export class McpServer {
   }
 
   /**
-   * Set up tool handlers
+   * Set up tool handlers for a given Server instance
    */
-  private setupToolHandlers(): void {
+  private setupToolHandlers(serverInstance: Server): void {
     // Handle tool list requests
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+    serverInstance.setRequestHandler(ListToolsRequestSchema, async () => {
       const tools = this.toolProvider
         .getRegistry()
         .list()
@@ -220,7 +202,7 @@ export class McpServer {
     });
 
     // Handle tool call requests
-    this.server.setRequestHandler(
+    serverInstance.setRequestHandler(
       CallToolRequestSchema,
       async (request, extra) => {
         const { name, arguments: args } = request.params;
@@ -232,9 +214,10 @@ export class McpServer {
         }
 
         try {
+          // Pass the specific serverInstance to execute for context (e.g., sendNotification)
           return (await this.toolProvider
             .getRegistry()
-            .execute(request, signal, this.server)) as CallToolResult;
+            .execute(request, signal, serverInstance)) as CallToolResult;
         } catch (error) {
           logger.error(`Error while calling tool '${name}':`, error);
 
@@ -253,8 +236,32 @@ export class McpServer {
    */
   public async connect(transport: Transport): Promise<void> {
     try {
-      // Connect the server to the transport
-      await this.server.connect(transport);
+      let serverInstance = this.servers.get(transport);
+
+      if (!serverInstance) {
+        serverInstance = new Server(
+          {
+            name: this.serverOptions.name,
+            version: this.serverOptions.version,
+          },
+          {
+            capabilities: {
+              prompts: {},
+              tools: {},
+            },
+          }
+        );
+        this.setupPromptHandlers(serverInstance);
+        this.setupToolHandlers(serverInstance);
+        this.servers.set(transport, serverInstance);
+        logger.info(`New MCP Server instance created for transport`);
+      } else {
+        logger.info(`Reusing existing MCP Server instance for transport`);
+      }
+
+      // Connect the server instance to the transport
+      await serverInstance.connect(transport);
+      logger.info(`MCP Server instance connected to transport`);
     } catch (error) {
       logger.error('MCP server connection failed:', error);
       throw error;
@@ -262,15 +269,39 @@ export class McpServer {
   }
 
   /**
-   * Disconnect server
+   * Disconnect all server instances
    */
   public async disconnect(): Promise<void> {
     try {
-      await this.server.close();
-      logger.info('MCP server disconnected');
+      for (const [, serverInstance] of this.servers) {
+        await serverInstance.close();
+        logger.info('MCP Server instance closed for a transport');
+      }
+      this.servers.clear();
+      logger.info('All MCP server instances disconnected and cleared');
     } catch (error) {
       logger.error('MCP server disconnection failed:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Disconnects a specific transport and its associated server instance.
+   * @param transport The transport to disconnect.
+   */
+  public async disconnectTransport(transport: Transport): Promise<void> {
+    const serverInstance = this.servers.get(transport);
+    if (serverInstance) {
+      try {
+        await serverInstance.close();
+        this.servers.delete(transport);
+        logger.info('MCP Server instance for the specified transport disconnected and removed.');
+      } catch (error) {
+        logger.error('MCP Server instance disconnection for the specified transport failed:', error);
+        throw error;
+      }
+    } else {
+      logger.warn('Attempted to disconnect a transport that was not found.');
     }
   }
 }
