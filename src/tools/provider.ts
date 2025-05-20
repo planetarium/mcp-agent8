@@ -110,7 +110,7 @@ class Registry implements ToolRegistry {
       };
 
       // Execute the tool with context
-      const result = await tool.execute(args as Record<string, any>, context);
+      const result = await tool.execute(args as Record<string, unknown>, context);
       return result;
     } catch (error) {
       logger.error(`Error executing tool '${name}':`, error);

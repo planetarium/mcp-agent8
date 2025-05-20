@@ -128,11 +128,11 @@ Different styles offer different aesthetic qualities, for example:
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected getToolUsageCount(args: Record<string, any>): number {
+  protected getToolUsageCount(args: Record<string, unknown>): number {
     return 1;
   }
 
-  protected getToolUsageDescription(args: Record<string, any>): string {
+  protected getToolUsageDescription(args: Record<string, unknown>): string {
     const styleId = args.skybox_style_id || 67;
     return `Skybox generation with style ${styleId}: "${String(args.prompt).substring(0, 30)}..."`;
   }

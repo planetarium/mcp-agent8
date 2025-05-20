@@ -17,7 +17,7 @@ export abstract class AudioGeneratorBase extends AssetGeneratorBase {
    * @param _args The arguments for the tool
    * @returns Number of credits to consume
    */
-  protected getToolUsageCount(args: Record<string, any>): number {
+  protected getToolUsageCount(args: Record<string, unknown>): number {
     return args.duration || DEFAULT_AUDIO_DURATION;
   }
 
@@ -26,7 +26,7 @@ export abstract class AudioGeneratorBase extends AssetGeneratorBase {
    * @param args The arguments for the tool
    * @returns Description of the tool usage
    */
-  protected getToolUsageDescription(args: Record<string, any>): string {
+  protected getToolUsageDescription(args: Record<string, unknown>): string {
     const audioType = this.getAudioType();
     const duration = args.duration || 30;
     return `${audioType} generation (${duration}s): "${String(args.prompt).substring(0, 30)}..."`;
@@ -47,13 +47,13 @@ export abstract class AudioGeneratorBase extends AssetGeneratorBase {
    * @param args The arguments to sanitize
    * @returns The sanitized arguments
    */
-  protected sanitizeToolArgs(args: Record<string, any>): Record<string, any> {
+  protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
     // Call the original sanitize method
     return this.sanitizeAudioArgs(args);
   }
 
   // Methods to be implemented by child classes
-  protected abstract sanitizeAudioArgs(args: Record<string, any>): Record<string, any>;
+  protected abstract sanitizeAudioArgs(args: Record<string, unknown>): Record<string, unknown>;
 
   protected abstract getAudioEndpoint(): string;
 

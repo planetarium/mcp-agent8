@@ -4,8 +4,9 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 import fs from 'fs/promises';
 import { logger } from './logging.js';
+import type { FFmpeg } from '@ffmpeg/ffmpeg';
 
-let wasmFFmpeg: any;
+let wasmFFmpeg: FFmpeg | undefined;
 
 async function convertWithSystemFfmpeg(wavBuffer: Buffer): Promise<Buffer> {
   const inputPath = path.join(tmpdir(), `${randomUUID()}.wav`);

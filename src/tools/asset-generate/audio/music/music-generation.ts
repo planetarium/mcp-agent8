@@ -91,7 +91,7 @@ Use this tool when you need to:
     required: ['prompt'],
   };
 
-  protected sanitizeAudioArgs(args: Record<string, any>): Record<string, any> {
+  protected sanitizeAudioArgs(args: Record<string, unknown>): Record<string, unknown> {
     return {
       prompt: args.prompt,
       duration: args.duration || DEFAULT_AUDIO_DURATION,
@@ -107,10 +107,10 @@ Use this tool when you need to:
   }
 
   protected async generateAsset(
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<any> {
+  ): Promise<unknown> {
     const { progressCallback } = context;
 
     // Prepare request parameters

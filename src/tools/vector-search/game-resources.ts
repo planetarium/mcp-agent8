@@ -73,7 +73,7 @@ export class GameResourceSearchTool implements Tool {
     required: ['userMessage'],
   };
 
-  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<ToolResult> {
+  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
     const { userMessage, limit = 5 } = args as SearchGameResourcesArgs;
     const { progressCallback } = context;
 

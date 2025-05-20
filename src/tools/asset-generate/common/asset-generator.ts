@@ -10,7 +10,7 @@ export abstract class AssetGeneratorBase implements Tool {
   abstract metadata: ToolMetadata;
 
   execute = async (
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     context: ToolExecutionContext
   ): Promise<ToolResult> => {
     const { progressCallback } = context;
@@ -95,10 +95,10 @@ export abstract class AssetGeneratorBase implements Tool {
 
   // Methods to be implemented by child classes
   protected abstract generateAsset(
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<any>;
+  ): Promise<unknown>;
 
   /**
    * Returns the tool type used for credit consumption
@@ -111,27 +111,27 @@ export abstract class AssetGeneratorBase implements Tool {
    * @param args The arguments for the tool
    * @returns Number of credits to consume
    */
-  protected abstract getToolUsageCount(args: Record<string, any>): number;
+  protected abstract getToolUsageCount(args: Record<string, unknown>): number;
 
   /**
    * Returns the description for credit consumption
    * @param args The arguments for the tool
    * @returns Description of the tool usage
    */
-  protected abstract getToolUsageDescription(args: Record<string, any>): string;
+  protected abstract getToolUsageDescription(args: Record<string, unknown>): string;
 
   /**
    * Sanitizes the arguments for the tool
    * @param args The arguments to sanitize
    * @returns The sanitized arguments
    */
-  protected abstract sanitizeToolArgs(args: Record<string, any>): Record<string, any>;
+  protected abstract sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown>;
 
   /**
    * Returns the API endpoint for the tool
    * Must be implemented by child classes
    */
-  protected abstract getApiEndpoint(args: Record<string, any>): string;
+  protected abstract getApiEndpoint(args: Record<string, unknown>): string;
 }
 
 // Result tool base class
@@ -152,7 +152,7 @@ export abstract class AssetResultBase implements Tool {
   };
 
   execute = async (
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     context: ToolExecutionContext
   ): Promise<ToolResult> => {
     const { progressCallback } = context;
@@ -194,7 +194,7 @@ export abstract class AssetResultBase implements Tool {
   };
 
   // Methods to be implemented by child classes
-  protected abstract fetchResult(url: string): Promise<any>;
+  protected abstract fetchResult(url: string): Promise<unknown>;
 
   protected abstract getAssetType(): string;
 }
