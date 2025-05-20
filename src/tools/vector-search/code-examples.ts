@@ -223,7 +223,7 @@ export class CodeExampleSearchTool implements Tool {
 
       formatted += '**Files:**\n';
       example.files.forEach((file) => {
-        formatted += `- \`${results[file].content}\`\n`;
+        formatted += `- \`${file}\`\n`;
       });
 
       formatted += '\n';
