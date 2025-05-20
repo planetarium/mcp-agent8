@@ -30,7 +30,7 @@ export async function consumeToolUsageCredits(
   toolType: string,
   usageCount: number = 1,
   description: string = '',
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   try {
     // Check if required env vars are set
     const clientId = env.get('V8_CREDIT_CLIENT_ID');
@@ -403,20 +403,26 @@ export async function uploadAssetToServer(
           `Upload failed: ${uploadResponse.status} ${JSON.stringify(uploadResponse.data)}`
         );
       }
-    } catch (uploadError: any) {
+    } catch (uploadError: unknown) {
       // Handle upload error
-      const errorMessage = uploadError.response
-        ? `Upload failed: ${uploadError.response.status} ${JSON.stringify(uploadError.response.data)}`
-        : `Upload error: ${uploadError.message}`;
+      let errorMessage = 'Upload error';
+      if (axios.isAxiosError(uploadError)) {
+        errorMessage = `Upload failed: ${uploadError.response?.status} ${JSON.stringify(
+          uploadError.response?.data
+        )}`;
+      } else if (uploadError instanceof Error) {
+        errorMessage = `Upload error: ${uploadError.message}`;
+      }
 
       logger.error(errorMessage);
       throw new Error(errorMessage);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error uploading asset to server:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error during upload';
     return {
       success: false,
-      error: error.message || 'Unknown error during upload',
+      error: message,
     };
   }
 }

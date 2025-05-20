@@ -1,4 +1,4 @@
-import { ToolExecutionContext } from '../../types.js';
+import { ToolExecutionContext, ToolResult } from '../../types.js';
 import {
   authenticatedRequest,
   sanitizeAPIParameters,
@@ -92,9 +92,11 @@ Use this tool when you need to:
     required: ['prompt', 'reference_image_urls'],
   };
 
-  protected sanitizeToolArgs(args: Record<string, any>): Record<string, any> {
+  protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
     // Limit reference images to maximum of 3
-    let referenceImages = args.reference_image_urls || [];
+    let referenceImages = Array.isArray(args.reference_image_urls)
+      ? (args.reference_image_urls as string[])
+      : [];
     if (referenceImages.length > 3) {
       logger.warn(
         'Too many reference images provided. Maximum allowed is 3. Using only the first 3 images.'
@@ -114,10 +116,14 @@ Use this tool when you need to:
       queue: true, // Always use queue for this model
       parameters: {
         prompt: args.prompt,
-        aspect_ratio: args.aspect_ratio || '16:9',
+        aspect_ratio:
+          typeof args.aspect_ratio === 'string' ? args.aspect_ratio : '16:9',
         reference_image_urls: referenceImages, // Use maximum of 3 images
         seed: args.seed,
-        movement_amplitude: args.movement_amplitude || 'auto',
+        movement_amplitude:
+          typeof args.movement_amplitude === 'string'
+            ? args.movement_amplitude
+            : 'auto',
       },
     };
   }
@@ -128,14 +134,14 @@ Use this tool when you need to:
   }
 
   protected async generateAsset(
-    args: Record<string, any>,
+    args: Record<string, unknown>,
     apiEndpoint: string,
     context: ToolExecutionContext
-  ): Promise<any> {
-    const parameters = args.parameters;
+  ): Promise<unknown> {
+    const parameters = (args.parameters as Record<string, unknown>) || {};
 
     // Optimize prompt (if provided)
-    if (parameters.prompt) {
+    if (typeof parameters.prompt === 'string') {
       parameters.prompt = enhanceCinematicPrompt(parameters.prompt, 'cinematic');
     }
 
@@ -143,8 +149,14 @@ Use this tool when you need to:
 
     // Update progress
     if (context.progressCallback) {
-      const aspectRatio = parameters.aspect_ratio || '16:9';
-      const movementAmplitude = parameters.movement_amplitude || 'auto';
+      const aspectRatio =
+        typeof parameters.aspect_ratio === 'string'
+          ? parameters.aspect_ratio
+          : '16:9';
+      const movementAmplitude =
+        typeof parameters.movement_amplitude === 'string'
+          ? parameters.movement_amplitude
+          : 'auto';
 
       await context.progressCallback({
         progress: 0.3,
@@ -166,10 +178,10 @@ Use this tool when you need to:
       typeof result.video === 'object' &&
       result.video !== null &&
       'url' in result.video &&
-      typeof (result.video as any).url === 'string'
+      typeof (result.video as { url?: unknown }).url === 'string'
     ) {
       // Handle vidu/reference-to-video schema format
-      assetUrls.push((result.video as any).url);
+      assetUrls.push((result.video as { url: string }).url);
     } else if (typeof result.video === 'string') {
       // Handle string URL format
       assetUrls.push(result.video);
@@ -178,16 +190,16 @@ Use this tool when you need to:
       typeof result.image === 'object' &&
       result.image !== null &&
       'url' in result.image &&
-      typeof (result.image as any).url === 'string'
+      typeof (result.image as { url?: unknown }).url === 'string'
     ) {
       // Handle image object with url property
-      assetUrls.push((result.image as any).url);
+      assetUrls.push((result.image as { url: string }).url);
     } else if (typeof result.image === 'string') {
       // Handle string image URL format
       assetUrls.push(result.image);
     } else if (Array.isArray(result.videos) && result.videos.length > 0) {
       // Handle array of video URLs or objects
-      result.videos.forEach((video: any) => {
+      result.videos.forEach((video: unknown) => {
         if (video && typeof video === 'object' && 'url' in video && typeof video.url === 'string') {
           assetUrls.push(video.url);
         } else if (typeof video === 'string') {
@@ -196,7 +208,7 @@ Use this tool when you need to:
       });
     } else if (Array.isArray(result.images) && result.images.length > 0) {
       // Handle array of image URLs or objects
-      result.images.forEach((image: any) => {
+      result.images.forEach((image: unknown) => {
         if (image && typeof image === 'object' && 'url' in image && typeof image.url === 'string') {
           assetUrls.push(image.url);
         } else if (typeof image === 'string') {
@@ -287,13 +299,16 @@ Use this tool when you need to:
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected getToolUsageCount(args: Record<string, any>): number {
+  protected getToolUsageCount(args: Record<string, unknown>): number {
     return 1;
   }
 
-  protected getToolUsageDescription(args: Record<string, any>): string {
-    const aspectRatio = args.parameters?.aspect_ratio || '16:9';
-    return `Cinematic video generation: "${String(args.parameters?.prompt || '').substring(0, 30)}..." (${aspectRatio})`;
+  protected getToolUsageDescription(args: Record<string, unknown>): string {
+    const parameters = (args.parameters as Record<string, unknown>) || {};
+    const aspectRatio =
+      typeof parameters.aspect_ratio === 'string' ? parameters.aspect_ratio : '16:9';
+    const prompt = typeof parameters.prompt === 'string' ? parameters.prompt : '';
+    return `Cinematic video generation: "${prompt.substring(0, 30)}..." (${aspectRatio})`;
   }
 }
 
@@ -316,7 +331,7 @@ When queue processing is complete, the generated cinematic assets (image or vide
     ]
   };
 
-  protected async fetchResult(url: string): Promise<any> {
+  protected async fetchResult(url: string): Promise<unknown> {
     // Get original result
     const result = await authenticatedRequest(url, 'GET');
 
@@ -329,10 +344,10 @@ When queue processing is complete, the generated cinematic assets (image or vide
       typeof result.video === 'object' &&
       result.video !== null &&
       'url' in result.video &&
-      typeof (result.video as any).url === 'string'
+      typeof (result.video as { url?: unknown }).url === 'string'
     ) {
       // Handle vidu/reference-to-video schema format
-      assetUrls.push((result.video as any).url);
+      assetUrls.push((result.video as { url: string }).url);
     } else if (typeof result.video === 'string') {
       // Handle string URL format
       assetUrls.push(result.video);
@@ -341,16 +356,16 @@ When queue processing is complete, the generated cinematic assets (image or vide
       typeof result.image === 'object' &&
       result.image !== null &&
       'url' in result.image &&
-      typeof (result.image as any).url === 'string'
+      typeof (result.image as { url?: unknown }).url === 'string'
     ) {
       // Handle image object with url property
-      assetUrls.push((result.image as any).url);
+      assetUrls.push((result.image as { url: string }).url);
     } else if (typeof result.image === 'string') {
       // Handle string image URL format
       assetUrls.push(result.image);
     } else if (Array.isArray(result.videos) && result.videos.length > 0) {
       // Handle array of video URLs or objects
-      result.videos.forEach((video: any) => {
+      result.videos.forEach((video: unknown) => {
         if (video && typeof video === 'object' && 'url' in video && typeof video.url === 'string') {
           assetUrls.push(video.url);
         } else if (typeof video === 'string') {
@@ -359,7 +374,7 @@ When queue processing is complete, the generated cinematic assets (image or vide
       });
     } else if (Array.isArray(result.images) && result.images.length > 0) {
       // Handle array of image URLs or objects
-      result.images.forEach((image: any) => {
+      result.images.forEach((image: unknown) => {
         if (image && typeof image === 'object' && 'url' in image && typeof image.url === 'string') {
           assetUrls.push(image.url);
         } else if (typeof image === 'string') {
@@ -452,9 +467,9 @@ Use this tool to check the current status of a cinematic generation job in the q
     required: ['url'],
   };
 
-  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<any> {
+  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
     try {
-      const url = args.url;
+      const url = typeof args.url === 'string' ? args.url : String(args.url);
 
       // Update progress
       if (context.progressCallback) {

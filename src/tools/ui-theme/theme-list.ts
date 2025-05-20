@@ -1,9 +1,10 @@
 import { Tool, ToolMetadata, ToolResult } from '../types.js';
 import { UI_THEME_CATEGORY } from './index.js';
 import { loadThemeList } from './loader.js';
+import { ThemeList, Theme } from './types.js';
 import { logger } from '../../utils/logging.js';
 
-let themeList: any = null;
+let themeList: ThemeList | null = null;
 
 loadThemeList().then(list => {
   themeList = list;
@@ -47,13 +48,17 @@ This is the FIRST TOOL you should use in the UI theming process.
     }
   };
 
-  async execute(args: Record<string, any>): Promise<ToolResult> {
+  async execute(args: Record<string, unknown>): Promise<ToolResult> {
     try {
-      const tags = args.tags as string[] || [];
+      const tags = Array.isArray(args.tags) ? (args.tags as string[]) : [];
       // Filter by tags (if provided)
-      let filteredThemes = themeList.themes;
+      if (!themeList) {
+        throw new Error('Theme list not available');
+      }
+
+      let filteredThemes: Theme[] = themeList.themes;
       if (tags && tags.length > 0) {
-        filteredThemes = filteredThemes.filter((theme: any) =>
+        filteredThemes = filteredThemes.filter((theme: Theme) =>
           tags.some(tag => theme.tags && theme.tags.includes(tag))
         );
       }

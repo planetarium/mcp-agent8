@@ -58,7 +58,7 @@ export interface Tool {
   inputSchema: Record<string, unknown>;
   // Tool metadata for categorization and filtering
   metadata: ToolMetadata;
-  execute: (args: Record<string, any>, context: ToolExecutionContext) => Promise<ToolResult>;
+  execute: (args: Record<string, unknown>, context: ToolExecutionContext) => Promise<ToolResult>;
 }
 
 /**

@@ -35,7 +35,7 @@ export class Logger {
   private level: LogLevel = LogLevel.INFO;
   private destination: LogDestination = LogDestination.STDOUT;
   private filePath?: string;
-  private fileStream?: any;
+  private fileStream?: import('fs').WriteStream;
 
   private constructor() {}
 
@@ -102,7 +102,7 @@ export class Logger {
   /**
    * Debug log
    */
-  public debug(message: string, ...args: any[]): void {
+  public debug(message: string, ...args: unknown[]): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
       this.writeLog('DEBUG', message, args);
     }
@@ -111,7 +111,7 @@ export class Logger {
   /**
    * Info log
    */
-  public info(message: string, ...args: any[]): void {
+  public info(message: string, ...args: unknown[]): void {
     if (this.shouldLog(LogLevel.INFO)) {
       this.writeLog('INFO', message, args);
     }
@@ -120,7 +120,7 @@ export class Logger {
   /**
    * Warning log
    */
-  public warn(message: string, ...args: any[]): void {
+  public warn(message: string, ...args: unknown[]): void {
     if (this.shouldLog(LogLevel.WARN)) {
       this.writeLog('WARN', message, args);
     }
@@ -129,7 +129,7 @@ export class Logger {
   /**
    * Error log
    */
-  public error(message: string, ...args: any[]): void {
+  public error(message: string, ...args: unknown[]): void {
     if (this.shouldLog(LogLevel.ERROR)) {
       this.writeLog('ERROR', message, args);
     }
@@ -138,7 +138,7 @@ export class Logger {
   /**
    * Write log to the configured destination
    */
-  private writeLog(level: string, message: string, args: any[]): void {
+  private writeLog(level: string, message: string, args: unknown[]): void {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] [${level}] ${message}`;
 

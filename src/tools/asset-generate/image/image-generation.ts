@@ -294,7 +294,7 @@ Effect Types:
     }
 
     // 모델별 파라미터 분기
-    let requestParams: any;
+    let requestParams: Record<string, unknown>;
     if (model === 'hidream-i1') {
       requestParams = {
         prompt,
