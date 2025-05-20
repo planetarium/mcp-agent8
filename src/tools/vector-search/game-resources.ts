@@ -73,8 +73,10 @@ export class GameResourceSearchTool implements Tool {
     required: ['userMessage'],
   };
 
-  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<ToolResult> {
-    const { userMessage, limit = 5 } = args as SearchGameResourcesArgs;
+  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
+    const { userMessage, limit } = args as Partial<SearchGameResourcesArgs>;
+    const message = typeof userMessage === 'string' ? userMessage : '';
+    const maxResults = typeof limit === 'number' ? limit : 5;
     const { progressCallback } = context;
 
     try {
@@ -98,12 +100,12 @@ export class GameResourceSearchTool implements Tool {
         apiKey: env.getRequired('OPENAI_API_KEY'),
       });
 
-      const results = await this.searchResources({
-        userMessage,
-        limit,
-        supabase,
-        openai,
-      });
+        const results = await this.searchResources({
+          userMessage: message,
+          limit: maxResults,
+          supabase,
+          openai,
+        });
 
       if (progressCallback) {
         await progressCallback({

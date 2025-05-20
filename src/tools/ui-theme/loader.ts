@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { logger } from '../../utils/logging.js';
+import { Theme, ThemeList } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,8 +12,8 @@ const __dirname = dirname(__filename);
 const THEMES_DIR = path.join(__dirname, 'themes-export');
 const THEMES_INDEX_PATH = path.join(THEMES_DIR, 'index.json');
 
-let themesCache: any = null;
-const themeDataCache = new Map<string, any>();
+let themesCache: ThemeList | null = null;
+const themeDataCache = new Map<string, Theme>();
 
 /**
  * Load and return the complete list of UI themes
@@ -20,10 +21,10 @@ const themeDataCache = new Map<string, any>();
  * This function loads theme metadata from the index.json file in the themes directory.
  * For performance, it caches the results after the first call.
  *
- * @returns {Promise<any>} Theme list object containing themes array and metadata
+ * @returns {Promise<ThemeList>} Theme list object containing themes array and metadata
  * @throws {Error} If themes cannot be loaded from the filesystem
  */
-export async function loadThemeList(): Promise<any> {
+export async function loadThemeList(): Promise<ThemeList> {
   try {
     // Use cache to avoid repeated reads
     if (themesCache) {
@@ -31,8 +32,8 @@ export async function loadThemeList(): Promise<any> {
     }
     // Read index.json
     const indexData = fs.readFileSync(THEMES_INDEX_PATH, 'utf-8');
-    themesCache = JSON.parse(indexData);
-    return themesCache;
+    themesCache = JSON.parse(indexData) as ThemeList;
+    return themesCache as ThemeList;
   } catch (error) {
     logger.error('Failed to load theme list:', error);
     throw new Error(`Failed to load theme list: ${error}`);
@@ -47,13 +48,16 @@ export async function loadThemeList(): Promise<any> {
  * For performance, it caches the results after the first call for each theme.
  *
  * @param {string} themeName - Name of the theme to load
- * @returns {Promise<any>} Complete theme data object
+ * @returns {Promise<Theme>} Complete theme data object
  * @throws {Error} If theme does not exist or cannot be loaded
  */
-export async function getTheme(themeName: string): Promise<any> {
+export async function getTheme(themeName: string): Promise<Theme> {
   try {
     if (themeDataCache.has(themeName)) {
-      return themeDataCache.get(themeName);
+      const cached = themeDataCache.get(themeName);
+      if (cached) {
+        return cached;
+      }
     }
 
     const themePath = path.join(THEMES_DIR, 'themes', themeName, 'theme.json');

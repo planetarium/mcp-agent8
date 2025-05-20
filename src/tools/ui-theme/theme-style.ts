@@ -1,6 +1,7 @@
 import { Tool, ToolMetadata, ToolResult } from '../types.js';
 import { UI_THEME_CATEGORY } from './index.js';
 import { getTheme } from './loader.js';
+import { Theme } from './types.js';
 import { logger } from '../../utils/logging.js';
 
 /**
@@ -40,7 +41,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
     required: ['theme']
   };
 
-  async execute(args: Record<string, any>): Promise<ToolResult> {
+  async execute(args: Record<string, unknown>): Promise<ToolResult> {
     try {
       const themeName = args.theme as string;
 
@@ -49,7 +50,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
       }
 
       // Get theme data
-      const themeData = await getTheme(themeName);
+      const themeData: Theme = await getTheme(themeName);
 
       if (!themeData) {
         return {

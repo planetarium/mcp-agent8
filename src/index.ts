@@ -38,16 +38,16 @@ const httpLoggingMiddleware = (req: express.Request, res: express.Response, next
   const originalJson = res.json;
 
   // Capture response body
-  let responseBody: any;
+  let responseBody: unknown;
 
   // Override send
-  res.send = function (body: any) {
+  res.send = function (body: unknown) {
     responseBody = body;
     return originalSend.call(this, body);
   };
 
   // Override json
-  res.json = function (body: any) {
+  res.json = function (body: unknown) {
     responseBody = body;
     return originalJson.call(this, body);
   };

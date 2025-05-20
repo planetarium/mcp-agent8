@@ -46,8 +46,9 @@ export class CodeExampleSearchTool implements Tool {
   /**
    * Execute the vector DB search
    */
-  async execute(args: Record<string, any>, context: ToolExecutionContext): Promise<ToolResult> {
-    const { userMessage, tags } = args;
+  async execute(args: Record<string, unknown>, context: ToolExecutionContext): Promise<ToolResult> {
+    const userMessage = typeof args.userMessage === 'string' ? args.userMessage : '';
+    const tags = Array.isArray(args.tags) ? (args.tags as string[]) : [];
     const { progressCallback, signal } = context;
 
     try {
