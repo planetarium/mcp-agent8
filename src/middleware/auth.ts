@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logging.js';
 import { V8User } from '../types/v8user.js';
 
-/**`
+/**
  * Validates an access token
  * In production, this should call an external authentication service
  */
