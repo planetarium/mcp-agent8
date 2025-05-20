@@ -180,7 +180,7 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 | Variable                          | Description                                                                        | Default                                                  |
 | --------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| MCP_TRANSPORT                     | Transport type (stdio, sse or streamable-htttp)                                    | stdio                                                    |
+| MCP_TRANSPORT                     | Transport type (stdio, sse or streamable-http)                                     | stdio                                                    |
 | PORT                              | Port to use for SSE transport                                                      | 3000                                                     |
 | LOG_LEVEL                         | Log level (debug, info, warn, error)                                               | info                                                     |
 | LOG_DESTINATION                   | Log destination (stdout, stderr, file, none)                                       | stderr (for stdio transport), stdout (for sse transport) |
