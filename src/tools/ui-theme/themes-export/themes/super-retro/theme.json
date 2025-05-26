@@ -3,38 +3,41 @@
   "displayName": "Super Retro",
   "description": "Super retro style, 8-bit pixel art, extreme old-school game feel",
   "tags": ["pixel", "8bit", "vintage"],
-  "variables": {
-    "colors": {
-      "background": "40 20% 60%",
-      "foreground": "0 0% 100%",
-      "card": "30 25% 40%",
-      "card-foreground": "0 0% 100%",
-      "popover": "30 25% 40%",
-      "popover-foreground": "0 0% 100%",
-      "primary": "220 70% 50%",
-      "primary-foreground": "0 0% 100%",
-      "secondary": "0 70% 50%",
-      "secondary-foreground": "0 0% 100%",
-      "muted": "30 15% 25%",
-      "muted-foreground": "0 0% 80%",
-      "accent": "120 70% 50%",
-      "accent-foreground": "0 0% 100%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "0 0% 100%",
-      "border": "0 0% 0%",
-      "ring": "220 70% 50%"
-    },
-    "fonts": {},
-    "radius": "0rem",
-    "other": {
-      "input": "30 25% 30%"
-    }
+  ":root": {
+    "background": "40 20% 60%",
+    "foreground": "0 0% 100%",
+    "card": "30 25% 40%",
+    "card-foreground": "0 0% 100%",
+    "popover": "30 25% 40%",
+    "popover-foreground": "0 0% 100%",
+    "primary": "220 70% 50%",
+    "primary-foreground": "0 0% 100%",
+    "secondary": "0 70% 50%",
+    "secondary-foreground": "0 0% 100%",
+    "muted": "30 15% 25%",
+    "muted-foreground": "0 0% 80%",
+    "accent": "120 70% 50%",
+    "accent-foreground": "0 0% 100%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "0 0% 100%",
+    "border": "0 0% 0%",
+    "input": "30 25% 30%",
+    "ring": "220 70% 50%",
+    "radius": "0rem"
   },
   "styleFeatures": {},
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Press Start 2P, Courier New, monospace",
+    "headings": "Press Start 2P, Courier New, monospace",
+    "accent": "Press Start 2P, Courier New, monospace",
+    "buttons": "Press Start 2P, Courier New, monospace",
+    "resources": {
+      "googleFonts": [
+        "https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400&display=swap"
+      ],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400&display=swap');"
+      ]
+    }
   }
 }

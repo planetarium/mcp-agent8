@@ -1,7 +1,6 @@
 import { Tool, ToolMetadata, ToolResult } from '../types.js';
 import { UI_THEME_CATEGORY } from './index.js';
 import { getTheme } from './loader.js';
-import { Theme } from './types.js';
 import { logger } from '../../utils/logging.js';
 
 /**
@@ -9,22 +8,30 @@ import { logger } from '../../utils/logging.js';
  */
 export class ThemeStyleTool implements Tool {
   name = 'ui_theme_style';
-  description = `STEP 2: Gets complete style variables and CSS definition for a specific UI theme.
+  description = `STEP 2: Gets complete UI theme configuration with CSS variables, component styles, and fonts.
 
-This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool. It provides the comprehensive style definition for the chosen theme.
+Data Structure
 
-[USAGE SEQUENCE]
-1. FIRST: Use 'ui_theme_list' to see all available themes and select one
-2. THEN: Use this tool (ui_theme_style) with your chosen theme name
+":root" - Global CSS variables (MOST IMPORTANT)
+- Must be placed in CSS :root selector for global access
+- Values are raw HSL format (without hsl() wrapper)
+- Usage: hsl(var(--variable-name)) with optional transparency hsl(var(--primary) / 0.5)
+:root {
+  --background: 210 30% 12%;
+  --primary: 190 100% 50%;
+  --foreground: 210 40% 98%;
+}
 
-[KEY FEATURES]
-- Returns all theme variables in a structured format
-- Includes complete color schemes and styling specifications
+"styleFeatures" - Component style patterns to copy into CSS classes
+body { background: hsl(var(--background)); }
+.button { background: hsl(var(--primary) / 0.3); }
 
-[RETURNED DATA]
-- variables: Complete set of theme variables (colors, radius, etc.)
-- styleFeatures: Common style patterns used in the theme
-- fontMappings: Typography settings for different text elements`;
+"fonts" - Theme-matching font system with Google Fonts resources
+- Use googleFonts URLs in HTML <link> tags (recommended for performance)
+- Or use imports at top of CSS files for quick prototyping
+- Apply fonts with font-family: 'Font Name', fallback
+
+CRITICAL: :root variables must be defined globally to work across all components.`;
 
   metadata: ToolMetadata = {
     categories: [UI_THEME_CATEGORY]
@@ -35,7 +42,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
     properties: {
       theme: {
         type: 'string',
-        description: 'Theme name to get style for (e.g., default, dark, neon-arcade, space-tech)'
+        description: 'Theme name to get style for (e.g., default, dark, neon-arcade, space-tech, super-retro)'
       }
     },
     required: ['theme']
@@ -49,8 +56,7 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
         throw new Error('Theme name cannot be empty');
       }
 
-      // Get theme data
-      const themeData: Theme = await getTheme(themeName);
+      const themeData: any = await getTheme(themeName);
 
       if (!themeData) {
         return {
@@ -67,17 +73,22 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
         };
       }
 
+      const result = {
+        name: themeData.name,
+        displayName: themeData.displayName,
+        description: themeData.description,
+        tags: themeData.tags,
+        ":root": themeData[":root"] || {},
+        styleFeatures: themeData.styleFeatures || {},
+        fonts: this.processFonts(themeData.fonts),
+        found: true
+      };
+
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              theme: themeName,
-              variables: themeData.variables,
-              styleFeatures: themeData.styleFeatures,
-              fontMappings: themeData.fontMappings,
-              found: true
-            }, null, 2)
+            text: JSON.stringify(result, null, 2)
           }
         ],
         isError: false
@@ -94,5 +105,31 @@ This tool should be used AFTER selecting a theme using the 'ui_theme_list' tool.
         isError: true
       };
     }
+  }
+
+  private processFonts(fonts: any) {
+    if (!fonts || Object.keys(fonts).length === 0) {
+      return {
+        body: "system-ui, -apple-system, sans-serif",
+        headings: "system-ui, -apple-system, sans-serif",
+        accent: "monospace, 'Courier New'",
+        buttons: "system-ui, -apple-system, sans-serif",
+        resources: {
+          googleFonts: [],
+          imports: []
+        }
+      };
+    }
+
+    return {
+      body: fonts.body || "system-ui, -apple-system, sans-serif",
+      headings: fonts.headings || fonts.body || "system-ui, -apple-system, sans-serif",
+      accent: fonts.accent || "monospace, 'Courier New'",
+      buttons: fonts.buttons || fonts.headings || fonts.body || "system-ui, -apple-system, sans-serif",
+      resources: {
+        googleFonts: fonts.resources?.googleFonts || [],
+        imports: fonts.resources?.imports || []
+      }
+    };
   }
 }

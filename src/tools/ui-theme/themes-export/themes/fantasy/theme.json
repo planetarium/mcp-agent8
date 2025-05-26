@@ -3,40 +3,35 @@
   "displayName": "Fantasy",
   "description": "Fantasy world theme with ancient styles and textures, perfect for medieval or magical games",
   "tags": ["medieval", "magic", "rpg"],
-  "variables": {
-    "colors": {
-      "background": "36 30% 97%",
-      "foreground": "20 40% 15%",
-      "card": "36 30% 99%",
-      "card-foreground": "20 40% 15%",
-      "popover": "36 30% 99%",
-      "popover-foreground": "20 40% 15%",
-      "primary": "27 74% 52%",
-      "primary-foreground": "36 30% 99%",
-      "secondary": "10 43% 85%",
-      "secondary-foreground": "20 40% 15%",
-      "muted": "36 20% 92%",
-      "muted-foreground": "20 30% 40%",
-      "accent": "27 74% 52%",
-      "accent-foreground": "36 30% 99%",
-      "destructive": "0 70% 45%",
-      "destructive-foreground": "36 30% 99%",
-      "border": "36 40% 80%",
-      "ring": "27 74% 52%",
-      "accent1": "340 70% 50%",
-      "accent1-foreground": "36 30% 99%",
-      "accent2": "78 65% 45%",
-      "accent2-foreground": "36 30% 99%",
-      "accent3": "200 70% 45%",
-      "accent3-foreground": "36 30% 99%",
-      "warning": "28 90% 55%",
-      "warning-foreground": "36 30% 99%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "36 30% 97%",
+    "foreground": "20 40% 15%",
+    "card": "36 30% 99%",
+    "card-foreground": "20 40% 15%",
+    "popover": "36 30% 99%",
+    "popover-foreground": "20 40% 15%",
+    "primary": "27 74% 52%",
+    "primary-foreground": "36 30% 99%",
+    "secondary": "10 43% 85%",
+    "secondary-foreground": "20 40% 15%",
+    "muted": "36 20% 92%",
+    "muted-foreground": "20 30% 40%",
+    "accent": "27 74% 52%",
+    "accent-foreground": "36 30% 99%",
+    "destructive": "0 70% 45%",
+    "destructive-foreground": "36 30% 99%",
+    "border": "36 40% 80%",
+    "input": "36 40% 80%",
+    "ring": "27 74% 52%",
     "radius": "0.5rem",
-    "other": {
-      "input": "36 40% 80%"
-    }
+    "accent1": "340 70% 50%",
+    "accent1-foreground": "36 30% 99%",
+    "accent2": "78 65% 45%",
+    "accent2-foreground": "36 30% 99%",
+    "accent3": "200 70% 45%",
+    "accent3-foreground": "36 30% 99%",
+    "warning": "28 90% 55%",
+    "warning-foreground": "36 30% 99%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, #b91c1c, #991b1b)",
@@ -67,10 +62,16 @@
     "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)",
     "letterSpacing": "0.02em"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Cinzel, serif",
+    "headings": "Cinzel, serif",
+    "accent": "Cinzel, serif",
+    "buttons": "Cinzel, serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Cinzel:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400&display=swap');"
+      ]
+    }
   }
 }
