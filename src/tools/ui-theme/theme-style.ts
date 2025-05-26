@@ -2,6 +2,7 @@ import { Tool, ToolMetadata, ToolResult } from '../types.js';
 import { UI_THEME_CATEGORY } from './index.js';
 import { getTheme } from './loader.js';
 import { logger } from '../../utils/logging.js';
+import { Theme } from './types.js';
 
 /**
  * Theme Style Tool - Gets complete theme style variables
@@ -56,7 +57,7 @@ CRITICAL: :root variables must be defined globally to work across all components
         throw new Error('Theme name cannot be empty');
       }
 
-      const themeData: any = await getTheme(themeName);
+      const themeData: Theme = await getTheme(themeName);
 
       if (!themeData) {
         return {
@@ -107,13 +108,13 @@ CRITICAL: :root variables must be defined globally to work across all components
     }
   }
 
-  private processFonts(fonts: any) {
+  private processFonts(fonts?: Theme['fonts']) {
     if (!fonts || Object.keys(fonts).length === 0) {
       return {
-        body: "system-ui, -apple-system, sans-serif",
-        headings: "system-ui, -apple-system, sans-serif",
-        accent: "monospace, 'Courier New'",
-        buttons: "system-ui, -apple-system, sans-serif",
+        body: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        headings: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        accent: "ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace",
+        buttons: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         resources: {
           googleFonts: [],
           imports: []

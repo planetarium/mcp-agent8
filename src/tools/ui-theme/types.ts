@@ -3,9 +3,18 @@ export interface Theme {
   displayName: string;
   description: string;
   tags: string[];
-  variables?: Record<string, unknown>;
-  styleFeatures?: Record<string, unknown>;
-  fontMappings?: Record<string, unknown>;
+  ":root"?: Record<string, string>;
+  styleFeatures?: Record<string, string>;
+  fonts?: {
+    body?: string;
+    headings?: string;
+    accent?: string;
+    buttons?: string;
+    resources?: {
+      googleFonts?: string[];
+      imports?: string[];
+    };
+  };
 }
 
 export interface ThemeList {
