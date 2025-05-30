@@ -3,39 +3,34 @@
   "displayName": "Neon Teal",
   "description": "Neon teal style, modern bright tones, suitable for fashionable game interfaces",
   "tags": ["neon", "vibrant", "modern"],
-  "variables": {
-    "colors": {
-      "background": "180 100% 10%",
-      "foreground": "160 100% 95%",
-      "card": "180 100% 8%",
-      "card-foreground": "160 100% 95%",
-      "popover": "180 100% 8%",
-      "popover-foreground": "160 100% 95%",
-      "primary": "142 70% 45%",
-      "primary-foreground": "0 0% 0%",
-      "secondary": "180 100% 15%",
-      "secondary-foreground": "160 100% 95%",
-      "muted": "180 100%\n    --muted-foreground: 160 70% 80%",
-      "accent": "142 70% 45%",
-      "accent-foreground": "0 0% 0%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "0 0% 0%",
-      "border": "180 100% 20%",
-      "ring": "142 70% 45%",
-      "accent1": "210 70% 55%",
-      "accent1-foreground": "0 0% 0%",
-      "accent2": "300 70% 55%",
-      "accent2-foreground": "0 0% 0%",
-      "accent3": "60 80% 50%",
-      "accent3-foreground": "0 0% 0%",
-      "warning": "25 100% 55%",
-      "warning-foreground": "0 0% 0%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "180 100% 10%",
+    "foreground": "160 100% 95%",
+    "card": "180 100% 8%",
+    "card-foreground": "160 100% 95%",
+    "popover": "180 100% 8%",
+    "popover-foreground": "160 100% 95%",
+    "primary": "142 70% 45%",
+    "primary-foreground": "0 0% 0%",
+    "secondary": "180 100% 15%",
+    "secondary-foreground": "160 100% 95%",
+    "muted": "180 100%\n    --muted-foreground: 160 70% 80%",
+    "accent": "142 70% 45%",
+    "accent-foreground": "0 0% 0%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "0 0% 0%",
+    "border": "180 100% 20%",
+    "input": "180 100% 20%",
+    "ring": "142 70% 45%",
     "radius": "0.25rem",
-    "other": {
-      "input": "180 100% 20%"
-    }
+    "accent1": "210 70% 55%",
+    "accent1-foreground": "0 0% 0%",
+    "accent2": "300 70% 55%",
+    "accent2-foreground": "0 0% 0%",
+    "accent3": "60 80% 50%",
+    "accent3-foreground": "0 0% 0%",
+    "warning": "25 100% 55%",
+    "warning-foreground": "0 0% 0%"
   },
   "styleFeatures": {
     "textTransform": "uppercase",
@@ -50,10 +45,16 @@
     "overflow": "hidden",
     "color": "hsl(var(--primary))"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Orbitron, system-ui, sans-serif",
+    "headings": "Orbitron, system-ui, sans-serif",
+    "accent": "Orbitron, system-ui, sans-serif",
+    "buttons": "Orbitron, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap');"
+      ]
+    }
   }
 }

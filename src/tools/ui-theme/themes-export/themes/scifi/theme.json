@@ -3,40 +3,35 @@
   "displayName": "Sci-Fi",
   "description": "Sci-fi theme with futuristic blue tones and sharp edges, ideal for space or tech themed games",
   "tags": ["futuristic", "tech", "space"],
-  "variables": {
-    "colors": {
-      "background": "220 40% 10%",
-      "foreground": "210 100% 90%",
-      "card": "220 40% 13%",
-      "card-foreground": "210 100% 90%",
-      "popover": "220 40% 13%",
-      "popover-foreground": "210 100% 90%",
-      "primary": "195 100% 50%",
-      "primary-foreground": "220 40% 10%",
-      "secondary": "250 100% 60%",
-      "secondary-foreground": "220 40% 10%",
-      "muted": "220 40% 20%",
-      "muted-foreground": "210 100% 70%",
-      "accent": "280 100% 60%",
-      "accent-foreground": "220 40% 10%",
-      "destructive": "350 100% 60%",
-      "destructive-foreground": "220 40% 10%",
-      "border": "220 40% 30%",
-      "ring": "195 100% 50%",
-      "accent1": "280 100% 60%",
-      "accent1-foreground": "220 40% 10%",
-      "accent2": "160 100% 50%",
-      "accent2-foreground": "220 40% 10%",
-      "accent3": "30 100% 60%",
-      "accent3-foreground": "220 40% 10%",
-      "warning": "30 100% 50%",
-      "warning-foreground": "220 40% 10%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "220 40% 10%",
+    "foreground": "210 100% 90%",
+    "card": "220 40% 13%",
+    "card-foreground": "210 100% 90%",
+    "popover": "220 40% 13%",
+    "popover-foreground": "210 100% 90%",
+    "primary": "195 100% 50%",
+    "primary-foreground": "220 40% 10%",
+    "secondary": "250 100% 60%",
+    "secondary-foreground": "220 40% 10%",
+    "muted": "220 40% 20%",
+    "muted-foreground": "210 100% 70%",
+    "accent": "280 100% 60%",
+    "accent-foreground": "220 40% 10%",
+    "destructive": "350 100% 60%",
+    "destructive-foreground": "220 40% 10%",
+    "border": "220 40% 30%",
+    "input": "220 40% 30%",
+    "ring": "195 100% 50%",
     "radius": "0.75rem",
-    "other": {
-      "input": "220 40% 30%"
-    }
+    "accent1": "280 100% 60%",
+    "accent1-foreground": "220 40% 10%",
+    "accent2": "160 100% 50%",
+    "accent2-foreground": "220 40% 10%",
+    "accent3": "30 100% 60%",
+    "accent3-foreground": "220 40% 10%",
+    "warning": "30 100% 50%",
+    "warning-foreground": "220 40% 10%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, #e11d48, #be123c)",
@@ -69,10 +64,16 @@
     "height": "2px",
     "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Exo 2, system-ui, sans-serif",
+    "headings": "Exo 2, system-ui, sans-serif",
+    "accent": "Exo 2, system-ui, sans-serif",
+    "buttons": "Exo 2, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Exo+2:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400&display=swap');"
+      ]
+    }
   }
 }

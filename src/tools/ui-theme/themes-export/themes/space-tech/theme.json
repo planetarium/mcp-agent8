@@ -3,40 +3,35 @@
   "displayName": "Space Tech",
   "description": "Space tech style with dark backgrounds and bright cyan and blue accents, creating a futuristic feel",
   "tags": ["futuristic", "tech", "space", "dark"],
-  "variables": {
-    "colors": {
-      "background": "210 30% 12%",
-      "foreground": "210 40% 98%",
-      "card": "210 30% 15%",
-      "card-foreground": "210 40% 98%",
-      "popover": "210 30% 15%",
-      "popover-foreground": "210 40% 98%",
-      "primary": "190 100% 50%",
-      "primary-foreground": "210 40% 98%",
-      "secondary": "210 30% 20%",
-      "secondary-foreground": "210 40% 98%",
-      "muted": "210 30% 20%",
-      "muted-foreground": "210 20% 80%",
-      "accent": "190 100% 50%",
-      "accent-foreground": "210 40% 98%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "210 40% 98%",
-      "border": "210 30% 25%",
-      "ring": "190 100% 50%",
-      "accent1": "220 100% 65%",
-      "accent1-foreground": "210 40% 98%",
-      "accent2": "170 100% 45%",
-      "accent2-foreground": "210 40% 98%",
-      "accent3": "280 70% 60%",
-      "accent3-foreground": "210 40% 98%",
-      "warning": "30 100% 50%",
-      "warning-foreground": "210 40% 98%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "210 30% 12%",
+    "foreground": "210 40% 98%",
+    "card": "210 30% 15%",
+    "card-foreground": "210 40% 98%",
+    "popover": "210 30% 15%",
+    "popover-foreground": "210 40% 98%",
+    "primary": "190 100% 50%",
+    "primary-foreground": "210 40% 98%",
+    "secondary": "210 30% 20%",
+    "secondary-foreground": "210 40% 98%",
+    "muted": "210 30% 20%",
+    "muted-foreground": "210 20% 80%",
+    "accent": "190 100% 50%",
+    "accent-foreground": "210 40% 98%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "210 40% 98%",
+    "border": "210 30% 25%",
+    "input": "210 30% 25%",
+    "ring": "190 100% 50%",
     "radius": "0.25rem",
-    "other": {
-      "input": "210 30% 25%"
-    }
+    "accent1": "220 100% 65%",
+    "accent1-foreground": "210 40% 98%",
+    "accent2": "170 100% 45%",
+    "accent2-foreground": "210 40% 98%",
+    "accent3": "280 70% 60%",
+    "accent3-foreground": "210 40% 98%",
+    "warning": "30 100% 50%",
+    "warning-foreground": "210 40% 98%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, #ef4444, #dc2626)",
@@ -50,10 +45,16 @@
     "boxShadow": "0 0 8px rgba(239, 68, 68, 0.4)",
     "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Russo One, system-ui, sans-serif",
+    "headings": "Russo One, system-ui, sans-serif",
+    "accent": "Russo One, system-ui, sans-serif",
+    "buttons": "Russo One, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Russo+One:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Russo+One:wght@400&display=swap');"
+      ]
+    }
   }
 }

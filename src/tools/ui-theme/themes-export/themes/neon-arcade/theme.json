@@ -3,40 +3,35 @@
   "displayName": "Neon Arcade",
   "description": "Vibrant neon style with bright purples, blues and pinks, perfect for arcade or cyberpunk games",
   "tags": ["cyberpunk", "arcade", "neon", "vibrant"],
-  "variables": {
-    "colors": {
-      "background": "240 10% 10%",
-      "foreground": "0 0% 100%",
-      "card": "240 10% 15%",
-      "card-foreground": "0 0% 100%",
-      "popover": "240 10% 15%",
-      "popover-foreground": "0 0% 100%",
-      "primary": "270 100% 65%",
-      "primary-foreground": "0 0% 100%",
-      "secondary": "180 100% 50%",
-      "secondary-foreground": "240 10% 10%",
-      "muted": "240 10% 20%",
-      "muted-foreground": "240 5% 65%",
-      "accent": "330 100% 65%",
-      "accent-foreground": "0 0% 100%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "0 0% 100%",
-      "border": "240 10% 20%",
-      "ring": "270 100% 65%",
-      "accent1": "330 100% 65%",
-      "accent1-foreground": "0 0% 100%",
-      "accent2": "180 100% 50%",
-      "accent2-foreground": "240 10% 10%",
-      "accent3": "120 100% 45%",
-      "accent3-foreground": "240 10% 10%",
-      "warning": "40 100% 50%",
-      "warning-foreground": "240 10% 10%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "240 10% 10%",
+    "foreground": "0 0% 100%",
+    "card": "240 10% 15%",
+    "card-foreground": "0 0% 100%",
+    "popover": "240 10% 15%",
+    "popover-foreground": "0 0% 100%",
+    "primary": "270 100% 65%",
+    "primary-foreground": "0 0% 100%",
+    "secondary": "180 100% 50%",
+    "secondary-foreground": "240 10% 10%",
+    "muted": "240 10% 20%",
+    "muted-foreground": "240 5% 65%",
+    "accent": "330 100% 65%",
+    "accent-foreground": "0 0% 100%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "0 0% 100%",
+    "border": "240 10% 20%",
+    "input": "240 10% 20%",
+    "ring": "270 100% 65%",
     "radius": "1rem",
-    "other": {
-      "input": "240 10% 20%"
-    }
+    "accent1": "330 100% 65%",
+    "accent1-foreground": "0 0% 100%",
+    "accent2": "180 100% 50%",
+    "accent2-foreground": "240 10% 10%",
+    "accent3": "120 100% 45%",
+    "accent3-foreground": "240 10% 10%",
+    "warning": "40 100% 50%",
+    "warning-foreground": "240 10% 10%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, #f43f5e, #e11d48)",
@@ -51,10 +46,16 @@
     "textTransform": "uppercase",
     "textShadow": "0 1px 1px rgba(0, 0, 0, 0.5)"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Audiowide, system-ui, sans-serif",
+    "headings": "Audiowide, system-ui, sans-serif",
+    "accent": "Audiowide, system-ui, sans-serif",
+    "buttons": "Audiowide, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Audiowide:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Audiowide:wght@400&display=swap');"
+      ]
+    }
   }
 }

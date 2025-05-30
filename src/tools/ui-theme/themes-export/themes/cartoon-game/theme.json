@@ -3,38 +3,39 @@
   "displayName": "Cartoon Game",
   "description": "Cartoon game style, lively and cute, suitable for casual games",
   "tags": ["fun", "colorful", "animated"],
-  "variables": {
-    "colors": {
-      "background": "0 0% 100%",
-      "foreground": "222.2 84% 4.9%",
-      "card": "0 0% 100%",
-      "card-foreground": "222.2 84% 4.9%",
-      "popover": "0 0% 100%",
-      "popover-foreground": "222.2 84% 4.9%",
-      "primary": "217 100% 50%",
-      "primary-foreground": "210 40% 98%",
-      "secondary": "78 100% 50%",
-      "secondary-foreground": "210 40% 98%",
-      "muted": "210 40% 96.1%",
-      "muted-foreground": "215.4 16.3% 46.9%",
-      "accent": "52 100% 50%",
-      "accent-foreground": "222.2 47.4% 11.2%",
-      "destructive": "0 84.2% 60.2%",
-      "destructive-foreground": "210 40% 98%",
-      "border": "214.3 31.8% 91.4%",
-      "ring": "217 100% 50%"
-    },
-    "fonts": {},
-    "radius": "0.75rem",
-    "other": {
-      "input": "214.3 31.8% 91.4%"
-    }
+  ":root": {
+    "background": "0 0% 100%",
+    "foreground": "222.2 84% 4.9%",
+    "card": "0 0% 100%",
+    "card-foreground": "222.2 84% 4.9%",
+    "popover": "0 0% 100%",
+    "popover-foreground": "222.2 84% 4.9%",
+    "primary": "217 100% 50%",
+    "primary-foreground": "210 40% 98%",
+    "secondary": "78 100% 50%",
+    "secondary-foreground": "210 40% 98%",
+    "muted": "210 40% 96.1%",
+    "muted-foreground": "215.4 16.3% 46.9%",
+    "accent": "52 100% 50%",
+    "accent-foreground": "222.2 47.4% 11.2%",
+    "destructive": "0 84.2% 60.2%",
+    "destructive-foreground": "210 40% 98%",
+    "border": "214.3 31.8% 91.4%",
+    "input": "214.3 31.8% 91.4%",
+    "ring": "217 100% 50%",
+    "radius": "0.75rem"
   },
   "styleFeatures": {},
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Bangers, system-ui, sans-serif",
+    "headings": "Bangers, system-ui, sans-serif",
+    "accent": "Bangers, system-ui, sans-serif",
+    "buttons": "Bangers, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Bangers:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Bangers:wght@400&display=swap');"
+      ]
+    }
   }
 }

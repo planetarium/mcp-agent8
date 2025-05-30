@@ -3,40 +3,35 @@
   "displayName": "Dark RPG",
   "description": "Dark RPG style with deep tones and mysterious purple elements, suitable for role-playing games",
   "tags": ["dark", "game", "fantasy", "rpg"],
-  "variables": {
-    "colors": {
-      "background": "230 25% 12%",
-      "foreground": "210 40% 98%",
-      "card": "230 30% 15%",
-      "card-foreground": "210 40% 98%",
-      "popover": "230 30% 18%",
-      "popover-foreground": "210 40% 98%",
-      "primary": "260 80% 60%",
-      "primary-foreground": "210 40% 98%",
-      "secondary": "230 25% 25%",
-      "secondary-foreground": "210 40% 98%",
-      "muted": "230 25% 20%",
-      "muted-foreground": "210 20% 80%",
-      "accent": "260 80% 60%",
-      "accent-foreground": "210 40% 98%",
-      "destructive": "0 80% 60%",
-      "destructive-foreground": "210 40% 98%",
-      "border": "230 25% 25%",
-      "ring": "260 80% 60%",
-      "accent1": "300 70% 55%",
-      "accent1-foreground": "210 40% 98%",
-      "accent2": "160 70% 55%",
-      "accent2-foreground": "210 40% 98%",
-      "accent3": "40 80% 55%",
-      "accent3-foreground": "210 40% 98%",
-      "warning": "35 90% 55%",
-      "warning-foreground": "210 40% 98%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "230 25% 12%",
+    "foreground": "210 40% 98%",
+    "card": "230 30% 15%",
+    "card-foreground": "210 40% 98%",
+    "popover": "230 30% 18%",
+    "popover-foreground": "210 40% 98%",
+    "primary": "260 80% 60%",
+    "primary-foreground": "210 40% 98%",
+    "secondary": "230 25% 25%",
+    "secondary-foreground": "210 40% 98%",
+    "muted": "230 25% 20%",
+    "muted-foreground": "210 20% 80%",
+    "accent": "260 80% 60%",
+    "accent-foreground": "210 40% 98%",
+    "destructive": "0 80% 60%",
+    "destructive-foreground": "210 40% 98%",
+    "border": "230 25% 25%",
+    "input": "230 25% 25%",
+    "ring": "260 80% 60%",
     "radius": "0.75rem",
-    "other": {
-      "input": "230 25% 25%"
-    }
+    "accent1": "300 70% 55%",
+    "accent1-foreground": "210 40% 98%",
+    "accent2": "160 70% 55%",
+    "accent2-foreground": "210 40% 98%",
+    "accent3": "40 80% 55%",
+    "accent3-foreground": "210 40% 98%",
+    "warning": "35 90% 55%",
+    "warning-foreground": "210 40% 98%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, hsl(var(--warning)), hsl(var(--warning) / 0.8))",
@@ -48,10 +43,16 @@
     "fontWeight": "600",
     "borderBottom": "2px solid hsl(var(--primary))"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Crimson Pro, serif",
+    "headings": "Crimson Pro, serif",
+    "accent": "Crimson Pro, serif",
+    "buttons": "Crimson Pro, serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&display=swap');"
+      ]
+    }
   }
 }

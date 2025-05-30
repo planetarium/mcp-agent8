@@ -3,40 +3,35 @@
   "displayName": "Cyberpunk",
   "description": "Cyberpunk style with neon colors and future urban aesthetics",
   "tags": ["neon", "futuristic", "dystopian"],
-  "variables": {
-    "colors": {
-      "background": "0 0% 0%",
-      "foreground": "0 0% 100%",
-      "card": "0 0% 10%",
-      "card-foreground": "0 0% 100%",
-      "popover": "0 0% 10%",
-      "popover-foreground": "0 0% 100%",
-      "primary": "320 100% 50%",
-      "primary-foreground": "0 0% 100%",
-      "secondary": "180 100% 50%",
-      "secondary-foreground": "0 0% 0%",
-      "muted": "0 0% 20%",
-      "muted-foreground": "0 0% 70%",
-      "accent": "60 100% 50%",
-      "accent-foreground": "0 0% 0%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "0 0% 100%",
-      "border": "320 100% 50%",
-      "ring": "320 100% 50%",
-      "accent1": "180 100% 50%",
-      "accent1-foreground": "0 0% 0%",
-      "accent2": "60 100% 50%",
-      "accent2-foreground": "0 0% 0%",
-      "accent3": "270 100% 65%",
-      "accent3-foreground": "0 0% 100%",
-      "warning": "30 100% 50%",
-      "warning-foreground": "0 0% 0%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "0 0% 0%",
+    "foreground": "0 0% 100%",
+    "card": "0 0% 10%",
+    "card-foreground": "0 0% 100%",
+    "popover": "0 0% 10%",
+    "popover-foreground": "0 0% 100%",
+    "primary": "320 100% 50%",
+    "primary-foreground": "0 0% 100%",
+    "secondary": "180 100% 50%",
+    "secondary-foreground": "0 0% 0%",
+    "muted": "0 0% 20%",
+    "muted-foreground": "0 0% 70%",
+    "accent": "60 100% 50%",
+    "accent-foreground": "0 0% 0%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "0 0% 100%",
+    "border": "320 100% 50%",
+    "input": "0 0% 20%",
+    "ring": "320 100% 50%",
     "radius": "0",
-    "other": {
-      "input": "0 0% 20%"
-    }
+    "accent1": "180 100% 50%",
+    "accent1-foreground": "0 0% 0%",
+    "accent2": "60 100% 50%",
+    "accent2-foreground": "0 0% 0%",
+    "accent3": "270 100% 65%",
+    "accent3-foreground": "0 0% 100%",
+    "warning": "30 100% 50%",
+    "warning-foreground": "0 0% 0%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, #ef4444, #dc2626)",
@@ -47,10 +42,16 @@
     "letterSpacing": "0.05em",
     "textTransform": "uppercase"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Orbitron, system-ui, sans-serif",
+    "headings": "Orbitron, system-ui, sans-serif",
+    "accent": "Orbitron, system-ui, sans-serif",
+    "buttons": "Orbitron, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap');"
+      ]
+    }
   }
 }

@@ -3,40 +3,35 @@
   "displayName": "Neon Blue",
   "description": "Neon blue tones, cool neon effects with strong tech feel",
   "tags": ["neon", "vibrant", "cool"],
-  "variables": {
-    "colors": {
-      "background": "220 70% 10%",
-      "foreground": "210 100% 90%",
-      "card": "220 70% 13%",
-      "card-foreground": "210 100% 90%",
-      "popover": "220 70% 13%",
-      "popover-foreground": "210 100% 90%",
-      "primary": "195 100% 50%",
-      "primary-foreground": "220 40% 10%",
-      "secondary": "220 70% 20%",
-      "secondary-foreground": "210 100% 90%",
-      "muted": "220 70% 20%",
-      "muted-foreground": "210 100% 70%",
-      "accent": "195 100% 50%",
-      "accent-foreground": "220 40% 10%",
-      "destructive": "0 100% 50%",
-      "destructive-foreground": "210 100% 90%",
-      "border": "220 70% 30%",
-      "ring": "195 100% 50%",
-      "accent1": "260 100% 60%",
-      "accent1-foreground": "220 40% 10%",
-      "accent2": "160 100% 50%",
-      "accent2-foreground": "220 40% 10%",
-      "accent3": "30 100% 50%",
-      "accent3-foreground": "220 40% 10%",
-      "warning": "30 100% 50%",
-      "warning-foreground": "220 40% 10%"
-    },
-    "fonts": {},
+  ":root": {
+    "background": "220 70% 10%",
+    "foreground": "210 100% 90%",
+    "card": "220 70% 13%",
+    "card-foreground": "210 100% 90%",
+    "popover": "220 70% 13%",
+    "popover-foreground": "210 100% 90%",
+    "primary": "195 100% 50%",
+    "primary-foreground": "220 40% 10%",
+    "secondary": "220 70% 20%",
+    "secondary-foreground": "210 100% 90%",
+    "muted": "220 70% 20%",
+    "muted-foreground": "210 100% 70%",
+    "accent": "195 100% 50%",
+    "accent-foreground": "220 40% 10%",
+    "destructive": "0 100% 50%",
+    "destructive-foreground": "210 100% 90%",
+    "border": "220 70% 30%",
+    "input": "220 70% 30%",
+    "ring": "195 100% 50%",
     "radius": "0.5rem",
-    "other": {
-      "input": "220 70% 30%"
-    }
+    "accent1": "260 100% 60%",
+    "accent1-foreground": "220 40% 10%",
+    "accent2": "160 100% 50%",
+    "accent2-foreground": "220 40% 10%",
+    "accent3": "30 100% 50%",
+    "accent3-foreground": "220 40% 10%",
+    "warning": "30 100% 50%",
+    "warning-foreground": "220 40% 10%"
   },
   "styleFeatures": {
     "background": "linear-gradient(to bottom, hsl(var(--warning)), hsl(var(--warning) / 0.8))",
@@ -51,10 +46,16 @@
     "textTransform": "uppercase",
     "letterSpacing": "0.05em"
   },
-  "fontMappings": {
-    "body": "var(--theme-font-base)",
-    "headings": "var(--theme-font-heading)",
-    "accent": "var(--theme-font-accent)",
-    "buttons": "var(--theme-font-heading)"
+  "fonts": {
+    "body": "Orbitron, system-ui, sans-serif",
+    "headings": "Orbitron, system-ui, sans-serif",
+    "accent": "Orbitron, system-ui, sans-serif",
+    "buttons": "Orbitron, system-ui, sans-serif",
+    "resources": {
+      "googleFonts": ["https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap"],
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap');"
+      ]
+    }
   }
 }
