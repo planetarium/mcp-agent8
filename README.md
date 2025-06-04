@@ -77,7 +77,7 @@ There are three ways to configure environment variables when running with Docker
      -e SUPABASE_URL=your_supabase_url \
      -e SUPABASE_SERVICE_ROLE_KEY=your_service_role_key \
      -e OPENAI_API_KEY=your_openai_api_key \
-     -e MCP_TRANSPORT=sse \
+     -e MCP_TRANSPORTS=sse,streamable-http \
      -e PORT=3000 \
      -e LOG_LEVEL=info \
      agent8-mcp-server
@@ -133,8 +133,8 @@ pnpm start --version
 Supported options:
 
 - `--debug`: Enable debug mode
-- `--transport <type>`: Transport type (stdio, sse, or streamable-http), default: stdio
-- `--port <number>`: Port to use for SSE or HTTP transport, default: 3000
+- `--transports <types>`: Transport methods (comma-separated: stdio,sse,streamable-http), default: stdio
+- `--port <number>`: Port to use for HTTP-based transports (sse, streamable-http), default: 3000
 - `--log-destination <dest>`: Log destination (stdout, stderr, file, none)
 - `--log-file <path>`: Path to log file (when log-destination is file)
 - `--log-level <level>`: Log level (debug, info, warn, error), default: info
@@ -178,34 +178,34 @@ This allows you to set baseline configuration in your `.env` file while overridi
 
 #### Supported Environment Variables
 
-| Variable                          | Description                                                                        | Default                                                  |
-| --------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| MCP_TRANSPORT                     | Transport type (stdio, sse or streamable-http)                                     | stdio                                                    |
-| PORT                              | Port to use for SSE transport                                                      | 3000                                                     |
-| LOG_LEVEL                         | Log level (debug, info, warn, error)                                               | info                                                     |
-| LOG_DESTINATION                   | Log destination (stdout, stderr, file, none)                                       | stderr (for stdio transport), stdout (for sse transport) |
-| LOG_FILE                          | Path to log file (when LOG_DESTINATION is file)                                    | (none)                                                   |
-| DEBUG                             | Enable debug mode (true/false)                                                     | false                                                    |
-| V8_AUTH_API_ENDPOINT              | Authentication API endpoint URL                                                    | (none)                                                   |
-| V8_AUTH_REQUIRE                   | Require authentication for API endpoints                                           | false                                                    |
-| SUPABASE_URL                      | Supabase URL for database connection                                               | (required)                                               |
-| SUPABASE_SERVICE_ROLE_KEY         | Supabase service role key for authentication                                       | (required)                                               |
-| OPENAI_API_KEY                    | OpenAI API key for AI functionality                                                | (required)                                               |
-| FAL_KEY                           | fal.ai API key for asset generation                                                | (required)                                               |
-| BLOCKADE_LABS_API_KEY             | Blockade Labs API key for skybox generation                                        | (required for skybox generation)                         |
-| V8_CREDIT_CLIENT_ID               | Client ID for credit consumption API                                               | (none, optional for asset generation)                    |
-| V8_CREDIT_CLIENT_SECRET           | Client secret for credit consumption API                                           | (none, optional for asset generation)                    |
-| V8_CREDIT_API_ENDPOINT            | API endpoint for credit consumption                                                | (required for asset generation)                          |
-| ENABLE_ALL_TOOLS                  | Enable or disable all tools globally                                               | true                                                     |
-| ENABLE_VECTOR_SEARCH_TOOLS        | Enable or disable all vector search tools                                          | true                                                     |
-| ENABLE_ASSET_GENERATE_TOOLS       | Enable or disable all asset generation tools (images, cinematics, audio, skyboxes) | true                                                     |
-| ENABLE_IMAGE_GENERATION_TOOLS     | Enable or disable image generation tools                                           | true                                                     |
-| ENABLE_CINEMATIC_GENERATION_TOOLS | Enable or disable cinematic generation tools                                       | true                                                     |
-| ENABLE_AUDIO_GENERATION_TOOLS     | Enable or disable audio generation tools                                           | true                                                     |
-| ENABLE_SKYBOX_GENERATION_TOOLS    | Enable or disable skybox generation tools                                          | true                                                     |
-| ENABLE_CODE_EXAMPLE_SEARCH_TOOL   | Enable or disable code example search tool                                         | true                                                     |
-| ENABLE_GAME_RESOURCE_SEARCH_TOOL  | Enable or disable game resource search tool                                        | true                                                     |
-| ENABLE_UI_THEME_TOOLS             | Enable or disable UI theme tool                                                    | true                                                     |
+| Variable                          | Description                                                                        | Default                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| MCP_TRANSPORTS                    | Transport methods (comma-separated: stdio,sse,streamable-http)                     | stdio                                                      |
+| PORT                              | Port to use for HTTP-based transports (sse, streamable-http)                       | 3000                                                       |
+| LOG_LEVEL                         | Log level (debug, info, warn, error)                                               | info                                                       |
+| LOG_DESTINATION                   | Log destination (stdout, stderr, file, none)                                       | stderr (for stdio transport), stdout (for http transports) |
+| LOG_FILE                          | Path to log file (when LOG_DESTINATION is file)                                    | (none)                                                     |
+| DEBUG                             | Enable debug mode (true/false)                                                     | false                                                      |
+| V8_AUTH_API_ENDPOINT              | Authentication API endpoint URL                                                    | (none)                                                     |
+| V8_AUTH_REQUIRE                   | Require authentication for API endpoints                                           | false                                                      |
+| SUPABASE_URL                      | Supabase URL for database connection                                               | (required)                                                 |
+| SUPABASE_SERVICE_ROLE_KEY         | Supabase service role key for authentication                                       | (required)                                                 |
+| OPENAI_API_KEY                    | OpenAI API key for AI functionality                                                | (required)                                                 |
+| FAL_KEY                           | fal.ai API key for asset generation                                                | (required)                                                 |
+| BLOCKADE_LABS_API_KEY             | Blockade Labs API key for skybox generation                                        | (required for skybox generation)                           |
+| V8_CREDIT_CLIENT_ID               | Client ID for credit consumption API                                               | (none, optional for asset generation)                      |
+| V8_CREDIT_CLIENT_SECRET           | Client secret for credit consumption API                                           | (none, optional for asset generation)                      |
+| V8_CREDIT_API_ENDPOINT            | API endpoint for credit consumption                                                | (required for asset generation)                            |
+| ENABLE_ALL_TOOLS                  | Enable or disable all tools globally                                               | true                                                       |
+| ENABLE_VECTOR_SEARCH_TOOLS        | Enable or disable all vector search tools                                          | true                                                       |
+| ENABLE_ASSET_GENERATE_TOOLS       | Enable or disable all asset generation tools (images, cinematics, audio, skyboxes) | true                                                       |
+| ENABLE_IMAGE_GENERATION_TOOLS     | Enable or disable image generation tools                                           | true                                                       |
+| ENABLE_CINEMATIC_GENERATION_TOOLS | Enable or disable cinematic generation tools                                       | true                                                       |
+| ENABLE_AUDIO_GENERATION_TOOLS     | Enable or disable audio generation tools                                           | true                                                       |
+| ENABLE_SKYBOX_GENERATION_TOOLS    | Enable or disable skybox generation tools                                          | true                                                       |
+| ENABLE_CODE_EXAMPLE_SEARCH_TOOL   | Enable or disable code example search tool                                         | true                                                       |
+| ENABLE_GAME_RESOURCE_SEARCH_TOOL  | Enable or disable game resource search tool                                        | true                                                       |
+| ENABLE_UI_THEME_TOOLS             | Enable or disable UI theme tool                                                    | true                                                       |
 
 **Tool Activation Priority**:
 The tool activation settings follow this priority order:
@@ -243,28 +243,43 @@ ENABLE_CINEMATIC_GENERATION_TOOLS=true
 ENABLE_AUDIO_GENERATION_TOOLS=true
 ```
 
-### Using Stdio Transport
+### Using Single Transport
 
 ```bash
-# Build and run
+# Build and run with stdio transport
 pnpm build
-pnpm start --transport=stdio
+pnpm start --transports=stdio
+
+# Build and run with SSE transport (default port: 3000)
+pnpm build
+pnpm start --transports=sse --port=3000
+
+# Build and run with streamable-http transport (default port: 3000)
+pnpm build
+pnpm start --transports=streamable-http --port=3000
 ```
 
-### Using SSE Transport
+### Using Multiple Transports
 
 ```bash
-# Build and run (default port: 3000)
+# Build and run with both SSE and streamable-http transports on the same port
 pnpm build
-pnpm start --transport=sse --port=3000
+pnpm start --transports=sse,streamable-http --port=3000
+
+# Build and run with all transports (stdio + http-based transports)
+pnpm build
+pnpm start --transports=stdio,sse,streamable-http --port=3000
 ```
 
-### Using Streamable HTTP Transport
+### Using Environment Variables for Multiple Transports
 
 ```bash
-# Build and run (default port: 3000)
-pnpm build
-pnpm start --transport=streamable-http --port=3000
+# Set environment variables
+export MCP_TRANSPORTS=sse,streamable-http
+export PORT=3000
+
+# Run the server
+pnpm start
 ```
 
 ### Debug Mode
