@@ -16,6 +16,7 @@ export abstract class AssetGeneratorBase implements Tool {
     const { progressCallback } = context;
     try {
       // Common preprocessing
+      args = this.sanitizeToolArgs(args);
       const apiEndpoint = this.getApiEndpoint(args);
 
       // Initial progress reporting
@@ -49,8 +50,6 @@ export abstract class AssetGeneratorBase implements Tool {
           throw new Error(`Credit consumption failed: ${creditError instanceof Error ? creditError.message : String(creditError)}`);
         }
       }
-
-      args = this.sanitizeToolArgs(args);
 
       // Call the asset generation method of child class
       const result = await this.generateAsset(args, apiEndpoint, context);

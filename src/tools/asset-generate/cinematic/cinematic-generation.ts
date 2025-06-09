@@ -42,7 +42,16 @@ Use this tool when you need to:
 - Provide specific and detailed game context (setting, mood, characters, main activities)
 - Choose reference images that best represent your desired style and game art direction
 - Clearly specify desired camera angles, lighting, and color palettes
-- Include sufficient references to maintain consistency with your game's actual assets`;
+- Include sufficient references to maintain consistency with your game's actual assets
+
+[VEO3 PROMPT TIPS]
+- Veo3 is used when no reference images are provided
+- Keep prompts short (one or two sentences) and focus on a single scene
+- Mention subject, style, camera angle, movement and lighting
+- Include quoted dialogue to add subtitles in the video
+- Avoid very long lists of styles or conflicting instructions
+- Provide reference images for consistent characters or settings
+- See Google's video prompt guide: https://cloud.google.com/vertex-ai/generative-ai/docs/video/video-gen-prompt-guide`;
 
   // Tool metadata for categorization and filtering
   metadata: ToolMetadata = {
@@ -89,7 +98,7 @@ Use this tool when you need to:
         default: true,
       },
     },
-    required: ['prompt', 'reference_image_urls'],
+    required: ['prompt'],
   };
 
   protected sanitizeToolArgs(args: Record<string, unknown>): Record<string, unknown> {
@@ -111,14 +120,16 @@ Use this tool when you need to:
       return url;
     });
 
+    const hasReference = referenceImages.length > 0;
+
     return {
-      model: 'fal-ai/vidu/reference-to-video',
-      queue: true, // Always use queue for this model
+      model: hasReference ? 'fal-ai/vidu/reference-to-video' : 'fal-ai/veo3',
+      queue: true, // Both models currently use queue processing
       parameters: {
         prompt: args.prompt,
         aspect_ratio:
           typeof args.aspect_ratio === 'string' ? args.aspect_ratio : '16:9',
-        reference_image_urls: referenceImages, // Use maximum of 3 images
+        ...(hasReference && { reference_image_urls: referenceImages }),
         seed: args.seed,
         movement_amplitude:
           typeof args.movement_amplitude === 'string'
@@ -128,9 +139,14 @@ Use this tool when you need to:
     };
   }
 
-  protected getApiEndpoint(): string {
-    // Fixed model for cinematics
-    return 'fal-ai/vidu/reference-to-video';
+  protected getApiEndpoint(args: Record<string, unknown>): string {
+    const parameters = (args.parameters as Record<string, unknown>) || {};
+    const referenceImages = Array.isArray(parameters.reference_image_urls)
+      ? (parameters.reference_image_urls as string[])
+      : [];
+    return referenceImages.length > 0
+      ? 'fal-ai/vidu/reference-to-video'
+      : 'fal-ai/veo3';
   }
 
   protected async generateAsset(
@@ -158,10 +174,14 @@ Use this tool when you need to:
           ? parameters.movement_amplitude
           : 'auto';
 
+      const hasReference = Array.isArray(parameters.reference_image_urls) &&
+        (parameters.reference_image_urls as unknown[]).length > 0;
       await context.progressCallback({
         progress: 0.3,
         total: 1,
-        message: `Generating cinematic with reference images... (${aspectRatio}, ${movementAmplitude} movement)`,
+        message: hasReference
+          ? `Generating cinematic with reference images... (${aspectRatio}, ${movementAmplitude} movement)`
+          : `Generating cinematic from prompt... (${aspectRatio}, ${movementAmplitude} movement)`,
       });
     }
 
